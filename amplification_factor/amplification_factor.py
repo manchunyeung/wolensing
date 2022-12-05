@@ -6,7 +6,6 @@ from scipy.fft import fftfreq
 from scipy.fftpack import fft
 import lensinggw.constants.constants as const
 from tqdm import trange, tqdm
-from numba import jit, cuda
 
 import sys
 import os
@@ -21,7 +20,6 @@ G = const.G  # gravitational constant [m^3 kg^-1 s^-2]
 c = const.c  # speed of light [m/s]
 M_sun = const.M_sun  # Solar mass [Kg]
 
-@jit(target_background='cuda')
 def histogram_routine(lens_model_complete, Numblocks, macroimindx, Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
                       binmin, binmax, Scale, kwargs_lens, y0, y1, dx):
     bincount = np.zeros(binnum)
@@ -161,9 +159,13 @@ def amplification_factor_fd(lens_model_list, args, kwargs_lens, **kwargs):
         Fw *= overall_phase
     else:
         dt = 1e-5
+        print(ts, F_tilde)
         ts_extended, F_tilde_extended = F_tilde_extend(ts, F_tilde, args, **kwargs)
         F_tilde_apodized = coswindowback(F_tilde_extended, 50)
-        ws, Fw = iwFourier(ts_extended*Tscale, F_tilde_apodized, args)
+    # np.savetxt('./data/test/test_ws_100.00000_1.00000.txt', ts_extended*Tscale)
+    # np.savetxt('./data/test/test_Fws_100.00000_1.00000.txt', F_tilde_apodized)
+    ws, Fw = iwFourier(ts_extended*Tscale, F_tilde_apodized, args)
+    print(ws, Fw)
 
     from bisect import bisect_left
 
