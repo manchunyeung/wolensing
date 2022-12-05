@@ -1,6 +1,6 @@
 import numpy as np
 from bisect import bisect_left
-import pycbc.psd as psd
+# import pycbc.psd as psd
 import matplotlib.pyplot as plt
 import matplotlib
 # matplotlib.use('Tkagg')
@@ -9,7 +9,12 @@ import lensinggw.constants.constants as const
 import sys
 from mpmath import hyp1f1, gamma
 from argparse import ArgumentParser
-from wolensing.utils.utils import smooth
+import sys
+import os
+path = os.getcwd()
+dir = os.path.abspath(os.path.join(path, os.pardir))
+sys.path.append(dir)
+from utils.utils import smooth
 
 GCSM = 2.47701878*1.98892*10**(-6) # G/c^3 *solar mass
 
@@ -32,8 +37,8 @@ args = parser.parse_args()
 plt.rc('text', usetex=True)
 plt.rc('font', family='serif')
 
-run = 'bilby'
-code = 'f4'
+run = 'test'
+code = 'None'
 
 G = const.G  # gravitational constant [m^3 kg^-1 s^-2]
 c = const.c  # speed of light [m/s]
@@ -51,15 +56,15 @@ scale = np.sqrt(mu)
 #----------------------------------------------------
 # Import 
 
-masslist = [50.]
+masslist = [100.]
 distancelist = [1.]
 colorlist = ['red', 'blue', 'green', 'purple', 'orange']
 
 fig, ax1 = plt.subplots()
 
-psdfs = np.linspace(5,2005,10000)
-df = psdfs[1] - psdfs[0]
-noise = np.sqrt(psd.analytical.aLIGOaLIGODesignSensitivityT1800044(len(psdfs), df, psdfs[0]))
+# psdfs = np.linspace(5,2005,10000)
+# df = psdfs[1] - psdfs[0]
+# noise = np.sqrt(psd.analytical.aLIGOaLIGODesignSensitivityT1800044(len(psdfs), df, psdfs[0]))
 
 minima = np.log10(1)
 maxima = np.log10(30)
@@ -97,7 +102,9 @@ for distance in distancelist:
             # Fws = np.loadtxt('./data/100lookup.txt'.format(run, mass, distance), dtype=complex, converters={0: lambda s: complex(s.decode().replace('+-', '-'))})/scale
             # ws = np.loadtxt('./data/{0}/{1}fs.txt'.format(run, code, mass, distance))
             # Fws = np.loadtxt('./data/{0}/{1}Fws.txt'.format(run, code, mass, distance), dtype=complex, converters={0: lambda s: complex(s.decode().replace('+-', '-'))})/scale
- 
+        print(Fws)
+        fs=ws/(2*np.pi)
+
         # smoothen the curve(s)
         from scipy.signal import savgol_filter
         Fa_fil = savgol_filter(np.abs(Fws), 51, 3)
@@ -116,10 +123,10 @@ for distance in distancelist:
 
         n += 1
 
-ax1.set_xlim(10,2000)
+# ax1.set_xlim(10,2000)
 
-ax2 = ax1.twinx()
-ax2.loglog(psdfs, noise, ':', color = 'gray', alpha = 0.8)#, label = r'aLIGO PSD')
+# ax2 = ax1.twinx()
+# ax2.loglog(psdfs, noise, ':', color = 'gray', alpha = 0.8)#, label = r'aLIGO PSD')
 
 ax1.set_xlabel(r'Frequency (Hz)', fontsize = 14)
 if args.absolute:
@@ -133,8 +140,8 @@ elif args.phase:
 ax1.tick_params(axis='x', labelsize=11)
 ax1.tick_params(axis='y', labelsize=11)
 ax1.grid(which = 'both', alpha = 0.5)
-ax2.tick_params(axis='x', labelsize=11)
-ax2.set_ylabel(r'strain (Hz$^{-1/2}$)', fontsize = 14)
+# ax2.tick_params(axis='x', labelsize=11)
+# ax2.set_ylabel(r'strain (Hz$^{-1/2}$)', fontsize = 14)
 fig.tight_layout()
 h1, l1 = ax1.get_legend_handles_labels()
 ax1.legend(h1, l1, ncol = 1, fontsize = 13, loc = 3)

@@ -219,6 +219,7 @@ for mL2 in mlist:
                         'theta_E': thetaE,
                         'LastImageT': args.LastImageT/Tscale,
                         'TExtend': args.TExtend/Tscale,
+                        'Tbuffer':0., 
                         'mu': args.mu}
 
     kwargs_integrator = {'InputScaled': False,
@@ -238,9 +239,5 @@ for mL2 in mlist:
 
     ws, Fws = af.amplification_factor_fd(lens_model_list, args, kwargs_lens_list, **kwargs_wolensing,**kwargs_integrator)
 
-    if args.code == None: 
-        np.savetxt('./data/{0}/{0}_ws_{1:1.5f}_{2:1.5f}.txt'.format(run, mL2, ym), ws[::1])
-        np.savetxt('./data/{0}/{0}_Fws_{1:1.5f}_{2:1.5f}.txt'.format(run, mL2, ym), Fws[::1])
-    else:
-        np.savetxt('./data/{0}/{0}_{1}ws_{2:1.5f}_{3:1.5f}.txt'.format(run, args.code, mL2, ym), ws[::1])
-        np.savetxt('./data/{0}/{0}_{1}Fws_{2:1.5f}_{3:1.5f}.txt'.format(run, args.code, mL2, ym), Fws[::1])
+    np.savetxt('./data/{0}/{0}_ws_{1:1.5f}_{2:1.5f}.txt'.format(run, mL2, ym), ws[::1])
+    np.savetxt('./data/{0}/{0}_Fws_{1:1.5f}_{2:1.5f}.txt'.format(run, mL2, ym), Fws[::1])

@@ -8,6 +8,9 @@ requires = ['numpy>=1.18.1',
             'lenstronomy',
             'scipy>=1.4.1',
             'matplotlib',
+            'fast_histogram',
+            'tqdm',
+            'pycbc'
            ]
 
 setup(

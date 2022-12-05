@@ -1,4 +1,6 @@
 import numpy as np
+from scipy.fft import fftfreq
+from scipy.fftpack import fft
 
 def fitfuncF0(t, F0, a, c):
     return (F0 + 1 / (a * t ** 1 + c)) # .5
@@ -54,6 +56,17 @@ def F_tilde_extend(ts, F_tilde, args, **kwargs):
     F_tilde_extended = np.concatenate((F_tilde, F_tilde_extension))
     ts_extended = np.concatenate((ts, ts_extension))
     return ts_extended, F_tilde_extended
+
+def iwFourier(ts, Ft, args):
+    num = len(ts)
+    dt = ts[1] - ts[0]
+    if args.type2:
+        dt = 1e-6
+    else:
+        dt = 1e-5
+    ws = 2 * np.pi * fftfreq(num, dt)[:num // 2]
+    Fw = np.conjugate(fft(Ft)[:num // 2] * (1.j) * ws * dt)
+    return ws, Fw
 
 def smooth(y, box_pts):
     box = np.ones(box_pts)/box_pts
