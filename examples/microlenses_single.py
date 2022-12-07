@@ -209,7 +209,7 @@ for mL2 in mlist:
         # plt.show()
         print(MacroImg_ra[imindex], MacroImg_dec[imindex])
         plot_contour(ax, lens_model_list, MacroImg_ra[imindex], MacroImg_dec[imindex], 13*thetaE2, kwargs_lens_list, beta0, beta1, Img_ra, Img_dec,
-                            T0 = T0, Tfac = (thetaE)**(-2), micro=True, test = args.type2, savename = contourtxtnamemicro)
+                            T0 = T0, Tfac = (thetaE)**(-2), micro=True)
         plt.show()
         quit()
 
