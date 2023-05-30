@@ -17,6 +17,7 @@ from lensinggw.amplification_factor.amplification_factor import geometricalOptic
 
 from plot.plot import plot_contour
 import amplification_factor.amplification_factor as af
+import lensmodels.morse_indices as morse
 #----------------------------------------------------
 ### command line options
 
@@ -102,7 +103,8 @@ for mL2 in mlist:
     lens_model_list = ['SIS']
     kwargs_sis_1 = {'center_x': eta10, 'center_y': eta11, 'theta_E': thetaE1}
     kwargs_lens_list = [kwargs_sis_1]
-
+    
+    print('thetaE1 and thetaE', thetaE1, thetaE)
     kwargs_sis_1_scaled = {'center_x': eta10 / thetaE, 'center_y': eta11 / thetaE, 'theta_E': thetaE1 / thetaE}
     kwargs_lens_list_scaled = [kwargs_sis_1_scaled]
     from lensinggw.solver.images import microimages
@@ -124,6 +126,10 @@ for mL2 in mlist:
                     zL, zS,
                     lens_model_list, kwargs_lens_list)
 
+    ns = getMinMaxSaddle(MacroImg_ra, MacroImg_dec, lens_model_list, kwargs_lens_list, diff = None)
+    ns_1 = morse.morse_indices(MacroImg_ra, MacroImg_dec, kwargs_sis_1)
+    print(T01, ns, ns_1)
+    exit()
     # imindex = np.where(T01 == 0)[0][0]
     if args.type2:
         imindex = np.nonzero(T01)[0][0]
