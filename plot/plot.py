@@ -28,7 +28,7 @@ def plot_contour(ax, lens_model_list, window_center1, window_center2, window_len
 
     lens_model_complete = LensModel(lens_model_list=lens_model_list)
 
-    # defiine the window
+    # define the window
     win_low1 = window_center1 - window_length / 2
     win_low2 = window_center2 - window_length / 2
     win_hi1 = win_low1 + window_length
