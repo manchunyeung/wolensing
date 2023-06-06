@@ -129,8 +129,7 @@ for mL2 in mlist:
     ns = getMinMaxSaddle(MacroImg_ra, MacroImg_dec, lens_model_list, kwargs_lens_list, diff = None)
     ns_1 = morse.morse_indices(MacroImg_ra, MacroImg_dec, kwargs_sis_1)
     print(T01, ns, ns_1)
-    exit()
-    # imindex = np.where(T01 == 0)[0][0]
+
     if args.type2:
         imindex = np.nonzero(T01)[0][0]
     else:
@@ -220,13 +219,10 @@ for mL2 in mlist:
         quit()
 
 
-    kwargs_wolensing = {'source_pos_x': beta0,
-                        'source_pos_y': beta1,
-                        'theta_E': thetaE,
-                        'LastImageT': args.LastImageT/Tscale,
-                        'TExtend': args.TExtend/Tscale,
-                        'Tbuffer':0., 
-                        'mu': args.mu}
+    kwargs_macro = {'source_pos_x': beta0,
+                    'source_pos_y': beta1,
+                    'theta_E': thetaE,
+                    'mu': args.mu}
 
     kwargs_integrator = {'InputScaled': False,
                          'PixelNum': int(args.pixel),
@@ -238,12 +234,14 @@ for mL2 in mlist:
                          'TimeMax': T0 + args.TimeMax/Tscale,
                          'TimeMin': T0 - args.TimeMin/Tscale,
                          'TimeLength': args.TimeLength/Tscale,
-                         'ImageRa': [],
-                         'ImageDec': [],
+                         'LastImageT': args.LastImageT/Tscale,
+                         'TExtend': args.TExtend/Tscale,
+                         'Tbuffer':0., 
                          'T0': T0,
                          'Tscale': Tscale}
 
-    ws, Fws = af.amplification_factor_fd(lens_model_list, args, kwargs_lens_list, **kwargs_wolensing,**kwargs_integrator)
+    amplification = af.amplification_factor_fd(lens_model_list=lens_model_list, kwargs_lens=kwargs_lens_list, kwargs_macro=kwargs_macro, **kwargs_integrator)
+    ws, Fws = amplification.integrator()
 
     np.savetxt('./data/{0}/{0}_ws_{1:1.5f}_{2:1.5f}.txt'.format(run, mL2, ym), ws[::1])
     np.savetxt('./data/{0}/{0}_Fws_{1:1.5f}_{2:1.5f}.txt'.format(run, mL2, ym), Fws[::1])

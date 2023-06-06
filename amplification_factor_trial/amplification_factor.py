@@ -22,7 +22,7 @@ M_sun = const.M_sun  # Solar mass [Kg]
 
 class amplification_factor_fd(object):
 
-    def __init__(self, lens_model_list=None, kwargs_lens=None, kwargs_initial=None, kwargs_integrator=None, embedded=False, type2=False):
+    def __init__(self, lens_model_list, kwargs_lens, kwargs_macro=None, **kwargs):
         """
 
         :param lens_model_list: list of lens models 
@@ -30,88 +30,67 @@ class amplification_factor_fd(object):
         :param kwargs_lens: arguments for integrating the diffraction integral
         """
 
+        kwargs_integrator = {
+                'TimeStep': 0.0005,
+                'TimeMax': 100,
+                'TimeMin': -50,
+                'TimeLength': 10, # length in time considered after initial signal
+                'LastImageT': .02,
+                'TExtend': 10,
+                'Tbuffer': 0.,
+                'T0': 0,
+                'Tscale': 0.,
+                'WindowSize': 15,
+                'PixelNum': 10000,
+                'PixelBlockMax': 2000,  # max number of pixels in a block
+                'WindowCenterX': 0,
+                'WindowCenterY': 0,
+                'InputScaled': True,
+                }
+        
+        for key in kwargs_integrator.keys():
+            if key in kwargs:
+                value = kwargs[key]
+                kwargs_integrator.update({key: value})
 
-
-        # kwargs_wolensing = {'FrequencyScaled': True}
-        # for key in kwargs_wolensing.keys():
-        #     if key in kwargs:
-        #         value = kwargs[key]
-        #         kwargs_wolensing.update({key: value})
-        # Tscale = kwargs['Tscale']
-
+        self._Tscale = kwargs_integrator['Tscale']
         self._kwargs_lens = kwargs_lens
-        self._kwargs_initial = kwargs_initial
+        self._kwargs_macro = kwargs_macro
         self._kwargs_integrator = kwargs_integrator
         if lens_model_list != None:
             self._lens_model_complete = LensModel(lens_model_list = lens_model_list)
-        self._embedded=embedded
-        self._type2=type2        
 
-        # ts, F_tilde = integrator(lens_model_complete, kwargs_lens, **kwargs)
-        # if args.type2:
-        #     ws, Fw = iwFourier(ts * Tscale, F_tilde, args) 
-        #     fs = ws/(2*np.pi)
-        #     peak = np.where(F_tilde == np.amax(F_tilde))
-        #     index = int(peak[0])
-        #     Tds = 5
-        #     tdiff = ts[index]*Tscale-5
-        #     overall_phase = np.exp(-1 * 2 * np.pi * 1j * (Tds+tdiff) * fs)
-        #     Fw *= overall_phase
-        # else:
-        #     dt = 1e-5
-        #     print(ts, F_tilde)
-        #     ts_extended, F_tilde_extended = F_tilde_extend(ts, F_tilde, args, **kwargs)
-        #     F_tilde_apodized = coswindowback(F_tilde_extended, 50)
-        # ws, Fw = iwFourier(ts_extended*Tscale, F_tilde_apodized, args)
-        # print(ws, Fw)
+    def integrator(self, freq_end = 2000, tds=None, embedded=True, type2=False):
+        """
+        Computes the amplification facator F(f) by constructing the histogram in time domain. Defines the integration window of lens plane first.        
 
-        # from bisect import bisect_left
+        """
 
-        # i = bisect_left(ws, 2*np.pi*2000)
 
-        # return ws[:i], Fw[:i]
-
-    def integrator(self):
-        
-        kwargs_integrator = {'TimeStep': 0.0005,
-                        'TimeMax': 100,
-                        'TimeMin': -50,
-                        'TimeLength': 10, # length in time considered after initial signal
-                        'WindowSize': 15,
-                        'PixelNum': 10000,
-                        'PixelBlockMax': 2000,  # max number of pixels in a block
-                        'WindowCenterX': 0,
-                        'WindowCenterY': 0,
-                        'InputScaled': True,
-                        'ImageRa': np.array([]),
-                        'ImageDec': np.array([])
-                        }
-        for key in kwargs_integrator.keys():
-            if key in self._kwargs_integrator:
-                value = self._kwargs_integrator[key]
-                kwargs_integrator.update({key: value})
-
+        # details of the lens model and source
         T = self._lens_model_complete.fermat_potential
-        binmax0 = kwargs_integrator['TimeMax']
-        binmin = kwargs_integrator['TimeMin']
-        binlength = kwargs_integrator['TimeLength']
-        binwidth = kwargs_integrator['TimeStep']
-        N = kwargs_integrator['PixelNum']
-        Nblock = kwargs_integrator['PixelBlockMax']
+        thetaE = self._kwargs_macro['theta_E']
+        y0 = thetaE * self._kwargs_macro['source_pos_x']
+        y1 = thetaE * self._kwargs_macro['source_pos_y']
+
+        # defines the time integration
+        binmax0 = self._kwargs_integrator['TimeMax']
+        binmin = self._kwargs_integrator['TimeMin']
+        binlength = self._kwargs_integrator['TimeLength']
+        binwidth = self._kwargs_integrator['TimeStep']
+
         binnum = int((binmax0 - binmin) / binwidth) + 1
         binnumlength = int(binlength / binwidth)
-
-        thetaE = self._kwargs_initial['theta_E']
-
-        y0 = thetaE * self._kwargs_initial['source_pos_x']
-        y1 = thetaE * self._kwargs_initial['source_pos_y']
-
         binmax = binmin + binwidth * (binnum + 1)
         bins = np.linspace(binmin, binmax, binnum)
 
-        x1cen = kwargs_integrator['WindowCenterX']
-        x2cen = kwargs_integrator['WindowCenterY']
-        L = thetaE * kwargs_integrator['WindowSize']
+        # dividing the lens plane into grid
+        N = self._kwargs_integrator['PixelNum']
+        Nblock = self._kwargs_integrator['PixelBlockMax']
+
+        x1cen = self._kwargs_integrator['WindowCenterX'] # The positions where the window centered at, usually the lens or the macroimage in embedded lens case
+        x2cen = self._kwargs_integrator['WindowCenterY']
+        L = thetaE * self._kwargs_integrator['WindowSize'] # Size of the integration window
         dx = L / (N - 1)
 
         x1corn = x1cen - L / 2
@@ -119,27 +98,29 @@ class amplification_factor_fd(object):
         Lblock = Nblock * dx
         Numblocks = N // Nblock
         Nresidue = N % Nblock
-        imagesra = kwargs_integrator['ImageRa']
-        imagesdec = kwargs_integrator['ImageDec']
-        imindx1 = (imagesra - x1corn) // Lblock
-        imindx2 = (imagesdec - x2corn) // Lblock
-        imindxzip = np.unique(np.column_stack((imindx1, imindx2)), axis = 0)
-        zoomblockcorn1 = imindx1*Lblock + x1corn
-        zoomblockcorn2 = imindx2*Lblock + x2corn
-        zoomblockcornzip = np.unique(np.column_stack((zoomblockcorn1, zoomblockcorn2)), axis = 0)
+
+        # imagesra = kwargs_integrator['ImageRa']
+        # imagesdec = kwargs_integrator['ImageDec']
+        # imindx1 = (imagesra - x1corn) // Lblock
+        # imindx2 = (imagesdec - x2corn) // Lblock
+        # imindxzip = np.unique(np.column_stack((imindx1, imindx2)), axis = 0)
+        # zoomblockcorn1 = imindx1*Lblock + x1corn
+        # zoomblockcorn2 = imindx2*Lblock + x2corn
+        # zoomblockcornzip = np.unique(np.column_stack((zoomblockcorn1, zoomblockcorn2)), axis = 0)
 
         bincount = histogram_routine(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
-                        binmin, binmax, thetaE, self._kwargs_initial, y0, y1, dx)
+                        binmin, binmax, thetaE, self._kwargs_macro, y0, y1, dx)
 
-        zoomN = N
-        zoomdx = Lblock/(N+1)
-        zoomNumblocks = zoomN // Nblock
-        zoomNresidue = zoomN % Nblock
-        zoomLblock = Nblock * zoomdx
-        for (zoomblockcorn1, zoomblockcorn2) in zoomblockcornzip:
-            bincount += histogram_routine(self._lens_model_complete, zoomNumblocks, np.array([[None, None]]), Nblock, zoomNresidue, zoomblockcorn1, zoomblockcorn2, zoomLblock, binnum,
-                        binmin, binmax, thetaE, self.kwargs_initial, y0, y1, zoomdx)
+        # zoomN = N
+        # zoomdx = Lblock/(N+1)
+        # zoomNumblocks = zoomN // Nblock
+        # zoomNresidue = zoomN % Nblock
+        # zoomLblock = Nblock * zoomdx
+        # for (zoomblockcorn1, zoomblockcorn2) in zoomblockcornzip:
+        #     bincount += histogram_routine(self._lens_model_complete, zoomNumblocks, np.array([[None, None]]), Nblock, zoomNresidue, zoomblockcorn1, zoomblockcorn2, zoomLblock, binnum,
+        #                 binmin, binmax, thetaE, self._kwargs_macro, y0, y1, zoomdx)
 
+        # trimming the array
         bincountback = np.trim_zeros(bincount, 'f')
         bincountfront = np.trim_zeros(bincount, 'b')
         fronttrimmed = len(bincount) - len(bincountback)
@@ -147,11 +128,46 @@ class amplification_factor_fd(object):
         F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
         ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
 
+        if embedded:
+            if type2:
+                ws, Fw = iwFourier(ts * self._Tscale, F_tilde, type2) 
+                fs = ws/(2*np.pi)
+                peak = np.where(F_tilde == np.amax(F_tilde))
+                index = int(peak[0])
+                Tds = 5 # in dimension time
+                tdiff = ts[index]*self._Tscale-5 
+                overall_phase = np.exp(-1 * 2 * np.pi * 1j * (Tds+tdiff) * fs)
+                Fw *= overall_phase
+        else:
+            dt = 1e-5
+            print(ts, F_tilde)
+            ts_extended, F_tilde_extended = F_tilde_extend(ts, F_tilde, self.kwargs_integrator)
+            F_tilde_apodized = coswindowback(F_tilde_extended, 50)
+            ws, Fw = iwFourier(ts_extended*self._Tscale, F_tilde_apodized)
+
+        from bisect import bisect_left
+        i = bisect_left(ws, 2*np.pi*freq_end)
+
+        return ws[:i], Fw[:i]
+
     def importor(self, ws, Fws):
+        """
+        Imports the amplification factor
+
+        :param ws: sampling frequency in unit of angular frequency
+        :param Fws: amplification factor 
+        """
         self._ws = ws
         self._Fws = Fws
 
-    def plot(self, abs=True, pha=False, save=False, savefile=None):
+    def plot(self, freq_end = 2000, abs=True, pha=False, saveplot=None):
+        """
+        Plots the amplification factor against frequency in semilogx
+
+        :param abs: boolean, compute the absolute value of the amplification.
+        :param pha: boolean, compute the phase of the amplification.
+        :param saveplot: where the plot is saved.
+        """
 
         import matplotlib.pyplot as plt
         plt.rc('text', usetex=True)
@@ -169,7 +185,7 @@ class amplification_factor_fd(object):
         Fp_fil = savgol_filter(np.angle(Fws), 51, 3)
 
         from bisect import bisect_left
-        i = bisect_left(fs, 2000) ###hardcoded
+        i = bisect_left(fs, freq_end) 
 
         if abs:
             ax.plot(fs[:i], Fa_fil[:i], linewidth=1)
@@ -186,7 +202,8 @@ class amplification_factor_fd(object):
         ax.grid(which = 'both', alpha = 0.5)
         fig.tight_layout()
 
-        if plt.save:
-            plt.savefig(savefile)
+        if saveplot != None:
+            plt.savefig(saveplot)
 
         plt.show()
+        
