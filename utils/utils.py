@@ -25,7 +25,7 @@ def coswindowback(data, percent):
     front = [1 for i in range(len(data) - len(back))]
     return np.concatenate((front, back)) * data
 
-def F_tilde_extend(ts, F_tilde, **kwargs):
+def F_tilde_extend(ts, F_tilde, kwargs):
 
     extend_to_t = kwargs['TExtend']
     Tscale = kwargs['Tscale']
@@ -38,14 +38,18 @@ def F_tilde_extend(ts, F_tilde, **kwargs):
         residual = num - expected_num
         residual = int(residual)
     fit_start = kwargs['LastImageT'] + kwargs['Tbuffer']
-    dt = TimeStep/Tscale
+    dt = TimeStep 
+    print(dt, 'dt')
     extend_num = int(extend_to_t / dt) + 0 - residual
+    print(len(ts), extend_to_t, 'extension')
     extension = extend_to_t - ts[-1]
+    print(ts[-1] + dt, ts[-1] - dt + extension, extend_num, 'key')
     ts_extension = np.linspace(ts[-1] + dt, ts[-1] - dt + extension, extend_num)
 
     from bisect import bisect_left
     i = bisect_left(ts, fit_start)
-    F0 = np.sqrt(kwargs['mu'])
+    # F0 = np.sqrt(kwargs['mu'])
+    F0 = np.sqrt(11)
 
     from scipy.optimize import curve_fit
     popt, pcov = curve_fit(lambda t, a, c: fitfuncF0(t, F0, a, c), ts[i:], F_tilde[i:], p0=(.1, .1))

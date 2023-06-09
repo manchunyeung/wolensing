@@ -15,8 +15,8 @@ import lensinggw.constants.constants as const
 from lensinggw.utils.utils import TimeDelay, magnifications, getMinMaxSaddle
 from lensinggw.amplification_factor.amplification_factor import geometricalOpticsMagnification
 
-from plot.plot import plot_contour
-import amplification_factor.amplification_factor as af
+# from plot.plot import plot_contour
+import amplification_factor_trial.amplification_factor as af
 import lensmodels.morse_indices as morse
 #----------------------------------------------------
 ### command line options
@@ -136,13 +136,13 @@ for mL2 in mlist:
         imindex = np.where(T01==0)[0][0]
     args.mu = Macromus[imindex]
 
-    # lens model
-    eta20, eta21 = MacroImg_ra[imindex] + np.cos(angle)*ym*thetaE2, MacroImg_dec[imindex] + np.sin(angle)*ym*thetaE2
+    # # lens model
+    # eta20, eta21 = MacroImg_ra[imindex] + np.cos(angle)*ym*thetaE2, MacroImg_dec[imindex] + np.sin(angle)*ym*thetaE2
 
-    lens_model_list = ['SIS', 'POINT_MASS']
-    kwargs_sis_1 = {'center_x': eta10, 'center_y': eta11, 'theta_E': thetaE1}
-    kwargs_point_mass_2 = {'center_x': eta20, 'center_y': eta21, 'theta_E': thetaE2}
-    kwargs_lens_list = [kwargs_sis_1, kwargs_point_mass_2]
+    # lens_model_list = ['SIS', 'POINT_MASS']
+    # kwargs_sis_1 = {'center_x': eta10, 'center_y': eta11, 'theta_E': thetaE1}
+    # kwargs_point_mass_2 = {'center_x': eta20, 'center_y': eta21, 'theta_E': thetaE2}
+    # kwargs_lens_list = [kwargs_sis_1, kwargs_point_mass_2]
 
     from lensinggw.solver.images import microimages
 
@@ -155,57 +155,58 @@ for mL2 in mlist:
     # solver_kwargs.update({'Improvement' : 0.1})
     # solver_kwargs.update({'MinDist' : 10**(-7)})
 
-    if not args.type2:
-        Img_ra, Img_dec, MacroImg_ra, MacroImg_dec, pixel_width = microimages(source_pos_x=beta0,
-                                                                              source_pos_y=beta1,
-                                                                              lens_model_list=lens_model_list,
-                                                                              kwargs_lens=kwargs_lens_list,
-                                                                              **solver_kwargs)
+    # if not args.type2:
+    #     Img_ra, Img_dec, MacroImg_ra, MacroImg_dec, pixel_width = microimages(source_pos_x=beta0,
+    #                                                                           source_pos_y=beta1,
+    #                                                                           lens_model_list=lens_model_list,
+    #                                                                           kwargs_lens=kwargs_lens_list,
+    #                                                                           **solver_kwargs)
 
-        Images_dict = {'Source_ra': beta0,
-                       'Source_dec': beta1,
-                       'Img_ra': Img_ra,
-                       'Img_dec': Img_dec,
-                       'MacroImg_ra': MacroImg_ra,
-                       'MacroImg_dec': MacroImg_dec,
-                       'Microlens_ra': [eta20],
-                       'Microlens_dec': [eta21],
-                       'thetaE': thetaE}
-    else:
-        Img_ra, Img_dec = MacroImg_ra, MacroImg_dec
+    #     Images_dict = {'Source_ra': beta0,
+    #                    'Source_dec': beta1,
+    #                    'Img_ra': Img_ra,
+    #                    'Img_dec': Img_dec,
+    #                    'MacroImg_ra': MacroImg_ra,
+    #                    'MacroImg_dec': MacroImg_dec,
+    #                    'Microlens_ra': [eta20],
+    #                    'Microlens_dec': [eta21],
+    #                    'thetaE': thetaE}
+    # else:
+    #     Img_ra, Img_dec = MacroImg_ra, MacroImg_dec
     
-    # time delays, magnifications, Morse indices and amplification factor
-    from lensinggw.utils.utils import TimeDelay, magnifications, getMinMaxSaddle
-    from lensinggw.amplification_factor.amplification_factor import geometricalOpticsMagnification
+    # # time delays, magnifications, Morse indices and amplification factor
+    # from lensinggw.utils.utils import TimeDelay, magnifications, getMinMaxSaddle
+    # from lensinggw.amplification_factor.amplification_factor import geometricalOpticsMagnification
 
-    tds = TimeDelay(Img_ra, Img_dec,
-                   beta0, beta1,
-                   zL, zS,
-                   lens_model_list, kwargs_lens_list)
-    mus = magnifications(Img_ra, Img_dec, lens_model_list, kwargs_lens_list)
-    ns = getMinMaxSaddle(Img_ra, Img_dec, lens_model_list, kwargs_lens_list, diff = None)
+    # tds = TimeDelay(Img_ra, Img_dec,
+    #                beta0, beta1,
+    #                zL, zS,
+    #                lens_model_list, kwargs_lens_list)
+    # mus = magnifications(Img_ra, Img_dec, lens_model_list, kwargs_lens_list)
+    # ns = getMinMaxSaddle(Img_ra, Img_dec, lens_model_list, kwargs_lens_list, diff = None)
 
-    print('Time delays (seconds): ', tds)
-    print('magnifications: ', mus)
-    print('Morse indices: ', ns)
+    # print('Time delays (seconds): ', tds)
+    # print('magnifications: ', mus)
+    # print('Morse indices: ', ns)
 
-    # hardcoded
-    if not args.type2:
-        # minidx = np.where(tds == 0.)
-        minidx = 1
-    else:
-        minidx = 0
-        minidx=imindex
+    # # hardcoded
+    # if not args.type2:
+    #     # minidx = np.where(tds == 0.)
+    #     minidx = 1
+    # else:
+    #     minidx = 0
+    #     minidx=imindex
     lens_model_complete = LensModel(lens_model_list=lens_model_list)
     T = lens_model_complete.fermat_potential
-    T0 = thetaE ** (-2) * T(Img_ra[minidx], Img_dec[minidx], kwargs_lens_list, beta0, beta1)#[0]
-    if not isinstance(T0, float):
-        T0 = T0[0]
+    # T0 = thetaE ** (-2) * T(Img_ra[minidx], Img_dec[minidx], kwargs_lens_list, beta0, beta1)#[0]
+    T0 = thetaE ** (-2) * T(eta10, eta11, kwargs_lens_list, beta0, beta1)#[0]
+    # if not isinstance(T0, float):
+    #     T0 = T0[0]
     Tscale = 4 * (1 + zL) * mtot * M_sun * G / c ** 3
-    print('T0 = {}'.format(T0))
-    print('Tscale = {}'.format(Tscale))
+    # print('T0 = {}'.format(T0))
+    # print('Tscale = {}'.format(Tscale))
 
-    print('TimeStep', args.TimeStep)
+    # print('TimeStep', args.TimeStep)
 
     if args.plot:
         fig, ax = plt.subplots()
@@ -224,21 +225,37 @@ for mL2 in mlist:
                     'theta_E': thetaE,
                     'mu': args.mu}
 
+    # kwargs_integrator = {'InputScaled': False,
+    #                      'PixelNum': int(args.pixel),
+    #                      'PixelBlockMax': 2000,
+    #                      'WindowSize': args.Winfac*210*thetaE3,
+    #                      'WindowCenterX': MacroImg_ra[imindex],
+    #                      'WindowCenterY': MacroImg_dec[imindex],
+    #                      'TimeStep': args.TimeStep/Tscale, 
+    #                      'TimeMax': T0 + args.TimeMax/Tscale,
+    #                      'TimeMin': T0 - args.TimeMin/Tscale,
+    #                      'TimeLength': args.TimeLength/Tscale,
+    #                      'LastImageT': args.LastImageT/Tscale,
+    #                      'TExtend': args.TExtend/Tscale,
+    #                      'Tbuffer':0., 
+    #                      'T0': T0,
+    #                      'Tscale': Tscale}
+    
     kwargs_integrator = {'InputScaled': False,
-                         'PixelNum': int(args.pixel),
-                         'PixelBlockMax': 2000,
-                         'WindowSize': args.Winfac*210*thetaE3,
-                         'WindowCenterX': MacroImg_ra[imindex],
-                         'WindowCenterY': MacroImg_dec[imindex],
-                         'TimeStep': args.TimeStep/Tscale, 
-                         'TimeMax': T0 + args.TimeMax/Tscale,
-                         'TimeMin': T0 - args.TimeMin/Tscale,
-                         'TimeLength': args.TimeLength/Tscale,
-                         'LastImageT': args.LastImageT/Tscale,
-                         'TExtend': args.TExtend/Tscale,
-                         'Tbuffer':0., 
-                         'T0': T0,
-                         'Tscale': Tscale}
+                        'PixelNum': int(args.pixel),
+                        'PixelBlockMax': 2000,
+                        'WindowSize': args.Winfac*210*thetaE3,
+                        'WindowCenterX': 0.,
+                        'WindowCenterY': 0.,
+                        'TimeStep': args.TimeStep/Tscale, 
+                        'TimeMax': T0 + 5/Tscale,
+                        'TimeMin': T0 - 5/Tscale,
+                        'TimeLength': 10/Tscale,
+                        'LastImageT': args.LastImageT/Tscale,
+                        'TExtend': args.TExtend/Tscale,
+                        'Tbuffer':0., 
+                        'T0': T0,
+                        'Tscale': Tscale}
 
     amplification = af.amplification_factor_fd(lens_model_list=lens_model_list, kwargs_lens=kwargs_lens_list, kwargs_macro=kwargs_macro, **kwargs_integrator)
     ws, Fws = amplification.integrator()
