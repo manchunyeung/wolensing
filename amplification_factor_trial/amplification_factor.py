@@ -22,7 +22,7 @@ M_sun = const.M_sun  # Solar mass [Kg]
 
 class amplification_factor_fd(object):
 
-    def __init__(self, lens_model_list, kwargs_lens, kwargs_macro=None, **kwargs):
+    def __init__(self, lens_model_list=None, kwargs_lens=None, kwargs_macro=None, **kwargs):
         """
 
         :param lens_model_list: list of lens models 
@@ -31,7 +31,7 @@ class amplification_factor_fd(object):
         """
 
         kwargs_integrator = {
-                'TimeStep': 0.0005,
+                'TimeStep': 1e-5,
                 'TimeMax': 100,
                 'TimeMin': -50,
                 'TimeLength': 10, # length in time considered after initial signal
@@ -70,8 +70,10 @@ class amplification_factor_fd(object):
         # details of the lens model and source
         T = self._lens_model_complete.fermat_potential
         thetaE = self._kwargs_macro['theta_E']
-        y0 = thetaE * self._kwargs_macro['source_pos_x']
-        y1 = thetaE * self._kwargs_macro['source_pos_y']
+        # y0 = thetaE * self._kwargs_macro['source_pos_x']
+        # y1 = thetaE * self._kwargs_macro['source_pos_y']
+        y0 = self._kwargs_macro['source_pos_x']
+        y1 = self._kwargs_macro['source_pos_y']
 
         # defines the time integration
         binmax0 = self._kwargs_integrator['TimeMax']
@@ -90,7 +92,7 @@ class amplification_factor_fd(object):
 
         x1cen = self._kwargs_integrator['WindowCenterX'] # The positions where the window centered at, usually the lens or the macroimage in embedded lens case
         x2cen = self._kwargs_integrator['WindowCenterY']
-        L = thetaE * self._kwargs_integrator['WindowSize'] # Size of the integration window
+        L = 1. * self._kwargs_integrator['WindowSize'] # Size of the integration window
         dx = L / (N - 1)
 
         x1corn = x1cen - L / 2
@@ -99,34 +101,43 @@ class amplification_factor_fd(object):
         Numblocks = N // Nblock
         Nresidue = N % Nblock
 
-        # imagesra = kwargs_integrator['ImageRa']
-        # imagesdec = kwargs_integrator['ImageDec']
-        # imindx1 = (imagesra - x1corn) // Lblock
-        # imindx2 = (imagesdec - x2corn) // Lblock
-        # imindxzip = np.unique(np.column_stack((imindx1, imindx2)), axis = 0)
-        # zoomblockcorn1 = imindx1*Lblock + x1corn
-        # zoomblockcorn2 = imindx2*Lblock + x2corn
-        # zoomblockcornzip = np.unique(np.column_stack((zoomblockcorn1, zoomblockcorn2)), axis = 0)
+        # imagesra = self._kwargs_integrator['ImageRa']
+        # imagesdec = self._kwargs_integrator['ImageDec']
+        imagesra = []
+        imagesdec = []
+        imindx1 = (imagesra - x1corn) // Lblock
+        imindx2 = (imagesdec - x2corn) // Lblock
+        imindxzip = np.unique(np.column_stack((imindx1, imindx2)), axis = 0)
+        zoomblockcorn1 = imindx1*Lblock + x1corn
+        zoomblockcorn2 = imindx2*Lblock + x2corn
+        zoomblockcornzip = np.unique(np.column_stack((zoomblockcorn1, zoomblockcorn2)), axis = 0)
 
         bincount = histogram_routine(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
-                        binmin, binmax, thetaE, self._kwargs_macro, y0, y1, dx)
+                        binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
+        print('parameters', Nblock, Nresidue, x1corn, x2corn, Lblock, binnum, binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
 
-        # zoomN = N
-        # zoomdx = Lblock/(N+1)
-        # zoomNumblocks = zoomN // Nblock
-        # zoomNresidue = zoomN % Nblock
-        # zoomLblock = Nblock * zoomdx
-        # for (zoomblockcorn1, zoomblockcorn2) in zoomblockcornzip:
-        #     bincount += histogram_routine(self._lens_model_complete, zoomNumblocks, np.array([[None, None]]), Nblock, zoomNresidue, zoomblockcorn1, zoomblockcorn2, zoomLblock, binnum,
-        #                 binmin, binmax, thetaE, self._kwargs_macro, y0, y1, zoomdx)
+        zoomN = N
+        zoomdx = Lblock/(N+1)
+        zoomNumblocks = zoomN // Nblock
+        zoomNresidue = zoomN % Nblock
+        zoomLblock = Nblock * zoomdx
+        for (zoomblockcorn1, zoomblockcorn2) in zoomblockcornzip:
+            bincount += histogram_routine(self._lens_model_complete, zoomNumblocks, np.array([[None, None]]), Nblock, zoomNresidue, zoomblockcorn1, zoomblockcorn2, zoomLblock, binnum,
+                        binmin, binmax, thetaE, self._kwargs_macro, y0, y1, zoomdx)
 
         # trimming the array
         bincountback = np.trim_zeros(bincount, 'f')
         bincountfront = np.trim_zeros(bincount, 'b')
         fronttrimmed = len(bincount) - len(bincountback)
         backtrimmed = len(bincount) - len(bincountfront) + 1
+        print(fronttrimmed, backtrimmed, 'trimmed', len(bincount))
+        print(len(bins))
+        print('trim', fronttrimmed, backtrimmed)
         F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
         ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
+        np.savetxt('./bincount.txt', F_tilde)
+
+        ts, F_tilde = ts[:binnumlength], F_tilde[:binnumlength]
 
         if embedded:
             if type2:
@@ -138,12 +149,13 @@ class amplification_factor_fd(object):
                 tdiff = ts[index]*self._Tscale-5 
                 overall_phase = np.exp(-1 * 2 * np.pi * 1j * (Tds+tdiff) * fs)
                 Fw *= overall_phase
-        else:
-            dt = 1e-5
-            print(ts, F_tilde)
-            ts_extended, F_tilde_extended = F_tilde_extend(ts, F_tilde, self.kwargs_integrator)
-            F_tilde_apodized = coswindowback(F_tilde_extended, 50)
-            ws, Fw = iwFourier(ts_extended*self._Tscale, F_tilde_apodized)
+            else:
+                dt = 1e-5
+                print('b4 extend', ts[0]*dt, ts[-1]*dt)
+                # print(ts, F_tilde)
+                ts_extended, F_tilde_extended = F_tilde_extend(ts, F_tilde, self._kwargs_integrator)
+                F_tilde_apodized = coswindowback(F_tilde_extended, 50)
+                ws, Fw = iwFourier(ts_extended*self._Tscale, F_tilde_apodized)
 
         from bisect import bisect_left
         i = bisect_left(ws, 2*np.pi*freq_end)
@@ -188,7 +200,7 @@ class amplification_factor_fd(object):
         i = bisect_left(fs, freq_end) 
 
         if abs:
-            ax.plot(fs[:i], Fa_fil[:i], linewidth=1)
+            ax.semilogx(fs[:i], np.abs(Fws[:i]), linewidth=1)
         elif pha:
             ax.plot(fs[:i], Fp_fil[:i], linewidth=1)
 
