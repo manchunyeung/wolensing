@@ -12,4 +12,4 @@ ws = np.loadtxt('./data/test/test_ws_100.00000_1.00000.txt')
 
 amplification = af.amplification_factor_fd()
 amplification.importor(ws, Fws)
-amplification.plot()
+amplification.plot(saveplot = './abs.pdf')
