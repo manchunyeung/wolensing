@@ -49,7 +49,7 @@ def F_tilde_extend(ts, F_tilde, kwargs):
     from bisect import bisect_left
     i = bisect_left(ts, fit_start)
     # F0 = np.sqrt(kwargs['mu'])
-    F0 = np.sqrt(11)
+    F0 = np.sqrt(1)
 
     from scipy.optimize import curve_fit
     popt, pcov = curve_fit(lambda t, a, c: fitfuncF0(t, F0, a, c), ts[i:], F_tilde[i:], p0=(.1, .1))
@@ -65,7 +65,7 @@ def iwFourier(ts, Ft, type2=None): # has to be removed hardcoded part
     # if type2:
     #     dt = 1e-6
     # else:
-    #     dt = 1e-5
+    dt = 1e-5
     ws = 2 * np.pi * fftfreq(num, dt)[:num // 2]
     Fw = np.conjugate(fft(Ft)[:num // 2] * (1.j) * ws * dt)
     return ws, Fw

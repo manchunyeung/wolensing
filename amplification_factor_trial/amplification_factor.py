@@ -35,9 +35,7 @@ class amplification_factor_fd(object):
                 'TimeMax': 100,
                 'TimeMin': -50,
                 'TimeLength': 10, # length in time considered after initial signal
-                'LastImageT': .02,
                 'TExtend': 10,
-                'Tbuffer': 0.,
                 'T0': 0,
                 'Tscale': 0.,
                 'WindowSize': 15,
@@ -45,7 +43,6 @@ class amplification_factor_fd(object):
                 'PixelBlockMax': 2000,  # max number of pixels in a block
                 'WindowCenterX': 0,
                 'WindowCenterY': 0,
-                'InputScaled': True,
                 }
         
         for key in kwargs_integrator.keys():
@@ -101,64 +98,45 @@ class amplification_factor_fd(object):
         Numblocks = N // Nblock
         Nresidue = N % Nblock
 
-        # imagesra = self._kwargs_integrator['ImageRa']
-        # imagesdec = self._kwargs_integrator['ImageDec']
-        imagesra = []
-        imagesdec = []
-        imindx1 = (imagesra - x1corn) // Lblock
-        imindx2 = (imagesdec - x2corn) // Lblock
-        imindxzip = np.unique(np.column_stack((imindx1, imindx2)), axis = 0)
-        zoomblockcorn1 = imindx1*Lblock + x1corn
-        zoomblockcorn2 = imindx2*Lblock + x2corn
-        zoomblockcornzip = np.unique(np.column_stack((zoomblockcorn1, zoomblockcorn2)), axis = 0)
 
         bincount = histogram_routine(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
                         binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
-        print('parameters', Nblock, Nresidue, x1corn, x2corn, Lblock, binnum, binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
 
-        zoomN = N
-        zoomdx = Lblock/(N+1)
-        zoomNumblocks = zoomN // Nblock
-        zoomNresidue = zoomN % Nblock
-        zoomLblock = Nblock * zoomdx
-        for (zoomblockcorn1, zoomblockcorn2) in zoomblockcornzip:
-            bincount += histogram_routine(self._lens_model_complete, zoomNumblocks, np.array([[None, None]]), Nblock, zoomNresidue, zoomblockcorn1, zoomblockcorn2, zoomLblock, binnum,
-                        binmin, binmax, thetaE, self._kwargs_macro, y0, y1, zoomdx)
 
         # trimming the array
         bincountback = np.trim_zeros(bincount, 'f')
         bincountfront = np.trim_zeros(bincount, 'b')
         fronttrimmed = len(bincount) - len(bincountback)
         backtrimmed = len(bincount) - len(bincountfront) + 1
-        print(fronttrimmed, backtrimmed, 'trimmed', len(bincount))
-        print(len(bins))
-        print('trim', fronttrimmed, backtrimmed)
         F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
         ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
-        np.savetxt('./bincount.txt', F_tilde)
-
         ts, F_tilde = ts[:binnumlength], F_tilde[:binnumlength]
 
-        if embedded:
-            if type2:
-                ws, Fw = iwFourier(ts * self._Tscale, F_tilde, type2) 
-                fs = ws/(2*np.pi)
-                peak = np.where(F_tilde == np.amax(F_tilde))
-                index = int(peak[0])
-                Tds = 5 # in dimension time
-                tdiff = ts[index]*self._Tscale-5 
-                overall_phase = np.exp(-1 * 2 * np.pi * 1j * (Tds+tdiff) * fs)
-                Fw *= overall_phase
-            else:
-                dt = 1e-5
-                print('b4 extend', ts[0]*dt, ts[-1]*dt)
-                # print(ts, F_tilde)
-                ts_extended, F_tilde_extended = F_tilde_extend(ts, F_tilde, self._kwargs_integrator)
-                F_tilde_apodized = coswindowback(F_tilde_extended, 50)
-                ws, Fw = iwFourier(ts_extended*self._Tscale, F_tilde_apodized)
+        if plot:
+            import matplotlib.pyplot as plt
+            plt.plot(ts, F_tilde)
+            plt.show()
+
+        if type2:
+            ws, Fw = iwFourier(ts * self._Tscale, F_tilde, type2) 
+            fs = ws/(2*np.pi)
+            peak = np.where(F_tilde == np.amax(F_tilde))
+            index = int(peak[0])
+            Tds = 5 # in dimension time
+            tdiff = ts[index]*self._Tscale-5 
+            overall_phase = np.exp(-1 * 2 * np.pi * 1j * (Tds+tdiff) * fs)
+            Fw *= overall_phase
+        else:
+            dt = 1e-5
+            ts_extended, F_tilde_extended = F_tilde_extend(ts, F_tilde, plot, self._kwargs_integrator)
+            plt.plot(ts_extended, F_tilde_extended)
+            plt.show()
+            ws, Fw = iwFourier(ts_extended*self._Tscale, F_tilde_extended)
 
         from bisect import bisect_left
         i = bisect_left(ws, 2*np.pi*freq_end)
+
+        self._ws, self._Fws = ws[:i], Fw[:i]
 
         return ws[:i], Fw[:i]
 
@@ -200,7 +178,7 @@ class amplification_factor_fd(object):
         i = bisect_left(fs, freq_end) 
 
         if abs:
-            ax.semilogx(fs[:i], np.abs(Fws[:i]), linewidth=1)
+            ax.semilogx(fs[:i], Fa_fil[:i], linewidth=1)
         elif pha:
             ax.plot(fs[:i], Fp_fil[:i], linewidth=1)
 

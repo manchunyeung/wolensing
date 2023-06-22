@@ -25,6 +25,7 @@ def plot_contour(ax, lens_model_list, window_center1, window_center2, window_len
     :return: a plot of time delay contour and images around the center
     """
 
+    print(Img_ra, Img_dec, 'Img_pos')
     lens_model_complete = LensModel(lens_model_list=lens_model_list)
 
     # define the window
@@ -42,8 +43,8 @@ def plot_contour(ax, lens_model_list, window_center1, window_center2, window_len
     Ts -= T0
 
     # Plot the figure
-    CS = ax.contour(X1s, X2s, Ts, 20)
+    CS = ax.contour(X1s, X2s, Ts, 50)
     ax.clabel(CS, CS.levels)
     ax.scatter(window_center1, window_center2)
-    ax.scatter(Img_ra[:-1], Img_dec[:-1])
+    ax.scatter(Img_ra[:], Img_dec[:])
     return ax
