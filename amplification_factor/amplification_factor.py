@@ -16,6 +16,8 @@ sys.path.append(dir)
 from utils.utils import *
 from utils.histogram import histogram_routine
 
+from lensmodels.potential import potential
+
 G = const.G  # gravitational constant [m^3 kg^-1 s^-2]
 c = const.c  # speed of light [m/s]
 M_sun = const.M_sun  # Solar mass [Kg]
@@ -100,10 +102,11 @@ class amplification_factor_fd(object):
         Numblocks = N // Nblock
         Nresidue = N % Nblock
 
+        # bincount = histogram_routine(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
+                        # binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
 
-        bincount = histogram_routine(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
+        bincount = histogram_routine(lens_model_list, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
                         binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
-
 
         # trimming the array
         bincountback = np.trim_zeros(bincount, 'f')

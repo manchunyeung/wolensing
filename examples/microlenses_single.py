@@ -16,7 +16,7 @@ from lensinggw.utils.utils import TimeDelay, magnifications, getMinMaxSaddle
 from lensinggw.amplification_factor.amplification_factor import geometricalOpticsMagnification
 
 from plot.plot import plot_contour
-import amplification_factor_trial.amplification_factor as af
+import amplification_factor.amplification_factor as af
 import lensmodels.morse_indices as morse
 #----------------------------------------------------
 ### command line options
