@@ -1,5 +1,4 @@
 import matplotlib
-matplotlib.use('Tkagg')
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -26,9 +25,10 @@ def plot_contour(ax, lens_model_list, window_center1, window_center2, window_len
     :return: a plot of time delay contour and images around the center
     """
 
+    print(Img_ra, Img_dec, 'Img_pos')
     lens_model_complete = LensModel(lens_model_list=lens_model_list)
 
-    # defiine the window
+    # define the window
     win_low1 = window_center1 - window_length / 2
     win_low2 = window_center2 - window_length / 2
     win_hi1 = win_low1 + window_length
@@ -43,8 +43,8 @@ def plot_contour(ax, lens_model_list, window_center1, window_center2, window_len
     Ts -= T0
 
     # Plot the figure
-    CS = ax.contour(X1s, X2s, Ts, 20)
+    CS = ax.contour(X1s, X2s, Ts, 50)
     ax.clabel(CS, CS.levels)
     ax.scatter(window_center1, window_center2)
-    ax.scatter(Img_ra[:-1], Img_dec[:-1])
+    ax.scatter(Img_ra[:], Img_dec[:])
     return ax
