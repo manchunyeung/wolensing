@@ -58,6 +58,7 @@ class amplification_factor_fd(object):
         self._kwargs_lens = kwargs_lens
         self._kwargs_macro = kwargs_macro
         self._kwargs_integrator = kwargs_integrator
+        self._lens_model_list = lens_model_list
         if lens_model_list != None:
             self._lens_model_complete = LensModel(lens_model_list = lens_model_list)
 
@@ -69,7 +70,6 @@ class amplification_factor_fd(object):
 
 
         # details of the lens model and source
-        T = self._lens_model_complete.fermat_potential
         thetaE = self._kwargs_macro['theta_E']
         # y0 = thetaE * self._kwargs_macro['source_pos_x']
         # y1 = thetaE * self._kwargs_macro['source_pos_y']
@@ -102,11 +102,11 @@ class amplification_factor_fd(object):
         Numblocks = N // Nblock
         Nresidue = N % Nblock
 
-        # bincount = histogram_routine(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
-                        # binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
-
-        bincount = histogram_routine(lens_model_list, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
+        bincount = histogram_routine(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
                         binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
+
+        # bincount = histogram_routine(self._lens_model_list, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
+        #                 binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
 
         # trimming the array
         bincountback = np.trim_zeros(bincount, 'f')
@@ -116,6 +116,8 @@ class amplification_factor_fd(object):
         F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
         ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
         ts, F_tilde = ts[:binnumlength], F_tilde[:binnumlength]
+        print(fronttrimmed, backtrimmed, 'trim')
+        np.savetxt('./F_tilde.txt', F_tilde)
 
         if plot:
             import matplotlib.pyplot as plt
