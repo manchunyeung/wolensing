@@ -2,7 +2,7 @@ import sys
 import os
 from setuptools import setup, find_packages
 
-readme = open('README.md').read()
+readme = open('README.rst').read()
 
 requires = ['numpy>=1.18.1',
             'lenstronomy',
@@ -18,7 +18,7 @@ setup(
     version='1.0',
     description='Computing the wave optics lensing',
     long_description=readme,
-    author='Simon Man Chun Yeung', 'Mark Ho Yeuk Cheung',
+    author='Simon Man Chun Yeung, Mark Ho Yeuk Cheung',
     author_email='yeungm@uwm.edu',
     url='',
     packages=find_packages(),
@@ -33,4 +33,4 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
     ]
-
+)
