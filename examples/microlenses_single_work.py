@@ -15,6 +15,7 @@ sys.path.append(dir)
 
 
 import numpy as np
+import time
 
 
 # In[3]:
@@ -230,8 +231,11 @@ kwargs_integrator = {'PixelNum': int(20000),
 
 
 amplification = af.amplification_factor_fd(lens_model_list=lens_model_list, kwargs_lens=kwargs_lens_list, kwargs_macro=kwargs_macro, **kwargs_integrator)
-ws, Fws = amplification.integrator(plot=True)
-amplification.plot()
+start = time.time()
+ws, Fws = amplification.integrator()
+end = time.time()
+print(end - start)
+amplification.plot(saveplot='./suc.pdf')
 
 
 # In[ ]:
