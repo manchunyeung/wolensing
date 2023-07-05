@@ -6,10 +6,10 @@ wolensing
 Installation
 ------------
 
-First install ``lensing``::
+First install ``lensingGW``::
 
 
-  git clone https://github.com/gipagano/lenstronomy.git
+  git clone https://gitlab.com/gpagano/lensinggw.git
   cd lensinggw
   python setup.py install
 
