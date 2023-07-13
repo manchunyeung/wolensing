@@ -11,11 +11,17 @@ def fitfuncF0(t, F0, a, c):
 def fitfunc(t, a, b, c):
     return (1 + 1 / (a * t ** b + c))
 
-@partial(jit, static_argnums=(3, 4))
+# @partial(jit, static_argnums=(3, 4))
+# def gridfromcorn(x1corn, x2corn, dx, num1, num2):
+#     x1s = jnp.linspace(x1corn, x1corn + dx * (num1 - 1), num=num1)
+#     x2s = jnp.linspace(x2corn, x2corn + dx * (num2 - 1), num=num2)
+#     X1, X2 = jnp.meshgrid(x1s, x2s)
+#     return X1, X2
+
 def gridfromcorn(x1corn, x2corn, dx, num1, num2):
-    x1s = jnp.linspace(x1corn, x1corn + dx * (num1 - 1), num=num1)
-    x2s = jnp.linspace(x2corn, x2corn + dx * (num2 - 1), num=num2)
-    X1, X2 = jnp.meshgrid(x1s, x2s)
+    x1s = np.linspace(x1corn, x1corn + dx * (num1 - 1), num=num1)
+    x2s = np.linspace(x2corn, x2corn + dx * (num2 - 1), num=num2)
+    X1, X2 = np.meshgrid(x1s, x2s)
     return X1, X2
 
 def coswindowback(data, percent):

@@ -3,3 +3,7 @@ __pycache__
 *.swp
 data/
 examples/SimonWorking&NotWorking_example_type2(1).ipynb
+examples/data/
+examples/*.txt
+*/.ipynb_checkpoints
+examples/*.pdf

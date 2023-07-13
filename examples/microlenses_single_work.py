@@ -32,6 +32,8 @@ from lensinggw.utils.utils import TimeDelay, magnifications, getMinMaxSaddle
 from plot.plot import plot_contour
 import amplification_factor.amplification_factor as af
 
+import jax
+jax.config.update("jax_enable_x64", True)
 
 # The macroimage where the microlens is placed around.
 
@@ -72,7 +74,7 @@ zL = 0.5 # lens redshift
 
 
 mL1 = 1 * 1e10
-mL2 = 100
+mL2 = 100 
 mtot = mL1 + mL2
 
 # convert to radians
@@ -83,7 +85,7 @@ thetaE = param_processing(zL, zS, mtot)
 
 
 # In[10]:
-
+type2=True
 
 beta0, beta1 = y0 * thetaE, y1 * thetaE
 eta10, eta11 = 0 * l0 * thetaE, 0 * l1 * thetaE
@@ -214,30 +216,46 @@ kwargs_macro = {'source_pos_x': beta0,
                 'mu': Mus[microtype],
                }
 
-kwargs_integrator = {'PixelNum': int(20000),
+kwargs_integrator = {'PixelNum': int(300000),
                      'PixelBlockMax': 2000,
-                     'WindowSize': 1.5*210*thetaE3,
+                     'WindowSize': 10.*210*thetaE3,
                      'WindowCenterX': MacroImg_ra[microtype],
                      'WindowCenterY': MacroImg_dec[microtype],
                      'T0': T0,
-                     'TimeStep': 1e-5/Tscale, 
-                     'TimeMax': T0 + 1/Tscale,
-                     'TimeMin': T0 - .1/Tscale,
-                     'TimeLength': 2/Tscale,
-                     'TExtend': 10/Tscale,
-                     'LastImageT': .02/Tscale,
+                     'TimeStep': 1e-6/Tscale, 
+                     'TimeMax': T0 + 7./Tscale,
+                     'TimeMin': T0 - 5./Tscale,
+                     'TimeLength': 12/Tscale,
+                     'TExtend': 7./Tscale,
+                     'LastImageT': 4e-7/Tscale,
                      'Tbuffer': 0,
                      'Tscale': Tscale}
 
+# kwargs_integrator = {'PixelNum': int(20000),
+#                      'PixelBlockMax': 2000,
+#                      'WindowSize': 1.*210*thetaE3,
+#                      'WindowCenterX': MacroImg_ra[microtype],
+#                      'WindowCenterY': MacroImg_dec[microtype],
+#                      'T0': T0,
+#                      'TimeStep': 1e-5/Tscale, 
+#                      'TimeMax': T0 + 1./Tscale,
+#                      'TimeMin': T0 - .1/Tscale,
+#                      'TimeLength': 10/Tscale,
+#                      'TExtend': 3./Tscale,
+#                      'LastImageT': .2/Tscale,
+#                      'Tbuffer': 0,
+#                      'Tscale': Tscale}
 
 amplification = af.amplification_factor_fd(lens_model_list=lens_model_list, kwargs_lens=kwargs_lens_list, kwargs_macro=kwargs_macro, **kwargs_integrator)
 start = time.time()
-ws, Fws = amplification.integrator()
+ws, Fws = amplification.integrator(gpu=False)
 end = time.time()
 print(end - start)
 amplification.plot(saveplot='./suc.pdf')
 
 
+np.savetxt('./data/{0}/{0}_ws_{1:1.5f}_{2:1.5f}_{3}.txt'.format(run, mL2, ym, 'pal'), ws[::1])
+np.savetxt('./data/{0}/{0}_Fws_{1:1.5f}_{2:1.5f}_{3}.txt'.format(run, mL2, ym, 'pal'), Fws[::1])
 # In[ ]:
 
 

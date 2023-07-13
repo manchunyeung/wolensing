@@ -17,7 +17,7 @@ from lensinggw.amplification_factor.amplification_factor import geometricalOptic
 
 from plot.plot import plot_contour
 import amplification_factor.amplification_factor as af
-import lensmodels.morse_indices as morse
+# import lensmodels.morse_indices as morse
 #----------------------------------------------------
 ### command line options
 
@@ -34,7 +34,7 @@ parser.add_argument('run', help = 'run name')
 parser.add_argument('-src', '--src', type = float, default = 0.1, help = 'source position')
 parser.add_argument('-p', '--plot', action = 'store_true', default = False, help = 'Plot out the images with contour lines')
 parser.add_argument('-t2', '--type2', action = 'store_true', default = False)
-# parser.add_argument('-c', '--code', metavar = 'filename', type = str, help = 'special code for the run')
+parser.add_argument('-c', '--code', metavar = 'filename', type = str, help = 'special code for the run')
 parser.add_argument('-sf', '--sampling_frequency', type = float, default = 0.25, help = 'choosing a specific sampling frequency (Hz)')
 
 args = parser.parse_args()
@@ -87,7 +87,7 @@ zL = 0.5
 mlist = [args.mass]
 for mL2 in mlist:
     mL1 = 1 * 1e10
-    mL1 = 0.00001
+    # mL1 = 0.00001
     mL3 = 10
     mtot = mL1 + mL2
 
@@ -129,9 +129,9 @@ for mL2 in mlist:
                     zL, zS,
                     lens_model_list, kwargs_lens_list)
 
-    ns = getMinMaxSaddle(MacroImg_ra, MacroImg_dec, lens_model_list, kwargs_lens_list, diff = None)
-    ns_1 = morse.morse_indices(MacroImg_ra, MacroImg_dec, kwargs_sis_1)
-    print(T01, ns, ns_1)
+    # ns = getMinMaxSaddle(MacroImg_ra, MacroImg_dec, lens_model_list, kwargs_lens_list, diff = None)
+    # ns_1 = morse.morse_indices(MacroImg_ra, MacroImg_dec, kwargs_sis_1)
+
 
     if args.type2:
         imindex = np.nonzero(T01)[0][0]
@@ -142,7 +142,7 @@ for mL2 in mlist:
     # # lens model
     eta20, eta21 = MacroImg_ra[imindex] + np.cos(angle)*ym*thetaE2, MacroImg_dec[imindex] + np.sin(angle)*ym*thetaE2
 
-    lens_model_list = ['SIS', 'SIS']
+    lens_model_list = ['SIS', 'POINT_MASS']
     kwargs_sis_1 = {'center_x': eta10, 'center_y': eta11, 'theta_E': thetaE1}
     kwargs_point_mass_2 = {'center_x': eta20, 'center_y': eta21, 'theta_E': thetaE2}
     kwargs_lens_list = [kwargs_sis_1, kwargs_point_mass_2]
@@ -201,8 +201,9 @@ for mL2 in mlist:
         minidx=imindex
     lens_model_complete = LensModel(lens_model_list=lens_model_list)
     T = lens_model_complete.fermat_potential
-    # T0 = thetaE ** (-2) * T(Img_ra[minidx], Img_dec[minidx], kwargs_lens_list, beta0, beta1)#[0]
-    T0 = thetaE ** (-2) * T(eta10, eta11, kwargs_lens_list, beta0, beta1)#[0]
+    T0 = thetaE ** (-2) * T(Img_ra[minidx], Img_dec[minidx], kwargs_lens_list, beta0, beta1)#[0]
+    # T0 = thetaE ** (-2) * T(eta10, eta11, kwargs_lens_list, beta0, beta1)#[0]
+    print('Tscale1 = {}'.format(thetaE ** (-2)), T(Img_ra[minidx], Img_dec[minidx], kwargs_lens_list, beta0, beta1))
     if not isinstance(T0, float):
         T0 = T0[0]
     Tscale = 4 * (1 + zL) * mtot * M_sun * G / c ** 3
@@ -264,7 +265,7 @@ for mL2 in mlist:
 
     amplification = af.amplification_factor_fd(lens_model_list=lens_model_list, kwargs_lens=kwargs_lens_list, kwargs_macro=kwargs_macro, **kwargs_integrator)
     ws, Fws = amplification.integrator()
-    amplification.plot()
+    amplification.plot(saveplot='./ori.pdf')
 
-    # np.savetxt('./data/{0}/{0}_ws_{1:1.5f}_{2:1.5f}.txt'.format(run, mL2, ym), ws[::1])
-    # np.savetxt('./data/{0}/{0}_Fws_{1:1.5f}_{2:1.5f}.txt'.format(run, mL2, ym), Fws[::1])
+    np.savetxt('./data/{0}/{0}_ws_{1:1.5f}_{2:1.5f}_{3}.txt'.format(run, mL2, ym, args.code), ws[::1])
+    np.savetxt('./data/{0}/{0}_Fws_{1:1.5f}_{2:1.5f}_{3}.txt'.format(run, mL2, ym, args.code), Fws[::1])

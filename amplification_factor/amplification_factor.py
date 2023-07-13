@@ -14,8 +14,7 @@ dir = os.path.abspath(os.path.join(path, os.pardir))
 sys.path.append(dir)
 
 from utils.utils import *
-from utils.histogram import histogram_routine
-
+from utils.histogram import *
 from lensmodels.potential import potential
 
 G = const.G  # gravitational constant [m^3 kg^-1 s^-2]
@@ -62,7 +61,7 @@ class amplification_factor_fd(object):
         if lens_model_list != None:
             self._lens_model_complete = LensModel(lens_model_list = lens_model_list)
 
-    def integrator(self, freq_end = 2000, tds=None, embedded=True, type2=False, plot=False):
+    def integrator(self, freq_end = 2000, tds=None, embedded=True, type2=False, plot=False, gpu=False):
         """
         Computes the amplification facator F(f) by constructing the histogram in time domain. Defines the integration window of lens plane first.        
 
@@ -102,11 +101,12 @@ class amplification_factor_fd(object):
         Numblocks = N // Nblock
         Nresidue = N % Nblock
 
-        # bincount = histogram_routine(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
-        #                 binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
-
-        bincount = histogram_routine(self._lens_model_list, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
-                        binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
+        if gpu:
+            bincount = histogram_routine_cpu1(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
+                            binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
+        else:
+            bincount = histogram_routine_cpu(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
+                            binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
 
         # trimming the array
         bincountback = np.trim_zeros(bincount, 'f')
@@ -116,8 +116,8 @@ class amplification_factor_fd(object):
         F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
         ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
         ts, F_tilde = ts[:binnumlength], F_tilde[:binnumlength]
-        print(fronttrimmed, backtrimmed, 'trim')
-        np.savetxt('./F_tilde.txt', F_tilde)
+        # print(fronttrimmed, backtrimmed, 'trim')
+        # np.savetxt('./F_tilde.txt', F_tilde)
 
         if plot:
             import matplotlib.pyplot as plt
@@ -129,8 +129,10 @@ class amplification_factor_fd(object):
             fs = ws/(2*np.pi)
             peak = np.where(F_tilde == np.amax(F_tilde))
             index = int(peak[0])
+            # Tds = self._Tscale/self._kwargs_macro['T01'] # in dimension time
             Tds = 5 # in dimension time
             tdiff = ts[index]*self._Tscale-5 
+            # tdiff = ts[index]*self._Tscale-Tds 
             overall_phase = np.exp(-1 * 2 * np.pi * 1j * (Tds+tdiff) * fs)
             Fw *= overall_phase
         else:
