@@ -75,7 +75,7 @@ def histogram_routine_cpu1(lens_model_complete, Numblocks, macroimindx, Nblock, 
                 X1, X2 = gridfromcorn(x1blockcorn, x2blockcorn, dx, Nblock1, Nblock2)
                 # Ts = Scale ** (-2) * potential(lens_model_complete, X1, X2, y, kwargs_lens)
                 Ts = Scale ** (-2) * T(X1, X2, kwargs_lens, y0, y1)
-                bincount += np.histogram(Ts, binnum, (binmin, binmax))[0] * dx ** 2
+                bincount += histogram1d(Ts, binnum, (binmin, binmax)) * dx ** 2
                 pbar.update(1)
                 del X1, X2, Ts
                 k+=1

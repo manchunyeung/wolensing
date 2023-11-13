@@ -72,9 +72,9 @@ def iwFourier(ts, Ft, type2=None): # has to be removed hardcoded part
     # if type2:
     #     dt = 1e-6
     # else:
-    dt = 1e-5
-    ws = 2 * np.pi * fftfreq(num, dt)[:num // 2]
-    Fw = np.conjugate(fft(Ft)[:num // 2] * (1.j) * ws * dt)
+    dt = 1e-6
+    ws = 2 * np.pi * fftfreq(num, dt)[:num]
+    Fw = np.conjugate(fft(Ft)[:num] * (1.j) * ws * dt)
     return ws, Fw
 
 def smooth(y, box_pts):

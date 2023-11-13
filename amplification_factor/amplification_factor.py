@@ -86,6 +86,7 @@ class amplification_factor_fd(object):
         binmax = binmin + binwidth * (binnum + 1)
         bins = np.linspace(binmin, binmax, binnum)
 
+        print(binmin, binmax, binnum)
         # dividing the lens plane into grid
         N = self._kwargs_integrator['PixelNum']
         Nblock = self._kwargs_integrator['PixelBlockMax']
@@ -101,47 +102,82 @@ class amplification_factor_fd(object):
         Numblocks = N // Nblock
         Nresidue = N % Nblock
 
-        if gpu:
-            bincount = histogram_routine_cpu1(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
-                            binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
-        else:
-            bincount = histogram_routine_cpu(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
-                            binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
+        print(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum, binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
 
+
+        # if gpu:
+        #     bincount = histogram_routine_gpu(self._lens_model_list, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
+        #                     binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
+        # else:
+        #     bincount = histogram_routine_cpu1(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
+        #                     binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
+
+        # bincount = np.loadtxt('./wosbincount.txt')
+        # bins = np.loadtxt('./wosbin.txt')
+            
         # trimming the array
-        bincountback = np.trim_zeros(bincount, 'f')
-        bincountfront = np.trim_zeros(bincount, 'b')
-        fronttrimmed = len(bincount) - len(bincountback)
-        backtrimmed = len(bincount) - len(bincountfront) + 1
-        F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
-        ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
-        ts, F_tilde = ts[:binnumlength], F_tilde[:binnumlength]
-        # print(fronttrimmed, backtrimmed, 'trim')
-        # np.savetxt('./F_tilde.txt', F_tilde)
+        # bincountback = np.trim_zeros(bincount, 'f')
+        # bincountfront = np.trim_zeros(bincount, 'b')
+        # fronttrimmed = len(bincount) - len(bincountback)
+        # backtrimmed = len(bincount) - len(bincountfront) + 1
+        # F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
+        # ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
+        # if not binnumlength > len(ts):
+        #     ts, F_tilde = ts[:binnumlength], F_tilde[:binnumlength]
+        # bincountback = np.trim_zeros(bincount, 'f')
+        # bincountfront = np.trim_zeros(bincount, 'b')
+        # fronttrimmed = len(bincount) - len(bincountback)
+        # backtrimmed = len(bincount) - len(bincountfront) + 1
+        # # return bins, bincount
 
+        # # Tscale = 4 * (1 + zL) * mtot * M_sun * G / c ** 3
+        # F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
+        # print(len(bins))
+        # print('trim', fronttrimmed, backtrimmed)
+        # print(bins[fronttrimmed:-backtrimmed], bins[fronttrimmed])
+        # ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
+        # print(ts)
+        # # quit()
+        # # if not binnumlength > len(ts):
+        # #     ts, F_tilde = ts, F_tilde
+        # # else:
+        # print(binlength, binwidth, binnumlength)
+        # print('done')
+        # ts, F_tilde = ts[:binnumlength], F_tilde[:binnumlength]  # , Tmax
+
+        # # np.savetxt('./t2ts.txt', ts)
+        # # np.savetxt('./t2F_tilde.txt', F_tilde)     
+           
+        ts = np.loadtxt('/home/manchun.yeung/microlensing/wolensing/main/t2ts.txt')
+        F_tilde = np.loadtxt('/home/manchun.yeung/microlensing/wolensing/main/t2F_tilde.txt')
+            
         if plot:
             import matplotlib.pyplot as plt
             plt.plot(ts, F_tilde)
             plt.show()
+            plt.savefig('./suc1.pdf')
 
-        if type2:
-            ws, Fw = iwFourier(ts * self._Tscale, F_tilde, type2) 
-            fs = ws/(2*np.pi)
-            peak = np.where(F_tilde == np.amax(F_tilde))
-            index = int(peak[0])
-            # Tds = self._Tscale/self._kwargs_macro['T01'] # in dimension time
-            Tds = 5 # in dimension time
-            tdiff = ts[index]*self._Tscale-5 
-            # tdiff = ts[index]*self._Tscale-Tds 
-            overall_phase = np.exp(-1 * 2 * np.pi * 1j * (Tds+tdiff) * fs)
-            Fw *= overall_phase
-        else:
-            ts_extended, F_tilde_extended = F_tilde_extend(ts, F_tilde, self._kwargs_integrator)
-            F_tilde_apodized = coswindowback(F_tilde_extended, 50) 
-            if plot:
-                plt.plot(ts_extended, F_tilde_extended)
-                plt.show()
-            ws, Fw = iwFourier(ts_extended*self._Tscale, F_tilde_apodized)
+        # if type2:
+        import matplotlib.pyplot as plt
+        ws, Fw = iwFourier(ts * self._Tscale, F_tilde, type2) 
+        fs = ws/(2*np.pi)
+        peak = np.where(F_tilde == np.amax(F_tilde))
+        index = int(peak[0])
+        # Tds = self._Tscale/self._kwargs_macro['T01'] # in dimension time
+        Tds = 5 # in dimension time
+        tdiff = ts[index]*self._Tscale-5 
+        # tdiff = ts[index]*self._Tscale-Tds 
+        overall_phase = np.exp(-1 * 2 * np.pi * 1j * (Tds+tdiff) * fs)
+        Fw *= overall_phase
+        plt.plot(ws, np.abs(Fw))
+        plt.savefig('./here.pdf')
+        # else:
+        #     ts_extended, F_tilde_extended = F_tilde_extend(ts, F_tilde, self._kwargs_integrator)
+        #     # F_tilde_apodized = coswindowback(F_tilde_extended, 50) 
+        #     if plot:
+        #         plt.plot(ts_extended, F_tilde_extended)
+        #         plt.show()
+        #     ws, Fw = iwFourier(ts_extended*self._Tscale, F_tilde_extended)
 
         from bisect import bisect_left
         i = bisect_left(ws, 2*np.pi*freq_end)
