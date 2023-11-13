@@ -21,6 +21,8 @@ def potential(lens_model_list, x1, x2, y, kwargs):
             potential += Psi_SIS(x1, x2, x_center, y_center, thetaE)  # Make sure Psi_SIS is JAX-compatible
         elif lens_type == 'POINT_MASS':
             potential += Psi_PM(x1, x2, x_center, y_center, thetaE)  # Make sure Psi_PM is JAX-compatible
+        elif lens_type == 'NFW':
+            potential += Psi_NFW(x1, x2, x_center, y_center, thetaE, kappa=3)
 
     geo = geometrical(x1, x2, y)
     fermat_potential = geo - potential
