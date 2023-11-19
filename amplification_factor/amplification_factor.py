@@ -21,7 +21,7 @@ G = const.G  # gravitational constant [m^3 kg^-1 s^-2]
 c = const.c  # speed of light [m/s]
 M_sun = const.M_sun  # Solar mass [Kg]
 
-class amplification_factor_fd(object):
+class amplification_factor(object):
 
     def __init__(self, lens_model_list=None, kwargs_lens=None, kwargs_macro=None, **kwargs):
         """
@@ -61,9 +61,11 @@ class amplification_factor_fd(object):
         if lens_model_list != None:
             self._lens_model_complete = LensModel(lens_model_list = lens_model_list)
 
-    def integrator(self, freq_end = 2000, tds=None, embedded=True, type2=False, plot=False, gpu=False):
+    def integrator(self, gpu=False, savefile=None):
         """
         Computes the amplification facator F(f) by constructing the histogram in time domain. Defines the integration window of lens plane first.        
+
+        :param gpu: To use gpu computing for integration.
 
         """
 
@@ -86,7 +88,6 @@ class amplification_factor_fd(object):
         binmax = binmin + binwidth * (binnum + 1)
         bins = np.linspace(binmin, binmax, binnum)
 
-        print(binmin, binmax, binnum)
         # dividing the lens plane into grid
         N = self._kwargs_integrator['PixelNum']
         Nblock = self._kwargs_integrator['PixelBlockMax']
@@ -102,110 +103,163 @@ class amplification_factor_fd(object):
         Numblocks = N // Nblock
         Nresidue = N % Nblock
 
-        print(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum, binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
+        if gpu:
+            bincount = histogram_routine_gpu(self._lens_model_list, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
+                            binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
+        else:
+            bincount = histogram_routine_cpu1(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
+                            binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
 
-
-        # if gpu:
-        #     bincount = histogram_routine_gpu(self._lens_model_list, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
-        #                     binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
-        # else:
-        #     bincount = histogram_routine_cpu1(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
-        #                     binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
-
-        # bincount = np.loadtxt('./wosbincount.txt')
-        # bins = np.loadtxt('./wosbin.txt')
+        # # bincount = np.loadtxt('./wosbincount.txt')
+        # # bins = np.loadtxt('./wosbin.txt')
             
-        # trimming the array
-        # bincountback = np.trim_zeros(bincount, 'f')
-        # bincountfront = np.trim_zeros(bincount, 'b')
-        # fronttrimmed = len(bincount) - len(bincountback)
-        # backtrimmed = len(bincount) - len(bincountfront) + 1
-        # F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
-        # ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
-        # if not binnumlength > len(ts):
-        #     ts, F_tilde = ts[:binnumlength], F_tilde[:binnumlength]
-        # bincountback = np.trim_zeros(bincount, 'f')
-        # bincountfront = np.trim_zeros(bincount, 'b')
-        # fronttrimmed = len(bincount) - len(bincountback)
-        # backtrimmed = len(bincount) - len(bincountfront) + 1
-        # # return bins, bincount
-
-        # # Tscale = 4 * (1 + zL) * mtot * M_sun * G / c ** 3
-        # F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
-        # print(len(bins))
-        # print('trim', fronttrimmed, backtrimmed)
-        # print(bins[fronttrimmed:-backtrimmed], bins[fronttrimmed])
-        # ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
-        # print(ts)
-        # # quit()
+        # # trimming the array
+        # # bincountback = np.trim_zeros(bincount, 'f')
+        # # bincountfront = np.trim_zeros(bincount, 'b')
+        # # fronttrimmed = len(bincount) - len(bincountback)
+        # # backtrimmed = len(bincount) - len(bincountfront) + 1
+        # # F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
+        # # ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
         # # if not binnumlength > len(ts):
-        # #     ts, F_tilde = ts, F_tilde
-        # # else:
-        # print(binlength, binwidth, binnumlength)
-        # print('done')
-        # ts, F_tilde = ts[:binnumlength], F_tilde[:binnumlength]  # , Tmax
+        # #     ts, F_tilde = ts[:binnumlength], F_tilde[:binnumlength]
+        bincountback = np.trim_zeros(bincount, 'f')
+        bincountfront = np.trim_zeros(bincount, 'b')
+        fronttrimmed = len(bincount) - len(bincountback)
+        backtrimmed = len(bincount) - len(bincountfront) + 1
+        # return bins, bincount
 
-        # # np.savetxt('./t2ts.txt', ts)
-        # # np.savetxt('./t2F_tilde.txt', F_tilde)     
-           
-        ts = np.loadtxt('/home/manchun.yeung/microlensing/wolensing/main/t2ts.txt')
-        F_tilde = np.loadtxt('/home/manchun.yeung/microlensing/wolensing/main/t2F_tilde.txt')
-            
-        if plot:
-            import matplotlib.pyplot as plt
-            plt.plot(ts, F_tilde)
-            plt.show()
-            plt.savefig('./suc1.pdf')
-
-        # if type2:
-        import matplotlib.pyplot as plt
-        ws, Fw = iwFourier(ts * self._Tscale, F_tilde, type2) 
-        fs = ws/(2*np.pi)
-        peak = np.where(F_tilde == np.amax(F_tilde))
-        index = int(peak[0])
-        # Tds = self._Tscale/self._kwargs_macro['T01'] # in dimension time
-        Tds = 5 # in dimension time
-        tdiff = ts[index]*self._Tscale-5 
-        # tdiff = ts[index]*self._Tscale-Tds 
-        overall_phase = np.exp(-1 * 2 * np.pi * 1j * (Tds+tdiff) * fs)
-        Fw *= overall_phase
-        plt.plot(ws, np.abs(Fw))
-        plt.savefig('./here.pdf')
+        # Tscale = 4 * (1 + zL) * mtot * M_sun * G / c ** 3
+        F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
+        print(len(bins))
+        print('trim', fronttrimmed, backtrimmed)
+        print(bins[fronttrimmed:-backtrimmed], bins[fronttrimmed])
+        ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
+        print(ts)
+        # quit()
+        # if not binnumlength > len(ts):
+        #     ts, F_tilde = ts, F_tilde
         # else:
-        #     ts_extended, F_tilde_extended = F_tilde_extend(ts, F_tilde, self._kwargs_integrator)
-        #     # F_tilde_apodized = coswindowback(F_tilde_extended, 50) 
-        #     if plot:
-        #         plt.plot(ts_extended, F_tilde_extended)
-        #         plt.show()
-        #     ws, Fw = iwFourier(ts_extended*self._Tscale, F_tilde_extended)
+        print(binlength, binwidth, binnumlength)
+        print('done')
+        self._ts, self._F_tilde = ts[:binnumlength], F_tilde[:binnumlength]  # , Tmax
+ 
+        return self._ts, self._F_tilde
+
+        # ts = np.loadtxt('/home/manchun.yeung/microlensing/wolensing_simon/examples/t2ts.txt')
+        # F_tilde = np.loadtxt('/home/manchun.yeung/microlensing/wolensing_simon/examples/t2F_tilde.txt')
+
+    def fourier(self, freq_end=2000, type2=False):
+        """
+        Compute the amplification factor in frequency domain
+
+        :param freq_end: higher end of the frequency series. Default to be 2000.
+        :param type2: If it is microlensing of a type 2 image.
+
+        """
+        
+        if type2:
+            ws, Fw = iwFourier(self._ts * self._Tscale, self._F_tilde, type2) 
+            fs = ws/(2*np.pi)
+            peak = np.where(self._F_tilde == np.amax(self._F_tilde))
+            index = int(peak[0])
+            Tds = 5 # in dimension time
+            tdiff = self._ts[index]*self._Tscale-5 
+            # tdiff = ts[index]*self._Tscale-Tds 
+            overall_phase = np.exp(-1 * 2 * np.pi * 1j * (Tds+tdiff) * fs)
+            Fw *= overall_phase
+        else:
+            ts_extended, F_tilde_extended = F_tilde_extend(self._ts, self._F_tilde, self._kwargs_integrator)
+            # F_tilde_apodized = coswindowback(F_tilde_extended, 50) 
+            ws, Fw = iwFourier(ts_extended*self._Tscale, F_tilde_extended)
 
         from bisect import bisect_left
-        i = bisect_left(ws, 2*np.pi*freq_end)
+        i = bisect_left(ws, 2*np.pi*2000)
 
-        self._ws, self._Fws = ws[:i], Fw[:i]
+        self._ws, self._Fws = ws, Fw
+        return ws[:i], Fw[:i] 
 
-        return ws[:i], Fw[:i]
-
-    def importor(self, ws, Fws):
+    def importor(self, time=False, freq=False, ts=None, F_tilde=None, ws=None, Fws=None):
         """
         Imports the amplification factor
 
+        :param time: plot time domain amplification factor
+        :param freq: plot frequency domain amplification factor
+        :param ts: time series in dimensionless unit
+        :param F_tilde: time domain amplification factor
         :param ws: sampling frequency in unit of angular frequency
-        :param Fws: amplification factor 
+        :param Fws: frequency domain amplification factor 
         """
-        self._ws = ws
-        self._Fws = Fws
+        if time:
+            self._ts = ts
+            self._F_tilde = F_tilde
+        elif freq:
+            self._ws = ws
+            self._Fws = Fws
+        else:
+            raise Exception('Please choose either time domain or frequency domain to import.')
 
-    def plot(self, freq_end = 2000, abs=True, pha=False, saveplot=None):
+    def plot_time(self, saveplot=None):
+        """
+        Plots the amplification factor in time domain
+
+        :param saveplot: where the plot is saved.
+        """
+
+        try:
+            self._ts
+        except NameError:
+            raise Exception('Time data is empty. Either integrate or import time data.')
+
+        import matplotlib.pyplot as plt
+        plt.clf()
+        plt.rc('text', usetex=True)
+        plt.rc('font', family='serif')
+        fig, ax = plt.subplots()
+
+        ts = self._ts
+        F_tilde = self._F_tilde
+
+        # smoothen the curve(s)
+        from scipy.signal import savgol_filter
+        F_smooth = savgol_filter(F_tilde, 51, 3)
+
+        ax.plot(ts, F_smooth, linewidth=1)
+
+        ax.set_xlabel(r'Time (1s/Tscale)', fontsize = 14)
+        ax.set_ylabel(r'$F(t)$', fontsize = 14)
+        ax.tick_params(axis='x', labelsize=11)
+        ax.tick_params(axis='y', labelsize=11)
+        ax.grid(which = 'both', alpha = 0.5)
+        fig.tight_layout()
+
+        if saveplot != None:
+            plt.savefig(saveplot)
+
+        plt.show()
+        return ax 
+
+    def plot_freq(self, freq_end = 2000, abs=True, pha=False, saveplot=None):
         """
         Plots the amplification factor against frequency in semilogx
 
+        :param freq_end: higher end of the frequency range 
         :param abs: boolean, compute the absolute value of the amplification.
         :param pha: boolean, compute the phase of the amplification.
         :param saveplot: where the plot is saved.
         """
 
+        try:
+            self._ws
+        except NameError:
+            raise Exception('Frequency data is empty. Either integrate or import frequency data.')
+
+
+        # Either plot the absolute value or the argument
+        if pha:
+            abs=False
+
         import matplotlib.pyplot as plt
+        plt.clf()
         plt.rc('text', usetex=True)
         plt.rc('font', family='serif')
         fig, ax = plt.subplots()
@@ -224,7 +278,7 @@ class amplification_factor_fd(object):
         i = bisect_left(fs, freq_end) 
 
         if abs:
-            ax.semilogx(fs[:i], np.abs(Fws[:i]), linewidth=1)
+            ax.semilogx(fs[:i], Fa_fil[:i], linewidth=1)
         elif pha:
             ax.plot(fs[:i], Fp_fil[:i], linewidth=1)
 
@@ -242,4 +296,4 @@ class amplification_factor_fd(object):
             plt.savefig(saveplot)
 
         plt.show()
-        
+        return ax 

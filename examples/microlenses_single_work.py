@@ -66,7 +66,7 @@ textendmax = 1/df
 tlength = .13
 textend = textendmax-tlength
 
-y0, y1 = 0.1, 0 # source position
+y0, y1 = 0.5, 0 # source position
 l0, l1 = 0., 0 # lens position
 
 zS = 1.0 # source redshift
@@ -226,9 +226,9 @@ kwargs_macro = {'source_pos_x': beta0,
                 'mu': Mus[microtype],
                }
 
-kwargs_integrator = {'PixelNum': int(300000),
+kwargs_integrator = {'PixelNum': int(350000),
                      'PixelBlockMax': 2000,
-                     'WindowSize': 10.*210*thetaE3,
+                     'WindowSize': 12.*210*thetaE3,
                      'WindowCenterX': MacroImg_ra[microtype],
                      'WindowCenterY': MacroImg_dec[microtype],
                      'T0': T0,
@@ -261,7 +261,7 @@ start = time.time()
 ws, Fws = amplification.integrator(gpu=True, plot=True, type2=True)
 end = time.time()
 print(end - start)
-amplification.plot(saveplot='./suc_gpu.pdf')
+amplification.plot(saveplot='./suc_gpu.pdf', abs=True)
 
 
 # np.savetxt('./data/{0}/{0}_ws_{1:1.5f}_{2:1.5f}_{3}.txt'.format('test', mL2, ym, 'cpu'), ws[::1])
