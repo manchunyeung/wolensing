@@ -116,16 +116,22 @@ def Psi_NFW(X1, X2, x_center, y_center, thetaE, kappa):
     
     x_shift = X1-x_center
     y_shift = X2-y_center
-    if x_shift ==0:
-        if x_shift == y_shift:
-            x_shift = 0.01
-    print(x_shift, y_shift, 'shifted')
+    # if isinstance(x_shift, ):
+    # if x_shift == 0:
+    #     if x_shift == y_shift:
+    #         x_shift = 0.01
     shifted = np.array([x_shift, y_shift], dtype=np.float64) 
     x_norm = np.linalg.norm(shifted, axis=0)
-    print(x_norm, 'norm')
     
     if x_norm<1:
-        Psi = kappa / 2 * (np.log(x_norm/2)**2 - np.arctanh(np.sqrt(1-x_norm**2))**2) *  thetaE
+        if x_norm<1e-7:
+            print('True')
+            y = np.sqrt(1-x_norm**2)
+            print(((1/2) * (np.log(1+y)+y)))
+            Psi = kappa / 2 * (1 - ((1/2) * (np.log(1+y)+y))) *  thetaE
+            print(Psi, 'si')
+        else:
+            Psi = kappa / 2 * (np.log(x_norm/2)**2 - np.arctanh(np.sqrt(1-x_norm**2))**2) *  thetaE
     else:
         Psi = kappa / 2 * (np.log(x_norm/2)**2 + np.arctan(np.sqrt(x_norm**2 - 1))**2) * thetaE
     # x_safe_low = jnp.where(x_norm<1, x, 0.5*dim_1)

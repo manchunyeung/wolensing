@@ -183,9 +183,13 @@ T = lens_model_complete.fermat_potential
 # y = jnp.array([beta0,beta1], dtype=jnp.float64)
 y = np.array([beta0,beta1], dtype=np.float64)
 # T0 = thetaE ** (-2) * T(beta0, beta1, kwargs_lens_list, beta0, beta1)#[0]
-T0 = thetaE ** (-2) * potential(lens_model_list, beta0, beta1, y, kwargs_lens_list)#[0]
-if not isinstance(T0, float):
-    T0 = T0[0]
+print(y, 'y')
+print(thetaE**(-2), 'inv thetaE')
+T0 = thetaE ** (-2) * potential(lens_model_list, 0, 0, y, kwargs_lens_list)#[0]
+T0 = np.array(T0)
+print('T0 = {}'.format(type(T0)))
+# if not isinstance(T0, float):
+#     T0 = T0[0]
 Tscale = 4 * (1 + zL) * mL1 * M_sun * G / c ** 3
 print('T0 = {}'.format(T0))
 print('Tscale = {}'.format(Tscale))
@@ -265,9 +269,11 @@ kwargs_integrator = {'PixelNum': int(20000),
                      'Tbuffer': 0,
                      'Tscale': Tscale}
 
-amplification = af.amplification_factor_fd(lens_model_list=lens_model_list, kwargs_lens=kwargs_lens_list, kwargs_macro=kwargs_macro, **kwargs_integrator)
+amplification = af.amplification_factor(lens_model_list=lens_model_list, kwargs_lens=kwargs_lens_list, kwargs_macro=kwargs_macro, **kwargs_integrator)
 start = time.time()
-ws, Fws = amplification.integrator(gpu=True, plot=True)
+# ws, Fws = amplification.integrator(gpu=True, plot=True)
+amplification.integrator(gpu=True)
+ws, Fws = amplification.amplification_factor_fd()
 end = time.time()
 print(end - start)
 amplification.plot(saveplot='./nfw.pdf')
