@@ -3,15 +3,16 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-version = "0.0.3"
-name = "jaxqualin"
+version = "0.0.0"
+name = "wolensing"
 authors = [
-  { name="Mark Ho-Yeuk Cheung", email="hcheung5@jhu.edu" },
+  { name="Simon Man-Chun Yeung, Mark Ho-Yeuk Cheung", email="yeungm@uwm.edu" },
 ]
-description = "A package for extracting quasinormal modes from time domain data"
-readme = "README.md"
-requires-python = ">=3.8,<3.12"
+description = "A package for computing wave optics amplification factor."
+readme = "README.rst"
+requires-python = ">=3.7,<3.12"
 classifiers = [
+    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -20,23 +21,16 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-  "adjustText==0.8",
-  "jax>0.3.23",
-  "jaxlib>0.3.23",
-  "jaxfit==0.0.3",
-  "matplotlib>3.6.1",
-  "numpy>1.23",
-  "pandas>1.5.1",
-  "pykerr==0.1.0",
-  "qnm==0.4.3",
-  "scipy>1.9.3",
-  "sxs>2022.4.5",
-  "tqdm>4.61.1",
+  "lenstronomy",
+  "jax==0.2.17",
+  "jaxlib==0.1.65",
+  "matplotlib",
+  "numpy>=1.18.1",
+  "fast_histogram",
+  "scipy>1.4.1",
+  "pycbc",
+  "tqdm",
 ]
 
-[project.optional-dependencies]
-pycbc = ["PyCBC>2.0.6"]
-
 [project.urls]
-"Homepage" = "https://github.com/mhycheung/Jaxqualin"
-"Bug Tracker" = "https://github.com/mhycheung/Jaxqualin/issues"
+"Homepage" = "https://github.com/manchunyeung/wolensing"
