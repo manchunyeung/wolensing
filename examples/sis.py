@@ -85,7 +85,7 @@ mL1 = 1 * 1e3
 from lensinggw.utils.utils import param_processing
 thetaE1 = param_processing(zL, zS, mL1)
 thetaE = thetaE1
-thetaE2 = param_processing(zL, zS, 10)
+# thetaE2 = param_processing(zL, zS, 10)
 # thetaE = param_processing(zL, zS, mtot)
 # print(mtot, thetaE)
 
@@ -94,86 +94,29 @@ thetaE2 = param_processing(zL, zS, 10)
 beta0, beta1 = y0 * thetaE, y1 * thetaE
 eta10, eta11 = 0 * l0 * thetaE, 0 * l1 * thetaE
 lens_model_list = ['SIS']
-# kwargs_sis_1 = {'center_x': eta10, 'center_y': eta11, 'theta_E': thetaE1, 'e1':0.5, 'e2':0}
 kwargs_sis_1 = {'center_x': eta10, 'center_y': eta11, 'theta_E': thetaE1}
 kwargs_lens_list = [kwargs_sis_1]
 
-kwargs_sis_1_scaled = {'center_x': eta10 / thetaE, 'center_y': eta11 / thetaE, 'theta_E': thetaE1 / thetaE}
-kwargs_lens_list_scaled = [kwargs_sis_1_scaled]
-
-from lensinggw.solver.images import microimages
-solver_kwargs = {'SearchWindowMacro': 10 * thetaE1,
-                 'SearchWindow': 5 * thetaE2,
-                 'OverlapDistMacro': 1e-17,
-                 'OnlyMacro': True}
-print(beta0, beta1, lens_model_list, kwargs_lens_list)
-MacroImg_ra, MacroImg_dec, pixel_width = microimages(source_pos_x=beta0,
-                                                     source_pos_y=beta1,
-                                                     lens_model_list=lens_model_list,
-                                                     kwargs_lens=kwargs_lens_list,
-                                                     **solver_kwargs)
-
-Td = TimeDelay(MacroImg_ra, MacroImg_dec,
-                beta0, beta1,
-                zL, zS,
-                lens_model_list, kwargs_lens_list)
-Mus = magnifications(MacroImg_ra, MacroImg_dec, lens_model_list, kwargs_lens_list)
-# if type2:
-#     microtype = np.nonzero(Td)[0][0]
-# else:
-#     microtype = np.where(Td==0)[0][0]
-
-# print(MacroImg_ra[microtype], MacroImg_dec[microtype])
-# print(MacroImg_ra[microtype] + np.cos(angle)*ym*thetaE2, MacroImg_dec[microtype] + np.sin(angle)*ym*thetaE2)
-# print(angle, ym, thetaE2)
-# Injecting microlens around desired macroimage
-# eta20, eta21 = MacroImg_ra[microtype] + np.cos(angle)*ym*thetaE2, MacroImg_dec[microtype] + np.sin(angle)*ym*thetaE2
-# eta21 = 1.2705494208814505e-21
-# lens_model_list = ['SIS', 'POINT_MASS']
-# kwargs_sis_1 = {'center_x': eta10, 'center_y': eta11, 'theta_E': thetaE1}
-# kwargs_point_mass_2 = {'center_x': eta20, 'center_y': eta21, 'theta_E': thetaE2}
-# kwargs_lens_list = [kwargs_sis_1, kwargs_point_mass_2]
-# print(kwargs_lens_list)
-
+# kwargs_sis_1_scaled = {'center_x': eta10 / thetaE, 'center_y': eta11 / thetaE, 'theta_E': thetaE1 / thetaE}
+# kwargs_lens_list_scaled = [kwargs_sis_1_scaled]
 
 # from lensinggw.solver.images import microimages
 # solver_kwargs = {'SearchWindowMacro': 10 * thetaE1,
-#                  'SearchWindow': 10 * thetaE2,
-#                  'Pixels': 1e3,
-#                  'OverlapDist': 1e-18,
-#                  'OverlapDistMacro': 1e-17}
-# solver_kwargs.update({'Improvement' : 0.1})
-# solver_kwargs.update({'MinDist' : 10**(-7)})
+#                  'SearchWindow': 5 * thetaE2,
+#                  'OverlapDistMacro': 1e-17,
+#                  'OnlyMacro': True}
+# print(beta0, beta1, lens_model_list, kwargs_lens_list)
+# MacroImg_ra, MacroImg_dec, pixel_width = microimages(source_pos_x=beta0,
+#                                                      source_pos_y=beta1,
+#                                                      lens_model_list=lens_model_list,
+#                                                      kwargs_lens=kwargs_lens_list,
+#                                                      **solver_kwargs)
 
-# Img_ra, Img_dec, MacroImg_ra, MacroImg_dec, pixel_width = microimages(source_pos_x=beta0,
-#                                                                       source_pos_y=beta1,
-#                                                                       lens_model_list=lens_model_list,
-#                                                                       kwargs_lens=kwargs_lens_list,
-#                                                                       **solver_kwargs)
-# Images_dict = {'Source_ra': beta0,
-#                'Source_dec': beta1,
-#                'Img_ra': Img_ra,
-#                'Img_dec': Img_dec,
-#                'MacroImg_ra': MacroImg_ra,
-#                'MacroImg_dec': MacroImg_dec,
-#                'Microlens_ra': [eta20],
-#                'Microlens_dec': [eta21],
-#                'thetaE': thetaE}
-
-# # time delays, magnifications, Morse indices 
-# from lensinggw.utils.utils import TimeDelay, magnifications, getMinMaxSaddle
-# from lensinggw.amplification_factor.amplification_factor import geometricalOpticsMagnification
-# tds = TimeDelay(Img_ra, Img_dec,
-#                beta0, beta1,
-#                zL, zS,
-#                lens_model_list, kwargs_lens_list)
-# mus = magnifications(Img_ra, Img_dec, lens_model_list, kwargs_lens_list)
-# ns = getMinMaxSaddle(Img_ra, Img_dec, lens_model_list, kwargs_lens_list, diff = None)
-# print('Time delays (seconds): ', tds)
-# print('magnifications: ', mus)
-# print('Morse indices: ', ns)
-
-# print(Img_ra[microtype], Img_dec[microtype])
+# Td = TimeDelay(MacroImg_ra, MacroImg_dec,
+#                 beta0, beta1,
+#                 zL, zS,
+#                 lens_model_list, kwargs_lens_list)
+# Mus = magnifications(MacroImg_ra, MacroImg_dec, lens_model_list, kwargs_lens_list)
 
 lens_model_complete = LensModel(lens_model_list=lens_model_list)
 T = lens_model_complete.fermat_potential

@@ -103,6 +103,8 @@ class amplification_factor(object):
         Numblocks = N // Nblock
         Nresidue = N % Nblock
 
+        print('argument', self._lens_model_list, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum, binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
+
         if gpu:
             bincount = histogram_routine_gpu(self._lens_model_list, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
                             binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)

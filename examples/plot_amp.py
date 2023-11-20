@@ -3,13 +3,13 @@ import os
 path = os.getcwd()
 dir = os.path.abspath(os.path.join(path, os.pardir))
 sys.path.append(dir)
-import amplification_factor_trial.amplification_factor as af
+import amplification_factor.amplification_factor as af
 import numpy as np
 
 scale = np.sqrt(1)
-Fws = np.loadtxt('./data/test/test_Fws_100.00000_1.00000.txt', dtype=complex, converters={0: lambda s: complex(s.decode().replace('+-', '-'))})/scale
-ws = np.loadtxt('./data/test/test_ws_100.00000_1.00000.txt')
+Fws = np.loadtxt('./test_sis_Fws.txt', dtype=complex, converters={0: lambda s: complex(s.decode().replace('+-', '-'))})/scale
+ws = np.loadtxt('./test_sis_ws.txt')
 
-amplification = af.amplification_factor_fd()
-amplification.importor(ws, Fws)
-amplification.plot(saveplot = './abs.pdf')
+amplification = af.amplification_factor()
+amplification.importor(freq=True, ws=ws, Fws=Fws)
+amplification.plot_freq(saveplot = './abs.pdf')
