@@ -11,14 +11,16 @@ requires = ['numpy>=1.18.1',
             'fast_histogram',
             'tqdm',
             'pycbc'
+            'jax==0.2.17',
+            'jaxlib==0.1.65'
            ]
 
 setup(
     name='wolensing',
-    version='1.0',
+    version='0.0',
     description='Computing the wave optics lensing',
     long_description=readme,
-    author='Simon Man Chun Yeung, Mark Ho Yeuk Cheung',
+    author='Simon Man-Chun Yeung, Mark Ho-Yeuk Cheung',
     author_email='yeungm@uwm.edu',
     url='',
     packages=find_packages(),
