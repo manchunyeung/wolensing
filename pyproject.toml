@@ -35,6 +35,3 @@ dependencies = [
 [project.urls]
 "Homepage" = "https://github.com/manchunyeung/wolensing"
 
-[testpypi]
-  username = manchunyeung
-  password = pypi-AgENdGVzdC5weXBpLm9yZwIkYmUzOTI0NDUtNTg3NS00ZDg3LWEzMTQtZjM2YzJhMTk5MzBjAAIqWzMsImY3NDkxMWZiLTA0NTUtNDQ2Zi1hOGQyLTJkODc3YzA5MWM1ZiJdAAAGIDwWozOxb41vRkhNLmQFETc1yRel_BRtujeRY6A5mv0M
