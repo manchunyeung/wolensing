@@ -6,4 +6,4 @@ fast_histogram
 tqdm
 pycbc
 jax
-jaxlib
+jaxlib==0.4.20
