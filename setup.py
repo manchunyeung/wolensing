@@ -10,7 +10,7 @@ requires = ['numpy>=1.18.1',
             'matplotlib',
             'fast_histogram',
             'tqdm',
-            'pycbc'
+            'pycbc',
             'jax==0.2.17',
             'jaxlib==0.1.65'
            ]
