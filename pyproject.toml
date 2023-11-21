@@ -22,8 +22,8 @@ classifiers = [
 ]
 dependencies = [
   "lenstronomy",
-  "jax==0.2.17",
-  "jaxlib==0.1.65",
+  "jax",
+  "jaxlib",
   "matplotlib",
   "numpy>=1.18.1",
   "fast_histogram",
