@@ -35,6 +35,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         python -m pip install --upgrade build twine
+        pip install jaxlib==0.1.65 -f https://storage.googleapis.com/jax-releases/jax_releases.html
         pip install .
     - name: Test with pytest
       run: |
