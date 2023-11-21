@@ -17,6 +17,9 @@ from utils.utils import *
 from utils.histogram import *
 from lensmodels.potential import potential
 
+import matplotlib
+matplotlib.rcParams.update(matplotlib.rcParamsDefault)
+
 G = const.G  # gravitational constant [m^3 kg^-1 s^-2]
 c = const.c  # speed of light [m/s]
 M_sun = const.M_sun  # Solar mass [Kg]
