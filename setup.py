@@ -11,8 +11,8 @@ requires = ['numpy>=1.18.1',
             'fast_histogram',
             'tqdm',
             'pycbc',
-            'jax==0.2.17',
-            'jaxlib==0.1.65'
+            'jax',
+            'jaxlib'
            ]
 
 setup(
