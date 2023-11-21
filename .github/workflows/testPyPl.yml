@@ -38,7 +38,8 @@ jobs:
         pip install .
     - name: Test with pytest
       run: |
-        pytest
+        cd test/
+        python3 -m pytest
     - name: Build and upload to PyPI
       if: ${{ matrix.python-version == '3.11'}}
       run: |
