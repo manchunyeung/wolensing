@@ -30,6 +30,10 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - uses: actions/checkout@v4
+    - name: Install latex
+      run: |
+        sudo apt install texlive-fonts-recommended texlive-fonts-extra
+        sudo apt install dvipng
     - name: Install lensinggw
       run: |
         git clone https://gitlab.com/gpagano/lensinggw.git
