@@ -30,6 +30,18 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - uses: actions/checkout@v4
+    - name: Dynamic versioning with date and time
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        VERSION=$(date +"%Y.%m.%d.%H%M")
+        echo "__version__ = \"$VERSION\"" > jaxqualin/__about__.py
+        git add wolensing/__about__.py
+        git commit -m "Dynamic versioning: $VERSION"
+        git tag $VERSION
+        git push
+        git push --tags
+    
     - name: Install latex
       run: |
         sudo apt install texlive-fonts-recommended texlive-fonts-extra
