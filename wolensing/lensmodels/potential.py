@@ -6,6 +6,12 @@ from functools import partial, wraps
 
 @jit
 def geometrical(x1, x2, y):
+    '''
+    :param x1: x-coordinates of position on lens plane with respect to the window center.
+    :param x2: y-coordinates of position on lens plane with respect to the window center.
+    :param y: numpy array, source positions.
+    :return: geometrical part of the time delay.
+    '''
     x = jnp.array([x1, x2], dtype=jnp.float64)
     # if isinstance(x1, np.ndarray): 
     geo = (1/2) * jnp.linalg.norm(x-y[:, jnp.newaxis, jnp.newaxis], axis=0)**2
@@ -14,6 +20,14 @@ def geometrical(x1, x2, y):
     return geo
 
 def potential(lens_model_list, x1, x2, y, kwargs):
+    '''
+    :param lens_model_list: list of lens models.
+    :param x1: x-coordinates of position on lens plane with respect to the window center.
+    :param x2: y-coordinates of position on lens plane with respect to the window center.
+    :param y: numpy array, source positions.
+    :kwargs: arguemnts for the lens models.
+    :return: time delay function.
+    '''
     potential = jnp.float64(0.0)
 
     for lens_type, lens_kwargs in zip(lens_model_list, kwargs):

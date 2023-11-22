@@ -11,6 +11,7 @@ def Psi_SIS(X1, X2, x_center, y_center, thetaE):
     :param x_center: x_coordinate of the window center
     :param y_center: y_coordinate of the window center
     :param thetaE: Einstein radius of the given lens model
+    :return: deflecetion potential of SIS model
     """
     x_shift = X1-x_center
     y_shift = X2-y_center
@@ -29,6 +30,7 @@ def Psi_PM(X1, X2, x_center, y_center, thetaE):
     :param x_center: x_coordinate of the window center
     :param y_center: y_coordinate of the window center
     :param thetaE: Einstein radius of the given lens model
+    :return: deflection potential of point mass model
     """
     x_shift = X1-x_center
     y_shift = X2-y_center

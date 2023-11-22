@@ -27,8 +27,8 @@ class amplification_factor(object):
         """
 
         :param lens_model_list: list of lens models 
-        :param args: the macroimage in which microlensing takes place
         :param kwargs_lens: arguments for integrating the diffraction integral
+        :param kwargs_macro: arguments of the macromodel
         """
 
         kwargs_integrator = {
@@ -61,19 +61,17 @@ class amplification_factor(object):
         if lens_model_list != None:
             self._lens_model_complete = LensModel(lens_model_list = lens_model_list)
 
-    def integrator(self, gpu=False, savefile=None):
+    def integrator(self, gpu=False):
         """
         Computes the amplification facator F(f) by constructing the histogram in time domain. Defines the integration window of lens plane first.        
 
-        :param gpu: To use gpu computing for integration.
-
+        :param gpu: boolean, if True, use gpu computing for integration.
+        :return: amplification factor in time domain.
         """
 
 
         # details of the lens model and source
         thetaE = self._kwargs_macro['theta_E']
-        # y0 = thetaE * self._kwargs_macro['source_pos_x']
-        # y1 = thetaE * self._kwargs_macro['source_pos_y']
         y0 = self._kwargs_macro['source_pos_x']
         y1 = self._kwargs_macro['source_pos_y']
 
@@ -103,7 +101,6 @@ class amplification_factor(object):
         Numblocks = N // Nblock
         Nresidue = N % Nblock
 
-        print('argument', self._lens_model_list, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum, binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
 
         if gpu:
             bincount = histogram_routine_gpu(self._lens_model_list, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
@@ -112,51 +109,33 @@ class amplification_factor(object):
             bincount = histogram_routine_cpu1(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
                             binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
 
-        # # bincount = np.loadtxt('./wosbincount.txt')
-        # # bins = np.loadtxt('./wosbin.txt')
             
-        # # trimming the array
-        # # bincountback = np.trim_zeros(bincount, 'f')
-        # # bincountfront = np.trim_zeros(bincount, 'b')
-        # # fronttrimmed = len(bincount) - len(bincountback)
-        # # backtrimmed = len(bincount) - len(bincountfront) + 1
-        # # F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
-        # # ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
-        # # if not binnumlength > len(ts):
-        # #     ts, F_tilde = ts[:binnumlength], F_tilde[:binnumlength]
+        # trimming the array
         bincountback = np.trim_zeros(bincount, 'f')
         bincountfront = np.trim_zeros(bincount, 'b')
         fronttrimmed = len(bincount) - len(bincountback)
         backtrimmed = len(bincount) - len(bincountfront) + 1
-        # return bins, bincount
-
-        # Tscale = 4 * (1 + zL) * mtot * M_sun * G / c ** 3
-        F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
-        print(len(bins))
-        print('trim', fronttrimmed, backtrimmed)
-        print(bins[fronttrimmed:-backtrimmed], bins[fronttrimmed])
-        ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
-        print(ts)
-        # quit()
-        # if not binnumlength > len(ts):
-        #     ts, F_tilde = ts, F_tilde
-        # else:
-        print(binlength, binwidth, binnumlength)
-        print('done')
-        self._ts, self._F_tilde = ts[:binnumlength], F_tilde[:binnumlength]  # , Tmax
+        self._F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
+        self._ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
+        if binnumlength > len(ts):
+            self._ts, self._F_tilde = ts[:binnumlength], F_tilde[:binnumlength]
+        # # qVVvuit()
+        # # if not binnumlength > len(ts):
+        # #     ts, F_tilde = ts, F_tilde
+        # # else:
+        # print(binlength, binwidth, binnumlength)
+        # print('done')
+        # self._ts, self._F_tilde = ts[:binnumlength], F_tilde[:binnumlength]  # , Tmax
  
         return self._ts, self._F_tilde
-
-        # ts = np.loadtxt('/home/manchun.yeung/microlensing/wolensing_simon/examples/t2ts.txt')
-        # F_tilde = np.loadtxt('/home/manchun.yeung/microlensing/wolensing_simon/examples/t2F_tilde.txt')
 
     def fourier(self, freq_end=2000, type2=False):
         """
         Compute the amplification factor in frequency domain
 
         :param freq_end: higher end of the frequency series. Default to be 2000.
-        :param type2: If it is microlensing of a type 2 image.
-
+        :param type2: boolean, if True, switch to fourier transform of  microlensing of a type 2 image.
+        :return: amplification factor in frequency domain.
         """
         
         if type2:
@@ -171,7 +150,6 @@ class amplification_factor(object):
             Fw *= overall_phase
         else:
             ts_extended, F_tilde_extended = F_tilde_extend(self._ts, self._F_tilde, self._kwargs_integrator)
-            # F_tilde_apodized = coswindowback(F_tilde_extended, 50) 
             ws, Fw = iwFourier(ts_extended*self._Tscale, F_tilde_extended)
 
         from bisect import bisect_left
@@ -180,16 +158,16 @@ class amplification_factor(object):
         self._ws, self._Fws = ws, Fw
         return ws[:i], Fw[:i] 
 
-    def importor(self, time=False, freq=False, ts=None, F_tilde=None, ws=None, Fws=None):
+    def importor(self, ts=None, F_tilde=None, ws=None, Fws=None, time=False, freq=False):
         """
         Imports the amplification factor
 
-        :param time: plot time domain amplification factor
-        :param freq: plot frequency domain amplification factor
         :param ts: time series in dimensionless unit
         :param F_tilde: time domain amplification factor
         :param ws: sampling frequency in unit of angular frequency
         :param Fws: frequency domain amplification factor 
+        :param time: boolean, if True, plot time domain amplification factor
+        :param freq: boolean, if True, plot frequency domain amplification factor
         """
         if time:
             self._ts = ts
@@ -205,6 +183,7 @@ class amplification_factor(object):
         Plots the amplification factor in time domain
 
         :param saveplot: where the plot is saved.
+        :return: axes class of matplotlib representing the plot.
         """
 
         try:
@@ -240,14 +219,15 @@ class amplification_factor(object):
         plt.show()
         return ax 
 
-    def plot_freq(self, freq_end = 2000, abs=True, pha=False, saveplot=None):
+    def plot_freq(self, freq_end = 2000, saveplot=None, abs=True, pha=False):
         """
         Plots the amplification factor against frequency in semilogx
 
         :param freq_end: higher end of the frequency range 
-        :param abs: boolean, compute the absolute value of the amplification.
-        :param pha: boolean, compute the phase of the amplification.
+        :param abs: boolean, if True, compute the absolute value of the amplification.
+        :param pha: boolean, if True, compute the phase of the amplification.
         :param saveplot: where the plot is saved.
+        :return: axes class of matplotlib representing the plot.
         """
 
         try:
