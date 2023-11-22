@@ -1,8 +1,10 @@
 import sys
 import os
-path = os.getcwd()
-dir = os.path.abspath(os.path.join(path, os.pardir))
-sys.path.append(dir)
+# path = os.getcwd()
+# dir = os.path.abspath(os.path.join(path, os.pardir))
+# dir = os.path.abspath(os.path.join(dios.pardir))
+# sys.path.append(dir)
+sys.path.insert(0, os.path.abspath('../wolensing/'))
 
 from pprint import pprint
 pprint(sys.path)
