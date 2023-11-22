@@ -117,7 +117,7 @@ class amplification_factor(object):
         backtrimmed = len(bincount) - len(bincountfront) + 1
         self._F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
         self._ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
-        if binnumlength > len(ts):
+        if binnumlength > len(self._ts):
             self._ts, self._F_tilde = ts[:binnumlength], F_tilde[:binnumlength]
         # # qVVvuit()
         # # if not binnumlength > len(ts):
