@@ -11,6 +11,29 @@ import multiprocessing
 
 def histogram_routine_gpu(lens_model_complete, Numblocks, macroimindx, Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
                       binmin, binmax, Scale, kwargs_lens, y0, y1, dx):
+    '''
+
+
+
+
+    :param lens_model_complete: lens models of the system.
+    :param Numblocks: number of boxes with Nblock inside.
+    :param macroimindx:
+    :param Nblock: number of pixels in a box.
+    :param Nredisude: number of pixels not in a box.
+    :param x1corn: x-coordinate of the lower side of the window.
+    :param x2corn: y-coordinate of the left side of the window.
+    :param Lblock: size of the integration block.
+    :param binnum: total number of steps.
+    :param binmin: lower bound of the time integration.
+    :param binmax: upper bound of the time integration.
+    :param Scale: Einstein radius of the system.
+    :param kwargs_lens: arguments of the lens models.
+    :param y0: x-coordinate of source position.
+    :param y1: y-coordinate of source position.
+    :param dx: integration step of the window covering lens place.
+    :return: histogram of F(t).
+    '''
     bincount = jnp.zeros(binnum, dtype=jnp.float64)
     # T = lens_model_complete.fermat_potential
     k = 0
@@ -47,6 +70,29 @@ def histogram_routine_gpu(lens_model_complete, Numblocks, macroimindx, Nblock, N
 
 def histogram_routine_cpu1(lens_model_complete, Numblocks, macroimindx, Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
                       binmin, binmax, Scale, kwargs_lens, y0, y1, dx):
+    '''
+
+
+
+
+    :param lens_model_complete: lens models of the system.
+    :param Numblocks: number of boxes with Nblock inside.
+    :param macroimindx:
+    :param Nblock: number of pixels in a box.
+    :param Nredisude: number of pixels not in a box.
+    :param x1corn: x-coordinate of the lower side of the window.
+    :param x2corn: y-coordinate of the left side of the window.
+    :param Lblock: size of the integration block.
+    :param binnum: total number of steps.
+    :param binmin: lower bound of the time integration.
+    :param binmax: upper bound of the time integration.
+    :param Scale: Einstein radius of the system.
+    :param kwargs_lens: arguments of the lens models.
+    :param y0: x-coordinate of source position.
+    :param y1: y-coordinate of source position.
+    :param dx: integration step of the window covering lens place.
+    :return: histogram of F(t).
+    '''
     bincount = np.zeros(binnum, dtype=np.float64)
     T = lens_model_complete.fermat_potential
     k = 0
