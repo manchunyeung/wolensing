@@ -117,16 +117,8 @@ class amplification_factor(object):
         backtrimmed = len(bincount) - len(bincountfront) + 1
         self._F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
         self._ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
-        if binnumlength > len(self._ts):
-            self._ts, self._F_tilde = ts[:binnumlength], F_tilde[:binnumlength]
-        # # qVVvuit()
-        # # if not binnumlength > len(ts):
-        # #     ts, F_tilde = ts, F_tilde
-        # # else:
-        # print(binlength, binwidth, binnumlength)
-        # print('done')
-        # self._ts, self._F_tilde = ts[:binnumlength], F_tilde[:binnumlength]  # , Tmax
- 
+        if binnumlength < len(self._ts):
+            self._ts, self._F_tilde = self._ts[:binnumlength], self._F_tilde[:binnumlength]
         return self._ts, self._F_tilde
 
     def fourier(self, freq_end=2000, type2=False):
