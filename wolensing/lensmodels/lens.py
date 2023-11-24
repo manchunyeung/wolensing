@@ -1,6 +1,7 @@
 import jax.numpy as jnp
 import numpy as np
 from jax import jit
+from scipy.special import hyp2f1
 
 def Psi_SIS(X1, X2, x_center, y_center, thetaE):
     """
@@ -39,7 +40,7 @@ def Psi_PM(X1, X2, x_center, y_center, thetaE):
     Psi = thetaE**2 * jnp.log(jnp.linalg.norm(shifted, axis=0))
     return Psi
 
-def derivatives(self, x, y, b, t, q):
+def derivatives(x, y, b, t, q):
     """Returns the deflection angles.
 
     :param x: x-coordinate in image plane relative to center (major axis)
@@ -68,7 +69,6 @@ def derivatives(self, x, y, b, t, q):
 
     return alpha_real, alpha_imag
 
-@jit
 def ellipticity2phi_q(e1, e2):
     """Transforms complex ellipticity moduli in orientation angle and axis ratio.
 
@@ -82,7 +82,6 @@ def ellipticity2phi_q(e1, e2):
     q = (1 - c) / (1 + c)
     return phi, q
 
-@jit
 def rotate(xcoords, ycoords, angle):
     """
 
@@ -93,7 +92,7 @@ def rotate(xcoords, ycoords, angle):
     """
     return xcoords * np.cos(angle) + ycoords * np.sin(angle), -xcoords * np.sin(angle) + ycoords * np.cos(angle)
 
-def Psi_SIE(X1, X2, x_center, y_center, thetaE, e1, e2):
+def Psi_SIE(X1, X2, x_center, y_center, theta_E, e1, e2):
     gamma = 2
     t = gamma-1
     phi_G, q = ellipticity2phi_q(e1, e2)
@@ -102,9 +101,9 @@ def Psi_SIE(X1, X2, x_center, y_center, thetaE, e1, e2):
     x_shift = X1-x_center
     y_shift = X2-y_center
        
-    x_rotate = rotate(x_shift, y_shift, phi_G)
+    x_rotate, y_rotate = rotate(x_shift, y_shift, phi_G)
     alpha_x, alpha_y = derivatives(x_rotate, y_rotate, b, t, q)
-    Psi = (x * alpha_x + y * alpha_y) / (2 - t)
+    Psi = (x_rotate * alpha_x + y_rotate * alpha_y) / (2 - t)
     return Psi
 
 def Psi_NFW(X1, X2, x_center, y_center, thetaE, kappa): 

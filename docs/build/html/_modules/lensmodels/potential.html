@@ -82,6 +82,12 @@
 <a class="viewcode-back" href="../../lensmodels.html#lensmodels.potential.geometrical">[docs]</a>
 <span class="nd">@jit</span>
 <span class="k">def</span> <span class="nf">geometrical</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    :param x1: x-coordinates of position on lens plane with respect to the window center.</span>
+<span class="sd">    :param x2: y-coordinates of position on lens plane with respect to the window center.</span>
+<span class="sd">    :param y: numpy array, source positions.</span>
+<span class="sd">    :return: geometrical part of the time delay.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="c1"># if isinstance(x1, np.ndarray): </span>
     <span class="n">geo</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">[:,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
@@ -93,6 +99,14 @@
 <div class="viewcode-block" id="potential">
 <a class="viewcode-back" href="../../lensmodels.html#lensmodels.potential.potential">[docs]</a>
 <span class="k">def</span> <span class="nf">potential</span><span class="p">(</span><span class="n">lens_model_list</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    :param lens_model_list: list of lens models.</span>
+<span class="sd">    :param x1: x-coordinates of position on lens plane with respect to the window center.</span>
+<span class="sd">    :param x2: y-coordinates of position on lens plane with respect to the window center.</span>
+<span class="sd">    :param y: numpy array, source positions.</span>
+<span class="sd">    :kwargs: arguemnts for the lens models.</span>
+<span class="sd">    :return: time delay function.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">potential</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">lens_type</span><span class="p">,</span> <span class="n">lens_kwargs</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">lens_model_list</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
