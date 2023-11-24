@@ -108,8 +108,8 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>lens_model_list</strong> – list of lens models</p></li>
-<li><p><strong>args</strong> – the macroimage in which microlensing takes place</p></li>
 <li><p><strong>kwargs_lens</strong> – arguments for integrating the diffraction integral</p></li>
+<li><p><strong>kwargs_macro</strong> – arguments of the macromodel</p></li>
 </ul>
 </dd>
 </dl>
@@ -117,11 +117,14 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="amplification_factor.amplification_factor.amplification_factor.integrator">
-<span class="sig-name descname"><span class="pre">integrator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">savefile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amplification_factor/amplification_factor.html#amplification_factor.integrator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amplification_factor.amplification_factor.amplification_factor.integrator" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">integrator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amplification_factor/amplification_factor.html#amplification_factor.integrator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amplification_factor.amplification_factor.amplification_factor.integrator" title="Link to this definition"></a></dt>
 <dd><p>Computes the amplification facator F(f) by constructing the histogram in time domain. Defines the integration window of lens plane first.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>gpu</strong> – To use gpu computing for integration.</p>
+<dd class="field-odd"><p><strong>gpu</strong> – boolean, if True, use gpu computing for integration.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>amplification factor in time domain.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -134,25 +137,28 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>freq_end</strong> – higher end of the frequency series. Default to be 2000.</p></li>
-<li><p><strong>type2</strong> – If it is microlensing of a type 2 image.</p></li>
+<li><p><strong>type2</strong> – boolean, if True, switch to fourier transform of  microlensing of a type 2 image.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>amplification factor in frequency domain.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="amplification_factor.amplification_factor.amplification_factor.importor">
-<span class="sig-name descname"><span class="pre">importor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F_tilde</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Fws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amplification_factor/amplification_factor.html#amplification_factor.importor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amplification_factor.amplification_factor.amplification_factor.importor" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">importor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F_tilde</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Fws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amplification_factor/amplification_factor.html#amplification_factor.importor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amplification_factor.amplification_factor.amplification_factor.importor" title="Link to this definition"></a></dt>
 <dd><p>Imports the amplification factor</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>time</strong> – plot time domain amplification factor</p></li>
-<li><p><strong>freq</strong> – plot frequency domain amplification factor</p></li>
 <li><p><strong>ts</strong> – time series in dimensionless unit</p></li>
 <li><p><strong>F_tilde</strong> – time domain amplification factor</p></li>
 <li><p><strong>ws</strong> – sampling frequency in unit of angular frequency</p></li>
 <li><p><strong>Fws</strong> – frequency domain amplification factor</p></li>
+<li><p><strong>time</strong> – boolean, if True, plot time domain amplification factor</p></li>
+<li><p><strong>freq</strong> – boolean, if True, plot frequency domain amplification factor</p></li>
 </ul>
 </dd>
 </dl>
@@ -166,21 +172,27 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>saveplot</strong> – where the plot is saved.</p>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>axes class of matplotlib representing the plot.</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="amplification_factor.amplification_factor.amplification_factor.plot_freq">
-<span class="sig-name descname"><span class="pre">plot_freq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amplification_factor/amplification_factor.html#amplification_factor.plot_freq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amplification_factor.amplification_factor.amplification_factor.plot_freq" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">plot_freq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amplification_factor/amplification_factor.html#amplification_factor.plot_freq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amplification_factor.amplification_factor.amplification_factor.plot_freq" title="Link to this definition"></a></dt>
 <dd><p>Plots the amplification factor against frequency in semilogx</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>freq_end</strong> – higher end of the frequency range</p></li>
-<li><p><strong>abs</strong> – boolean, compute the absolute value of the amplification.</p></li>
-<li><p><strong>pha</strong> – boolean, compute the phase of the amplification.</p></li>
+<li><p><strong>abs</strong> – boolean, if True, compute the absolute value of the amplification.</p></li>
+<li><p><strong>pha</strong> – boolean, if True, compute the phase of the amplification.</p></li>
 <li><p><strong>saveplot</strong> – where the plot is saved.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>axes class of matplotlib representing the plot.</p>
 </dd>
 </dl>
 </dd></dl>

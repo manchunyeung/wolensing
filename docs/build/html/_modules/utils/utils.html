@@ -82,25 +82,45 @@
 <div class="viewcode-block" id="fitfuncF0">
 <a class="viewcode-back" href="../../utils.html#utils.utils.fitfuncF0">[docs]</a>
 <span class="k">def</span> <span class="nf">fitfuncF0</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">F0</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Fitting function of power law</span>
+
+<span class="sd">    :param t: independent variable.</span>
+<span class="sd">    :param F0: costant that the power law converges to.</span>
+<span class="sd">    :param a: parameter multiplying the variable.</span>
+<span class="sd">    :param c: exponent parameter to the variable.</span>
+<span class="sd">    :return: fitted power law function. </span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">F0</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">c</span><span class="p">))</span> <span class="c1"># .5</span></div>
 
 
 <div class="viewcode-block" id="fitfunc">
 <a class="viewcode-back" href="../../utils.html#utils.utils.fitfunc">[docs]</a>
 <span class="k">def</span> <span class="nf">fitfunc</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Fitting function of power law</span>
+
+<span class="sd">    :param t: independent variable.</span>
+<span class="sd">    :param a: parameter multiplying the variable.</span>
+<span class="sd">    :param c: exponent parameter to the variable.</span>
+<span class="sd">    :return: fitted power law function. </span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">t</span> <span class="o">**</span> <span class="n">b</span> <span class="o">+</span> <span class="n">c</span><span class="p">))</span></div>
 
-
-<span class="c1"># @partial(jit, static_argnums=(3, 4))</span>
-<span class="c1"># def gridfromcorn(x1corn, x2corn, dx, num1, num2):</span>
-<span class="c1">#     x1s = jnp.linspace(x1corn, x1corn + dx * (num1 - 1), num=num1)</span>
-<span class="c1">#     x2s = jnp.linspace(x2corn, x2corn + dx * (num2 - 1), num=num2)</span>
-<span class="c1">#     X1, X2 = jnp.meshgrid(x1s, x2s)</span>
-<span class="c1">#     return X1, X2</span>
 
 <div class="viewcode-block" id="gridfromcorn">
 <a class="viewcode-back" href="../../utils.html#utils.utils.gridfromcorn">[docs]</a>
 <span class="k">def</span> <span class="nf">gridfromcorn</span><span class="p">(</span><span class="n">x1corn</span><span class="p">,</span> <span class="n">x2corn</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">num1</span><span class="p">,</span> <span class="n">num2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Construct blocks for integration.</span>
+<span class="sd">    </span>
+<span class="sd">    :param x1corn: x-coordinate of the left bottom corner of the block.</span>
+<span class="sd">    :param x2corn: y-coordinate of the left bottom corner of the block.</span>
+<span class="sd">    :param dx: steps of integration window.</span>
+<span class="sd">    :param num1: number of points on the horizontal side of the box.</span>
+<span class="sd">    :param num2: number of points on the vertical side of the box.</span>
+<span class="sd">    :return: numpy meshgrid of the box.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">x1s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x1corn</span><span class="p">,</span> <span class="n">x1corn</span> <span class="o">+</span> <span class="n">dx</span> <span class="o">*</span> <span class="p">(</span><span class="n">num1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">num</span><span class="o">=</span><span class="n">num1</span><span class="p">)</span>
     <span class="n">x2s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x2corn</span><span class="p">,</span> <span class="n">x2corn</span> <span class="o">+</span> <span class="n">dx</span> <span class="o">*</span> <span class="p">(</span><span class="n">num2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">num</span><span class="o">=</span><span class="n">num2</span><span class="p">)</span>
     <span class="n">X1</span><span class="p">,</span> <span class="n">X2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x1s</span><span class="p">,</span> <span class="n">x2s</span><span class="p">)</span>
@@ -111,9 +131,12 @@
 <a class="viewcode-back" href="../../utils.html#utils.utils.coswindowback">[docs]</a>
 <span class="k">def</span> <span class="nf">coswindowback</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">percent</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    cosine apodization function for a percentage of points at</span>
+<span class="sd">    Cosine apodization function for a percentage of points at</span>
 <span class="sd">    the end of a timeseries of length len(data)</span>
-<span class="sd">    </span>
+
+<span class="sd">    :param data: data to apodize.</span>
+<span class="sd">    :param percent: percentage of data being apodized.</span>
+<span class="sd">    :return: apodized results.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">xback</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">*</span> <span class="n">percent</span> <span class="o">/</span> <span class="mi">100</span><span class="p">))</span>
     <span class="n">back</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xback</span><span class="p">]</span>
@@ -124,7 +147,14 @@
 <div class="viewcode-block" id="F_tilde_extend">
 <a class="viewcode-back" href="../../utils.html#utils.utils.F_tilde_extend">[docs]</a>
 <span class="k">def</span> <span class="nf">F_tilde_extend</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">F_tilde</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Extend the function with fitted power law.</span>
 
+<span class="sd">    :param ts: time series.</span>
+<span class="sd">    :param F_tilde: data.</span>
+<span class="sd">    :param kwargs: arguments for integration.</span>
+<span class="sd">    :return: extended ts and F_tilde.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">extend_to_t</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;TExtend&#39;</span><span class="p">]</span>
     <span class="n">Tscale</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;Tscale&#39;</span><span class="p">]</span>
     <span class="n">TimeLength</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;TimeLength&#39;</span><span class="p">]</span>
@@ -157,7 +187,16 @@
 
 <div class="viewcode-block" id="iwFourier">
 <a class="viewcode-back" href="../../utils.html#utils.utils.iwFourier">[docs]</a>
-<span class="k">def</span> <span class="nf">iwFourier</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">Ft</span><span class="p">,</span> <span class="n">type2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> <span class="c1"># has to be removed hardcoded part</span>
+<span class="k">def</span> <span class="nf">iwFourier</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">Ft</span><span class="p">,</span> <span class="n">type2</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span><span class="c1"># has to be removed hardcoded part</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Fourier transform the time series data.</span>
+
+<span class="sd">    :param ts: time series</span>
+<span class="sd">    :param Ft: data</span>
+<span class="sd">    :param type2: boolean, if True, use the appropriate time step for type 2 image.</span>
+<span class="sd">    :return: sampling frequency and transformed data in frequency domain.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
     <span class="n">num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
     <span class="n">dt</span> <span class="o">=</span> <span class="n">ts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="c1"># if type2:</span>

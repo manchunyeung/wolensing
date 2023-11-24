@@ -87,6 +87,29 @@
 <a class="viewcode-back" href="../../utils.html#utils.histogram.histogram_routine_gpu">[docs]</a>
 <span class="k">def</span> <span class="nf">histogram_routine_gpu</span><span class="p">(</span><span class="n">lens_model_complete</span><span class="p">,</span> <span class="n">Numblocks</span><span class="p">,</span> <span class="n">macroimindx</span><span class="p">,</span> <span class="n">Nblock</span><span class="p">,</span> <span class="n">Nresidue</span><span class="p">,</span> <span class="n">x1corn</span><span class="p">,</span> <span class="n">x2corn</span><span class="p">,</span> <span class="n">Lblock</span><span class="p">,</span> <span class="n">binnum</span><span class="p">,</span>
                       <span class="n">binmin</span><span class="p">,</span> <span class="n">binmax</span><span class="p">,</span> <span class="n">Scale</span><span class="p">,</span> <span class="n">kwargs_lens</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">dx</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+
+
+
+
+<span class="sd">    :param lens_model_complete: lens models of the system.</span>
+<span class="sd">    :param Numblocks: number of boxes with Nblock inside.</span>
+<span class="sd">    :param macroimindx:</span>
+<span class="sd">    :param Nblock: number of pixels in a box.</span>
+<span class="sd">    :param Nredisude: number of pixels not in a box.</span>
+<span class="sd">    :param x1corn: x-coordinate of the lower side of the window.</span>
+<span class="sd">    :param x2corn: y-coordinate of the left side of the window.</span>
+<span class="sd">    :param Lblock: size of the integration block.</span>
+<span class="sd">    :param binnum: total number of steps.</span>
+<span class="sd">    :param binmin: lower bound of the time integration.</span>
+<span class="sd">    :param binmax: upper bound of the time integration.</span>
+<span class="sd">    :param Scale: Einstein radius of the system.</span>
+<span class="sd">    :param kwargs_lens: arguments of the lens models.</span>
+<span class="sd">    :param y0: x-coordinate of source position.</span>
+<span class="sd">    :param y1: y-coordinate of source position.</span>
+<span class="sd">    :param dx: integration step of the window covering lens place.</span>
+<span class="sd">    :return: histogram of F(t).</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">bincount</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">binnum</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="c1"># T = lens_model_complete.fermat_potential</span>
     <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
@@ -126,6 +149,29 @@
 <a class="viewcode-back" href="../../utils.html#utils.histogram.histogram_routine_cpu1">[docs]</a>
 <span class="k">def</span> <span class="nf">histogram_routine_cpu1</span><span class="p">(</span><span class="n">lens_model_complete</span><span class="p">,</span> <span class="n">Numblocks</span><span class="p">,</span> <span class="n">macroimindx</span><span class="p">,</span> <span class="n">Nblock</span><span class="p">,</span> <span class="n">Nresidue</span><span class="p">,</span> <span class="n">x1corn</span><span class="p">,</span> <span class="n">x2corn</span><span class="p">,</span> <span class="n">Lblock</span><span class="p">,</span> <span class="n">binnum</span><span class="p">,</span>
                       <span class="n">binmin</span><span class="p">,</span> <span class="n">binmax</span><span class="p">,</span> <span class="n">Scale</span><span class="p">,</span> <span class="n">kwargs_lens</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">dx</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+
+
+
+
+<span class="sd">    :param lens_model_complete: lens models of the system.</span>
+<span class="sd">    :param Numblocks: number of boxes with Nblock inside.</span>
+<span class="sd">    :param macroimindx:</span>
+<span class="sd">    :param Nblock: number of pixels in a box.</span>
+<span class="sd">    :param Nredisude: number of pixels not in a box.</span>
+<span class="sd">    :param x1corn: x-coordinate of the lower side of the window.</span>
+<span class="sd">    :param x2corn: y-coordinate of the left side of the window.</span>
+<span class="sd">    :param Lblock: size of the integration block.</span>
+<span class="sd">    :param binnum: total number of steps.</span>
+<span class="sd">    :param binmin: lower bound of the time integration.</span>
+<span class="sd">    :param binmax: upper bound of the time integration.</span>
+<span class="sd">    :param Scale: Einstein radius of the system.</span>
+<span class="sd">    :param kwargs_lens: arguments of the lens models.</span>
+<span class="sd">    :param y0: x-coordinate of source position.</span>
+<span class="sd">    :param y1: y-coordinate of source position.</span>
+<span class="sd">    :param dx: integration step of the window covering lens place.</span>
+<span class="sd">    :return: histogram of F(t).</span>
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">bincount</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">binnum</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
     <span class="n">T</span> <span class="o">=</span> <span class="n">lens_model_complete</span><span class="o">.</span><span class="n">fermat_potential</span>
     <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
