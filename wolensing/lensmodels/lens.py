@@ -45,6 +45,7 @@ def derivatives(x, y, b, s, q):
     if q >= 1:
         q = 0.99999999
     psi = np.sqrt(q**2 * (s**2 + x**2) + y**2)
+    # print(x,y,b,s,q, 'deri_psi')
     f_x = (
         b / np.sqrt(1.0 - q**2) * np.arctan(np.sqrt(1.0 - q**2) * x / (psi + s))
     )
@@ -132,19 +133,23 @@ def Psi_SIE(X1, X2, x_center, y_center, theta_E, e1, e2):
     gamma = 2
     t = gamma-1
     phi_G, q = ellipticity2phi_q(e1, e2)
-    # theta_E = theta_E / (np.sqrt((1.+q**2) / (2. * q)))
+    theta_E = theta_E / (np.sqrt((1.+q**2) / (2. * q)))
     b = theta_E * np.sqrt((1+q**2)/2)
 
     x_shift = X1-x_center
     y_shift = X2-y_center
        
     x_rotate, y_rotate = rotate(x_shift, y_shift, phi_G)
+    # print('psi_rotate', x_rotate, y_rotate)
     s = 0.0000000001
+    s = s * np.sqrt((1 + q**2) / (2*q**2))
+    # print(b, s, q, phi_G, 'psi_param')
     psi = np.sqrt(q**2 * (s**2 + x_rotate**2) + y_rotate**2)
     # alpha_x, alpha_y = derivatives(x_rotate, y_rotate, b, t, q)
     # Psi = (x_rotate * alpha_x + y_rotate * alpha_y) / (2 - t)
     # return Psi
     alpha_x, alpha_y = derivatives(x_rotate, y_rotate, b, s, q)
+    # print(alpha_x, alpha_y, 'alpha')
     f_ = (
         x_rotate * alpha_x
         + y_rotate * alpha_y
