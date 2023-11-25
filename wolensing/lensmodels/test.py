@@ -10,7 +10,7 @@ from lenstronomy.LensModel.lens_model import LensModel
 from lensmodels.lens import Psi_SIE
 
 theta_E = 1.0
-x = np.array([0.1*theta_E])
+x = np.array([2])
 y = np.array([0])
 q = 0.9
 phi_G = 1.0
@@ -23,5 +23,6 @@ T = lens_model_complete.fermat_potential
 
 kwargs_sis_1 = [{'center_x': 0, 'center_y': 0, 'theta_E': theta_E, 'e1':e1, 'e2':e2}]
 
-values1 = T(0, 0, kwargs_sis_1, 0.1*theta_E, 0)
+# x,y image position
+values1 = T(2, 0, kwargs_sis_1, 0, 0)
 print(values, values1)
