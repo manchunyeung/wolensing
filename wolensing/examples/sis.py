@@ -59,7 +59,7 @@ angle = np.radians(float(0))
 G = const.G  # gravitational constant [m^3 kg^-1 s^-2]
 c = const.c  # speed of light [m/s]
 M_sun = const.M_sun  # Solar mass [Kg]
-
+print(c, 'c')
 
 # In[8]:
 df = 0.25
@@ -129,6 +129,8 @@ print(T0, 'T0')
 if not isinstance(T0, float):
     T0 = T0[0]
 Tscale = 4 * (1 + zL) * mL1 * M_sun * G / c ** 3
+
+print(zL, mL1, M_sun, G, c, 'args')
 print(T(beta0, beta1, kwargs_lens_list, beta0, beta1))
 print('T0 = {}'.format(T0))
 print('Tscale = {}'.format(Tscale))
@@ -145,12 +147,12 @@ print('Tscale = {}'.format(Tscale))
 # In[12]:
 
 
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
-# fig, ax = plt.subplots()
-# plot_contour(ax, lens_model_list, eta10, eta11, 4*thetaE1, kwargs_lens_list, beta0, beta1, MacroImg_ra, MacroImg_dec,
-#                     T0 = T0, Tfac = (thetaE)**(-2), micro=False)
-
+fig, ax = plt.subplots()
+plot_contour(ax, lens_model_list, eta10, eta11, 4*thetaE1, kwargs_lens_list, beta0, beta1, 0, 0,
+                    T0 = T0, Tfac = (thetaE)**(-2), micro=False)
+exit()
 
 # # In[13]:
 
@@ -210,7 +212,7 @@ kwargs_integrator = {'PixelNum': int(20000),
 
 amplification = af.amplification_factor(lens_model_list=lens_model_list, kwargs_lens=kwargs_lens_list, kwargs_macro=kwargs_macro, **kwargs_integrator)
 start = time.time()
-ts, F_tilde = amplification.integrator(gpu=True)
+ts, F_tilde = amplification.integrator(gpu=False)
 ws, Fws = amplification.fourier()
 end = time.time()
 print(end - start)

@@ -85,6 +85,7 @@ class amplification_factor(object):
         binnumlength = int(binlength / binwidth)
         binmax = binmin + binwidth * (binnum + 1)
         bins = np.linspace(binmin, binmax, binnum)
+        print('bin', binmin, binmax)
 
         # dividing the lens plane into grid
         N = self._kwargs_integrator['PixelNum']
@@ -106,15 +107,20 @@ class amplification_factor(object):
             bincount = histogram_routine_gpu(self._lens_model_list, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
                             binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
         else:
-            bincount = histogram_routine_cpu1(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
+            bincount = histogram_routine_cpu(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
                             binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
 
-            
+        print(bins, bincount)
+        np.savetxt('bins.txt', bins)
+        np.savetxt('bincount.txt', bincount)
+        
+        
         # trimming the array
         bincountback = np.trim_zeros(bincount, 'f')
         bincountfront = np.trim_zeros(bincount, 'b')
         fronttrimmed = len(bincount) - len(bincountback)
         backtrimmed = len(bincount) - len(bincountfront) + 1
+        print(fronttrimmed, backtrimmed, len(bins))
         self._F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
         self._ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
         if binnumlength < len(self._ts):

@@ -40,50 +40,34 @@ def Psi_PM(X1, X2, x_center, y_center, thetaE):
     Psi = thetaE**2 * jnp.log(jnp.linalg.norm(shifted, axis=0))
     return Psi
 
-def derivatives(x, y, b, s, q):
-    """Returns df/dx and df/dy of the function."""
-    if q >= 1:
-        q = 0.99999999
-    psi = np.sqrt(q**2 * (s**2 + x**2) + y**2)
-    f_x = (
-        b / np.sqrt(1.0 - q**2) * np.arctan(np.sqrt(1.0 - q**2) * x / (psi + s))
-    )
-    f_y = (
-        b
-        / np.sqrt(1.0 - q**2)
-        * np.arctanh(np.sqrt(1.0 - q**2) * y / (psi + q**2 * s))
-    )
-    return f_x, f_y
+def derivatives(x, y, b, t, q):
+    """Returns the deflection angles.
 
+    :param x: x-coordinate in image plane relative to center (major axis)
+    :param y: y-coordinate in image plane relative to center (minor axis)
+    :param b: critical radius
+    :param t: projected power-law slope
+    :param q: axis ratio
+    :return: f_x, f_y
+    """
+    # elliptical radius, eq. (5)
+    Z = np.empty(np.shape(x), dtype=complex)
+    Z.real = q * x
+    Z.imag = y
+    R = np.abs(Z)
+    R = np.maximum(R, 0.000000001)
 
-# def derivatives(x, y, b, t, q):
-#     """Returns the deflection angles.
+    # angular dependency with extra factor of R, eq. (23)
+    R_omega = Z * hyp2f1(1, t / 2, 2 - t / 2, -(1 - q) / (1 + q) * (Z / Z.conj()))
 
-#     :param x: x-coordinate in image plane relative to center (major axis)
-#     :param y: y-coordinate in image plane relative to center (minor axis)
-#     :param b: critical radius
-#     :param t: projected power-law slope
-#     :param q: axis ratio
-#     :return: f_x, f_y
-#     """
-#     # elliptical radius, eq. (5)
-#     Z = np.empty(np.shape(x), dtype=complex)
-#     Z.real = q * x
-#     Z.imag = y
-#     R = np.abs(Z)
-#     R = np.maximum(R, 0.000000001)
+    # deflection, eq. (22)
+    alpha = 2 / (1 + q) * (b / R) ** t * R_omega
 
-#     # angular dependency with extra factor of R, eq. (23)
-#     R_omega = Z * hyp2f1(1, t / 2, 2 - t / 2, -(1 - q) / (1 + q) * (Z / Z.conj()))
+    # return real and imaginary part
+    alpha_real = np.nan_to_num(alpha.real, posinf=10**10, neginf=-(10**10))
+    alpha_imag = np.nan_to_num(alpha.imag, posinf=10**10, neginf=-(10**10))
 
-#     # deflection, eq. (22)
-#     alpha = 2 / (1 + q) * (b / R) ** t * R_omega
-
-#     # return real and imaginary part
-#     alpha_real = np.nan_to_num(alpha.real, posinf=10**10, neginf=-(10**10))
-#     alpha_imag = np.nan_to_num(alpha.imag, posinf=10**10, neginf=-(10**10))
-
-#     return alpha_real, alpha_imag
+    return alpha_real, alpha_imag
 
 def ellipticity2phi_q(e1, e2):
     """Transforms complex ellipticity moduli in orientation angle and axis ratio.
@@ -108,50 +92,20 @@ def rotate(xcoords, ycoords, angle):
     """
     return xcoords * np.cos(angle) + ycoords * np.sin(angle), -xcoords * np.sin(angle) + ycoords * np.cos(angle)
 
-def param_conv(self, theta_E, e1, e2, s_scale):
-    """
-    convert parameters from 2*kappa = bIE [s2IE + r2(1 − e *cos(2*phi)]−1/2 to
-    2*kappa=  b *(q2(s2 + x2) + y2􏰉)−1/2
-    see expressions after Equation 8 in Keeton and Kochanek 1998, https://arxiv.org/pdf/astro-ph/9705194.pdf
-
-    :param theta_E: Einstein radius
-    :param e1: eccentricity component
-    :param e2: eccentricity component
-    :param s_scale: smoothing scale
-    :return: critical radius b, smoothing scale s, axis ratio q, orientation angle phi_G
-    """
-
-    phi_G, q = ellipticity2phi_q(e1, e2)
-    theta_E_major_conv = theta_E / (np.sqrt((1.0 + q**2) / (2.0 * q)))
-    b = theta_E_conv * np.sqrt((1 + q**2) / 2)
-    s = s_scale / np.sqrt(q)
-    # s = s_scale * np.sqrt((1 + q**2) / (2*q**2))
-    return b, s, q, phi_G
-
 def Psi_SIE(X1, X2, x_center, y_center, theta_E, e1, e2):
     gamma = 2
     t = gamma-1
     phi_G, q = ellipticity2phi_q(e1, e2)
-    # theta_E = theta_E / (np.sqrt((1.+q**2) / (2. * q)))
+    theta_E = theta_E / (np.sqrt((1.+q**2) / (2. * q)))
     b = theta_E * np.sqrt((1+q**2)/2)
 
     x_shift = X1-x_center
     y_shift = X2-y_center
        
     x_rotate, y_rotate = rotate(x_shift, y_shift, phi_G)
-    s = 0.0000000001
-    psi = np.sqrt(q**2 * (s**2 + x_rotate**2) + y_rotate**2)
-    # alpha_x, alpha_y = derivatives(x_rotate, y_rotate, b, t, q)
-    # Psi = (x_rotate * alpha_x + y_rotate * alpha_y) / (2 - t)
-    # return Psi
-    alpha_x, alpha_y = derivatives(x_rotate, y_rotate, b, s, q)
-    f_ = (
-        x_rotate * alpha_x
-        + y_rotate * alpha_y
-        - b * s * 1.0 / 2.0 * np.log((psi + s) ** 2 + (1.0 - q**2) * x_rotate**2)
-    )
-    return f_
-
+    alpha_x, alpha_y = derivatives(x_rotate, y_rotate, b, t, q)
+    Psi = (x_rotate * alpha_x + y_rotate * alpha_y) / (2 - t)
+    return Psi
 
 def Psi_NFW(X1, X2, x_center, y_center, thetaE, kappa): 
     """
