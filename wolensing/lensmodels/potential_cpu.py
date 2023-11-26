@@ -41,14 +41,18 @@ def potential(lens_model_list, x1, x2, y, kwargs):
             potential += Psi_PM(x1, x2, x_center, y_center, thetaE)  # Make sure Psi_PM is JAX-compatible
         elif lens_type == 'NFW':
             potential += Psi_NFW(x1, x2, x_center, y_center, thetaE, kappa=2)
+        elif lens_type == 'SIE':
 
+            e1 = lens_kwargs['e1']
+            e2 = lens_kwargs['e2']
+            potential += Psi_SIE(x1, x2, x_center, y_center, thetaE, e1, e2)
     geo = geometrical(x1, x2, y)
     # if geo<potential:
     #     fermat_potential = geo
     # else:
     fermat_potential = geo - potential
-    # print(geo, 'geo')
-    # print(potential, 'pot')
+    print(geo, 'geo')
+    print(potential, 'pot')
     # print(fermat_potential, 'fermat')
     return fermat_potential
 
