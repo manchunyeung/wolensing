@@ -1,8 +1,6 @@
 import numpy as np
-# from numba import jit
-from .lens import *
+from wolensing.lensmodels.lens import *
 from jax import jit
-from functools import partial, wraps
 
 @jit
 def geometrical(x1, x2, y):
@@ -13,10 +11,7 @@ def geometrical(x1, x2, y):
     :return: geometrical part of the time delay.
     '''
     x = jnp.array([x1, x2], dtype=jnp.float64)
-    # if isinstance(x1, np.ndarray): 
     geo = (1/2) * jnp.linalg.norm(x-y[:, jnp.newaxis, jnp.newaxis], axis=0)**2
-    # else:
-    #     geo = (1/2) * jnp.linalg.norm(x-y, axis=0)**2
     return geo
 
 def potential(lens_model_list, x1, x2, y, kwargs):
@@ -41,14 +36,12 @@ def potential(lens_model_list, x1, x2, y, kwargs):
             potential += Psi_PM(x1, x2, x_center, y_center, thetaE)  # Make sure Psi_PM is JAX-compatible
         elif lens_type == 'NFW':
             potential += Psi_NFW(x1, x2, x_center, y_center, thetaE, kappa=3)
+        elif lens_type == 'SIE':
+            e1 = lens_kwargs['e1']
+            e2 = lens_kwargs['e2']
+            potential += Psi_SIE(x1, x2, x_center, y_center, thetaE, e1, e2)
 
     geo = geometrical(x1, x2, y)
-    # if geo<potential:
-    #     fermat_potential = geo
-    # else:
     fermat_potential = geo - potential
-    # print(geo, 'geo')
-    # print(potential, 'pot')
-    # print(fermat_potential, 'fermat')
     return fermat_potential
 

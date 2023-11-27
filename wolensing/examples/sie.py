@@ -105,11 +105,15 @@ kwargs_lens_list = [kwargs_sis_1]
 # kwargs_lens_list_scaled = [kwargs_sis_1_scaled]
 
 # from lensinggw.solver.images import microimages
-# solver_kwargs = {'SearchWindowMacro': 10 * thetaE1,
+# solver_kwargs = {'SearchWindowMacro': 5 * thetaE1,
 #                  'SearchWindow': 5 * thetaE2,
-#                  'OverlapDistMacro': 1e-17,
 #                  'OnlyMacro': True,
-#                  'NearSource':True}
+#                  'NearSource':False,
+#                  'Verbose': True,
+#                  'OverlapDist': 1e-18,
+#                  'OverlapDistMacro': 1e-18}
+# solver_kwargs.update({'ImprovementMacro' : 0.5})
+# solver_kwargs.update({'MinDistMacro' : 10**(-7)})
 # print(beta0, beta1, lens_model_list, kwargs_lens_list)
 # MacroImg_ra, MacroImg_dec, pixel_width = microimages(source_pos_x=beta0,
 #                                                      source_pos_y=beta1,
@@ -200,14 +204,14 @@ kwargs_macro = {'source_pos_x': beta0,
 
 kwargs_integrator = {'PixelNum': int(20000),
                      'PixelBlockMax': 2000,
-                     'WindowSize': 1.*210*thetaE3,
+                     'WindowSize': 1*210*thetaE3,
                      'WindowCenterX': 0,
                      'WindowCenterY': 0,
                      'T0': T0,
                      'TimeStep': 1e-5/Tscale, 
-                     'TimeMax': T0 + 1./Tscale,
+                     'TimeMax': T0 + 5./Tscale,
                      'TimeMin': T0 - .1/Tscale,
-                     'TimeLength': tlength/Tscale,
+                     'TimeLength': 5/Tscale,
                      'TExtend': 10/Tscale,
                      'LastImageT': .02/Tscale,
                      'Tbuffer': 0,
@@ -215,7 +219,7 @@ kwargs_integrator = {'PixelNum': int(20000),
 
 amplification = af.amplification_factor(lens_model_list=lens_model_list, kwargs_lens=kwargs_lens_list, kwargs_macro=kwargs_macro, **kwargs_integrator)
 start = time.time()
-ts, F_tilde = amplification.integrator(gpu=False)
+ts, F_tilde = amplification.integrator(gpu=True)
 ws, Fws = amplification.fourier()
 end = time.time()
 print(end - start)
