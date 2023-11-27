@@ -147,12 +147,12 @@ print('Tscale = {}'.format(Tscale))
 # In[12]:
 
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
-fig, ax = plt.subplots()
-plot_contour(ax, lens_model_list, eta10, eta11, 4*thetaE1, kwargs_lens_list, beta0, beta1, 0, 0,
-                    T0 = T0, Tfac = (thetaE)**(-2), micro=False)
-exit()
+# fig, ax = plt.subplots()
+# plot_contour(ax, lens_model_list, eta10, eta11, 4*thetaE1, kwargs_lens_list, beta0, beta1, 0, 0,
+#                     T0 = T0, Tfac = (thetaE)**(-2), micro=False)
+# exit()
 
 # # In[13]:
 
@@ -212,15 +212,15 @@ kwargs_integrator = {'PixelNum': int(20000),
 
 amplification = af.amplification_factor(lens_model_list=lens_model_list, kwargs_lens=kwargs_lens_list, kwargs_macro=kwargs_macro, **kwargs_integrator)
 start = time.time()
-ts, F_tilde = amplification.integrator(gpu=False)
+ts, F_tilde = amplification.integrator(gpu=True)
 ws, Fws = amplification.fourier()
 end = time.time()
 print(end - start)
 amplification.plot_freq(saveplot='./sis.pdf')
-np.savetxt('./sis_ts.txt', ts)
-np.savetxt('./sis_F_tilde.txt', F_tilde)
-np.savetxt('./sis_ws.txt', ws)
-np.savetxt('./sis_Fws.txt', Fws)
+# np.savetxt('./sis_ts.txt', ts)
+# np.savetxt('./sis_F_tilde.txt', F_tilde)
+# np.savetxt('./sis_ws.txt', ws)
+# np.savetxt('./sis_Fws.txt', Fws)
 
 # np.savetxt('./data/{0}/{0}_ws_{1:1.5f}_{2:1.5f}_{3}.txt'.format('test', mL2, ym, 'cpu'), ws[::1])
 # np.savetxt('./data/{0}/{0}_Fws_{1:1.5f}_{2:1.5f}_{3}.txt'.format('test', mL2, ym, 'cpu'), Fws[::1])

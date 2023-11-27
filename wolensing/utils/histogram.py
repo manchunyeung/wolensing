@@ -3,7 +3,7 @@ from fast_histogram import histogram1d
 from tqdm import trange, tqdm
 from utils.utils import gridfromcorn
 import numba as nb
-from lensmodels.potential_cpu import potential
+from lensmodels.potential import potential
 import multiprocessing as mp
 import jax.numpy as jnp
 from jax import pmap, vmap, jit
@@ -58,9 +58,6 @@ def histogram_routine_gpu(lens_model_complete, Numblocks, macroimindx, Nblock, N
                 x2blockcorn = x2corn + j * Lblock
                 X1, X2 = gridfromcorn(x1blockcorn, x2blockcorn, dx, Nblock1, Nblock2)
                 Ts = Scale ** (-2) * potential(lens_model_complete, X1, X2, y, kwargs_lens)
-                # print('y', y0, y1)
-                # print('exit', Ts)
-                # exit()
                 bincount += jnp.histogram(Ts, binnum, (binmin, binmax))[0] * dx ** 2
                 pbar.update(1)
                 del X1, X2, Ts
@@ -91,7 +88,7 @@ def histogram_routine_cpu(lens_model_complete, Numblocks, macroimindx, Nblock, N
     :return: histogram of F(t).
     '''
     bincount = np.zeros(binnum, dtype=np.float64)
-    # T = lens_model_complete.fermat_potential
+    T = lens_model_complete.fermat_potential
     k = 0
     y = np.array([y0, y1], dtype=np.float64)
     print('start')
@@ -116,16 +113,9 @@ def histogram_routine_cpu(lens_model_complete, Numblocks, macroimindx, Nblock, N
                 x1blockcorn = x1corn + i * Lblock
                 x2blockcorn = x2corn + j * Lblock
                 X1, X2 = gridfromcorn(x1blockcorn, x2blockcorn, dx, Nblock1, Nblock2)
-                X1, X2 = X1[0], X2[0]
-                Ts = Scale ** (-2) * potential(lens_model_complete, X1, X2, y, kwargs_lens)
-                # Ts = Scale ** (-2) * T(X1, X2, kwargs_lens, y0, y1)
-                # print('y', y0, y1)
-                print('exit', Ts)
-                exit()
-                # print(binmin, binmax, 'bin')
+                # Ts = Scale ** (-2) * potential(lens_model_complete, X1, X2, y, kwargs_lens)
+                Ts = Scale ** (-2) * T(X1, X2, kwargs_lens, y0, y1)
                 bincount += histogram1d(Ts, binnum, (binmin, binmax)) * dx ** 2
-                # print(binnum, (binmin, binmax))
-                # print(dx, 'dx')
                 pbar.update(1)
                 del X1, X2, Ts
                 k+=1

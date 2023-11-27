@@ -107,7 +107,7 @@ class amplification_factor(object):
             bincount = histogram_routine_gpu(self._lens_model_list, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
                             binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
         else:
-            bincount = histogram_routine_cpu(self._lens_model_list, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
+            bincount = histogram_routine_cpu(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
                             binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
 
         print(bins, bincount)
