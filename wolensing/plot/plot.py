@@ -46,6 +46,5 @@ def plot_contour(ax, lens_model_list, window_center1, window_center2, window_len
     CS = ax.contour(X1s, X2s, Ts, 50)
     ax.clabel(CS, CS.levels)
     ax.scatter(window_center1, window_center2)
-    # ax.scatter(Img_ra[:], Img_dec[:])
-    plt.savefig('./here.pdf')
+    ax.scatter(Img_ra[:], Img_dec[:])
     return ax

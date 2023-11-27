@@ -1,21 +1,10 @@
-import sys
-import os
-# path = os.getcwd()
-# dir = os.path.abspath(os.path.join(path, os.pardir))
-# dir = os.path.abspath(os.path.join(dios.pardir))
-# sys.path.append(dir)
-sys.path.insert(0, os.path.abspath('../wolensing/'))
-
-from pprint import pprint
-pprint(sys.path)
-
 import pytest
 import numpy as np
 
 from lenstronomy.LensModel.lens_model import LensModel
 import lensinggw.constants.constants as const
 from lensinggw.utils.utils import param_processing
-import amplification_factor.amplification_factor as af
+import wolensing.amplification_factor.amplification_factor as af
 
 @pytest.fixture
 def sis_amp():
