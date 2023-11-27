@@ -1,5 +1,5 @@
 import numpy as np
-from .lens import *
+from wolensing.lensmodels.lens import *
 from jax import jit
 
 @jit

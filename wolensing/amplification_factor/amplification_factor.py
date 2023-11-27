@@ -7,14 +7,8 @@ from scipy.fftpack import fft
 import lensinggw.constants.constants as const
 from tqdm import trange, tqdm
 
-import sys
-import os
-path = os.getcwd()
-dir = os.path.abspath(os.path.join(path, os.pardir))
-sys.path.append(dir)
-
-from utils.utils import *
-from utils.histogram import *
+from wolensing.utils.utils import *
+from wolensing.utils.histogram import *
 from lensmodels.potential import potential
 
 G = const.G  # gravitational constant [m^3 kg^-1 s^-2]

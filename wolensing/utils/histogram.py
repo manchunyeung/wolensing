@@ -1,13 +1,13 @@
 import numpy as np
 from fast_histogram import histogram1d
 from tqdm import trange, tqdm
-from utils.utils import gridfromcorn
 import numba as nb
-from lensmodels.potential import potential
 import multiprocessing as mp
 import jax.numpy as jnp
 from jax import pmap, vmap, jit
 import multiprocessing
+from wolensing.utils.utils import gridfromcorn
+from wolensing.lensmodels.potential import potential
 
 def histogram_routine_gpu(lens_model_complete, Numblocks, macroimindx, Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
                       binmin, binmax, Scale, kwargs_lens, y0, y1, dx):
