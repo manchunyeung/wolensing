@@ -1,16 +1,17 @@
 
-.. image:: https://github.com/manchunyeung/wolensing/workflows/Tests/badge.svg
-    :target: https://github.com/lenstronomy/lenstronomy/actions
+.. image:: https://github.com/manchunyeung/wolensing/actions/workflows/pytest.yaml/badge.svg
+    :target: https://github.com/manchunyeung/wolensing/actions/workflows/pytest.yaml
 
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
     :target: https://github.com/mhycheung/jaxqualin/blob/main/LICENSE
 
-
+.. image:: https://badgen.net/badge/Read/the doc/blue
+    :target: https://manchunyeung.github.io/wolensing/
 
 wolensing
 =========
 
-``wolensing`` is a software package to simulate lensed gravitational waves. It computes the amplification factor in full wave optics within the range of LIGO sensitivity and is compatible with arbitrary lens models.
+``wolensing`` is a software package to simulate lensed gravitational waves. It computes the full wave optics amplification factor within the range of LIGO sensitivity and is compatible with arbitrary lens models. ``wolensing`` also supports jax to accelerate the computation.
 
 Installation
 ------------
@@ -30,4 +31,7 @@ First install ``lensingGW``::
 Examples Notebooks
 -------------------
 
-The `examples <>` show the computation of wave optics amplification factor and the plots of them.
+Examples notebooks showing the computation of wave optics amplification factor for different lens models and the plots of time delay contour are available at `https://github.com/manchunyeung/wolensing <https://github.com/manchunyeung/wolensing>`_
+
+
+

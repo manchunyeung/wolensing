@@ -6,15 +6,15 @@ import pytest
 
 @pytest.fixture
 def test_time_data():
-    fixed_ts = np.loadtxt('./test_sis_ts.txt')
-    fixed_F_tilde = np.loadtxt('test_sis_F_tilde.txt')
+    fixed_ts = np.loadtxt('./test/test_sis_ts.txt')
+    fixed_F_tilde = np.loadtxt('./test/test_sis_F_tilde.txt')
 
     return fixed_ts, fixed_F_tilde
 
 @pytest.fixture
 def test_freq_data():
-    fixed_fs = np.loadtxt('./test_sis_ws.txt')
-    fixed_Fws = np.loadtxt('./test_sis_Fws.txt', dtype=complex, converters={0: lambda s: complex(s.decode().replace('+-', '-'))})
+    fixed_fs = np.loadtxt('./test/test_sis_ws.txt')
+    fixed_Fws = np.loadtxt('./test/test_sis_Fws.txt', dtype=complex, converters={0: lambda s: complex(s.decode().replace('+-', '-'))})
 
     return fixed_fs, fixed_Fws
 
