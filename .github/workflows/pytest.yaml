@@ -32,13 +32,13 @@ jobs:
     - uses: actions/checkout@v4
     - name: Install dependencies
       run: |
+        python -m pip install --upgrade pip
         sudo apt install texlive-fonts-recommended texlive-fonts-extra
         sudo apt install dvipng cm-super
         git clone https://gitlab.com/gpagano/lensinggw.git
         cd lensinggw/
         python setup.py install
         cd ../
-        python -m pip install --upgrade pip
         pip install -r requirements.txt
         python -m pip install --upgrade build twine pytest numba
         pip install .
