@@ -54,14 +54,9 @@
 <li class="toctree-l3"><a class="reference internal" href="#lensmodels.lens.ellipticity2phi_q"><code class="docutils literal notranslate"><span class="pre">ellipticity2phi_q()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#lensmodels.lens.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#lensmodels.lens.Psi_SIE"><code class="docutils literal notranslate"><span class="pre">Psi_SIE()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#lensmodels.lens.Psi_NFW"><code class="docutils literal notranslate"><span class="pre">Psi_NFW()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#module-lensmodels.potential">lensmodels.potential module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#lensmodels.potential.geometrical"><code class="docutils literal notranslate"><span class="pre">geometrical()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#lensmodels.potential.potential"><code class="docutils literal notranslate"><span class="pre">potential()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#lensmodels-potential-module">lensmodels.potential module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-lensmodels">Module contents</a></li>
 </ul>
 </li>
@@ -142,22 +137,8 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lensmodels.lens.derivatives">
-<span class="sig-name descname"><span class="pre">derivatives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lensmodels/lens.html#derivatives"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lensmodels.lens.derivatives" title="Link to this definition"></a></dt>
-<dd><p>Returns the deflection angles.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> – x-coordinate in image plane relative to center (major axis)</p></li>
-<li><p><strong>y</strong> – y-coordinate in image plane relative to center (minor axis)</p></li>
-<li><p><strong>b</strong> – critical radius</p></li>
-<li><p><strong>t</strong> – projected power-law slope</p></li>
-<li><p><strong>q</strong> – axis ratio</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>f_x, f_y</p>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">derivatives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lensmodels/lens.html#derivatives"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lensmodels.lens.derivatives" title="Link to this definition"></a></dt>
+<dd><p>Returns df/dx and df/dy of the function.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -196,67 +177,29 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lensmodels.lens.Psi_SIE">
-<span class="sig-name descname"><span class="pre">Psi_SIE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thetaE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lensmodels/lens.html#Psi_SIE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lensmodels.lens.Psi_SIE" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lensmodels.lens.Psi_NFW">
-<span class="sig-name descname"><span class="pre">Psi_NFW</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thetaE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lensmodels/lens.html#Psi_NFW"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lensmodels.lens.Psi_NFW" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<span class="sig-name descname"><span class="pre">Psi_SIE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta_E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lensmodels/lens.html#Psi_SIE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lensmodels.lens.Psi_SIE" title="Link to this definition"></a></dt>
+<dd><p>Return the Psi of SIE model.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>xcoords</strong> – x points</p></li>
-<li><p><strong>ycoords</strong> – y points</p></li>
-<li><p><strong>angle</strong> – angle in radians</p></li>
+<li><p><strong>X1</strong> – x-coordinate in image plane relative to center</p></li>
+<li><p><strong>X2</strong> – y-coordinate in image plane relative to center</p></li>
+<li><p><strong>x_center</strong> – x_coordinate of the window center</p></li>
+<li><p><strong>y_center</strong> – y_coordinate of the window center</p></li>
+<li><p><strong>thetaE</strong> – Einstein radius of the given lens model</p></li>
+<li><p><strong>e1</strong> – ellipticity</p></li>
+<li><p><strong>e2</strong> – ellipticity</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>x points and y points rotated ccw by angle theta</p>
+<dd class="field-even"><p>deflecetion potential of SIE model</p>
 </dd>
 </dl>
 </dd></dl>
 
 </section>
-<section id="module-lensmodels.potential">
-<span id="lensmodels-potential-module"></span><h2>lensmodels.potential module<a class="headerlink" href="#module-lensmodels.potential" title="Link to this heading"></a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="lensmodels.potential.geometrical">
-<span class="sig-name descname"><span class="pre">geometrical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lensmodels/potential.html#geometrical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lensmodels.potential.geometrical" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x1</strong> – x-coordinates of position on lens plane with respect to the window center.</p></li>
-<li><p><strong>x2</strong> – y-coordinates of position on lens plane with respect to the window center.</p></li>
-<li><p><strong>y</strong> – numpy array, source positions.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>geometrical part of the time delay.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="lensmodels.potential.potential">
-<span class="sig-name descname"><span class="pre">potential</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lens_model_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lensmodels/potential.html#potential"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lensmodels.potential.potential" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>lens_model_list</strong> – list of lens models.</p></li>
-<li><p><strong>x1</strong> – x-coordinates of position on lens plane with respect to the window center.</p></li>
-<li><p><strong>x2</strong> – y-coordinates of position on lens plane with respect to the window center.</p></li>
-<li><p><strong>y</strong> – numpy array, source positions.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Kwargs<span class="colon">:</span></dt>
-<dd class="field-even"><p>arguemnts for the lens models.</p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>time delay function.</p>
-</dd>
-</dl>
-</dd></dl>
-
+<section id="lensmodels-potential-module">
+<h2>lensmodels.potential module<a class="headerlink" href="#lensmodels-potential-module" title="Link to this heading"></a></h2>
 </section>
 <section id="module-lensmodels">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lensmodels" title="Link to this heading"></a></h2>

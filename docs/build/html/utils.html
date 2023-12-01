@@ -48,13 +48,7 @@
 <li class="toctree-l1"><a class="reference internal" href="plot.html">plot package</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">utils package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-utils.histogram">utils.histogram module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#utils.histogram.histogram_routine_gpu"><code class="docutils literal notranslate"><span class="pre">histogram_routine_gpu()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#utils.histogram.histogram_routine_cpu1"><code class="docutils literal notranslate"><span class="pre">histogram_routine_cpu1()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#utils.histogram.process_block"><code class="docutils literal notranslate"><span class="pre">process_block()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#utils.histogram.histogram_routine_cpu"><code class="docutils literal notranslate"><span class="pre">histogram_routine_cpu()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#utils-histogram-module">utils.histogram module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-utils.utils">utils.utils module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#utils.utils.fitfuncF0"><code class="docutils literal notranslate"><span class="pre">fitfuncF0()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#utils.utils.fitfunc"><code class="docutils literal notranslate"><span class="pre">fitfunc()</span></code></a></li>
@@ -99,78 +93,8 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="module-utils.histogram">
-<span id="utils-histogram-module"></span><h2>utils.histogram module<a class="headerlink" href="#module-utils.histogram" title="Link to this heading"></a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="utils.histogram.histogram_routine_gpu">
-<span class="sig-name descname"><span class="pre">histogram_routine_gpu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lens_model_complete</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Numblocks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">macroimindx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nblock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nresidue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1corn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2corn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Lblock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs_lens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/histogram.html#histogram_routine_gpu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.histogram.histogram_routine_gpu" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>lens_model_complete</strong> – lens models of the system.</p></li>
-<li><p><strong>Numblocks</strong> – number of boxes with Nblock inside.</p></li>
-<li><p><strong>macroimindx</strong> – </p></li>
-<li><p><strong>Nblock</strong> – number of pixels in a box.</p></li>
-<li><p><strong>Nredisude</strong> – number of pixels not in a box.</p></li>
-<li><p><strong>x1corn</strong> – x-coordinate of the lower side of the window.</p></li>
-<li><p><strong>x2corn</strong> – y-coordinate of the left side of the window.</p></li>
-<li><p><strong>Lblock</strong> – size of the integration block.</p></li>
-<li><p><strong>binnum</strong> – total number of steps.</p></li>
-<li><p><strong>binmin</strong> – lower bound of the time integration.</p></li>
-<li><p><strong>binmax</strong> – upper bound of the time integration.</p></li>
-<li><p><strong>Scale</strong> – Einstein radius of the system.</p></li>
-<li><p><strong>kwargs_lens</strong> – arguments of the lens models.</p></li>
-<li><p><strong>y0</strong> – x-coordinate of source position.</p></li>
-<li><p><strong>y1</strong> – y-coordinate of source position.</p></li>
-<li><p><strong>dx</strong> – integration step of the window covering lens place.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>histogram of F(t).</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="utils.histogram.histogram_routine_cpu1">
-<span class="sig-name descname"><span class="pre">histogram_routine_cpu1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lens_model_complete</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Numblocks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">macroimindx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nblock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nresidue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1corn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2corn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Lblock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs_lens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/histogram.html#histogram_routine_cpu1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.histogram.histogram_routine_cpu1" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>lens_model_complete</strong> – lens models of the system.</p></li>
-<li><p><strong>Numblocks</strong> – number of boxes with Nblock inside.</p></li>
-<li><p><strong>macroimindx</strong> – </p></li>
-<li><p><strong>Nblock</strong> – number of pixels in a box.</p></li>
-<li><p><strong>Nredisude</strong> – number of pixels not in a box.</p></li>
-<li><p><strong>x1corn</strong> – x-coordinate of the lower side of the window.</p></li>
-<li><p><strong>x2corn</strong> – y-coordinate of the left side of the window.</p></li>
-<li><p><strong>Lblock</strong> – size of the integration block.</p></li>
-<li><p><strong>binnum</strong> – total number of steps.</p></li>
-<li><p><strong>binmin</strong> – lower bound of the time integration.</p></li>
-<li><p><strong>binmax</strong> – upper bound of the time integration.</p></li>
-<li><p><strong>Scale</strong> – Einstein radius of the system.</p></li>
-<li><p><strong>kwargs_lens</strong> – arguments of the lens models.</p></li>
-<li><p><strong>y0</strong> – x-coordinate of source position.</p></li>
-<li><p><strong>y1</strong> – y-coordinate of source position.</p></li>
-<li><p><strong>dx</strong> – integration step of the window covering lens place.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>histogram of F(t).</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="utils.histogram.process_block">
-<span class="sig-name descname"><span class="pre">process_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/histogram.html#process_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.histogram.process_block" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="utils.histogram.histogram_routine_cpu">
-<span class="sig-name descname"><span class="pre">histogram_routine_cpu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lens_model_complete</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Numblocks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">macroimindx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nblock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nresidue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1corn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2corn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Lblock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs_lens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/histogram.html#histogram_routine_cpu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.histogram.histogram_routine_cpu" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
+<section id="utils-histogram-module">
+<h2>utils.histogram module<a class="headerlink" href="#utils-histogram-module" title="Link to this heading"></a></h2>
 </section>
 <section id="module-utils.utils">
 <span id="utils-utils-module"></span><h2>utils.utils module<a class="headerlink" href="#module-utils.utils" title="Link to this heading"></a></h2>
