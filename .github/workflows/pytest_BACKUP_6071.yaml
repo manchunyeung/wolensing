@@ -10,7 +10,11 @@ name: Pytest
 
 on:
   push:
+<<<<<<< HEAD
     branches: [master]
+=======
+    branches: [master-patch2]
+>>>>>>> master-patch2
 
 permissions:
   contents: write
@@ -21,7 +25,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+<<<<<<< HEAD
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+=======
         python-version: ["3.9", "3.10", "3.11"]
+>>>>>>> master-patch2
 
     steps:
     - uses: actions/checkout@v4

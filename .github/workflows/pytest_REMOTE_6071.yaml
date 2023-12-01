@@ -10,7 +10,7 @@ name: Pytest
 
 on:
   push:
-    branches: [master]
+    branches: [master-patch2]
 
 permissions:
   contents: write
