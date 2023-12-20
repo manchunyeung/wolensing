@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>amplification_factor.amplification_factor &mdash; wolensing 0.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=7026087e"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            wolensing
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../amplification_factor.html">amplification_factor package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../lensmodels.html">lensmodels package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plot.html">plot package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">wolensing</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">amplification_factor.amplification_factor</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for amplification_factor.amplification_factor</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">lenstronomy.LensModel.lens_model</span> <span class="kn">import</span> <span class="n">LensModel</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span>
+<span class="kn">from</span> <span class="nn">fast_histogram</span> <span class="kn">import</span> <span class="n">histogram1d</span>
+<span class="kn">from</span> <span class="nn">scipy.fft</span> <span class="kn">import</span> <span class="n">fftfreq</span>
+<span class="kn">from</span> <span class="nn">scipy.fftpack</span> <span class="kn">import</span> <span class="n">fft</span>
+<span class="kn">import</span> <span class="nn">lensinggw.constants.constants</span> <span class="k">as</span> <span class="nn">const</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">trange</span><span class="p">,</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">wolensing.utils.utils</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">wolensing.utils.histogram</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">wolensing.lensmodels.potential</span> <span class="kn">import</span> <span class="n">potential</span>
+
+<span class="n">G</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">G</span>  <span class="c1"># gravitational constant [m^3 kg^-1 s^-2]</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span>  <span class="c1"># speed of light [m/s]</span>
+<span class="n">M_sun</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">M_sun</span>  <span class="c1"># Solar mass [Kg]</span>
+
+<div class="viewcode-block" id="amplification_factor">
+<a class="viewcode-back" href="../../amplification_factor.html#amplification_factor.amplification_factor.amplification_factor">[docs]</a>
+<span class="k">class</span> <span class="nc">amplification_factor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="amplification_factor.__init__">
+<a class="viewcode-back" href="../../amplification_factor.html#amplification_factor.amplification_factor.amplification_factor.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lens_model_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kwargs_lens</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kwargs_macro</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param lens_model_list: list of lens models </span>
+<span class="sd">        :param kwargs_lens: arguments for integrating the diffraction integral</span>
+<span class="sd">        :param kwargs_macro: arguments of the macromodel</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">kwargs_integrator</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;TimeStep&#39;</span><span class="p">:</span> <span class="mf">1e-5</span><span class="p">,</span>
+                <span class="s1">&#39;TimeMax&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+                <span class="s1">&#39;TimeMin&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">50</span><span class="p">,</span>
+                <span class="s1">&#39;TimeLength&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="c1"># length in time considered after initial signal</span>
+                <span class="s1">&#39;TExtend&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                <span class="s1">&#39;T0&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s1">&#39;Tscale&#39;</span><span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+                <span class="s1">&#39;WindowSize&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+                <span class="s1">&#39;PixelNum&#39;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">,</span>
+                <span class="s1">&#39;PixelBlockMax&#39;</span><span class="p">:</span> <span class="mi">2000</span><span class="p">,</span>  <span class="c1"># max number of pixels in a block</span>
+                <span class="s1">&#39;WindowCenterX&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s1">&#39;WindowCenterY&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s1">&#39;LastImageT&#39;</span><span class="p">:</span> <span class="mf">.02</span><span class="p">,</span>
+                <span class="s1">&#39;Tbuffer&#39;</span><span class="p">:</span><span class="mi">0</span>
+                <span class="p">}</span>
+        
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs_integrator</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                <span class="n">kwargs_integrator</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Tscale</span> <span class="o">=</span> <span class="n">kwargs_integrator</span><span class="p">[</span><span class="s1">&#39;Tscale&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_lens</span> <span class="o">=</span> <span class="n">kwargs_lens</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_macro</span> <span class="o">=</span> <span class="n">kwargs_macro</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_integrator</span> <span class="o">=</span> <span class="n">kwargs_integrator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lens_model_list</span> <span class="o">=</span> <span class="n">lens_model_list</span>
+        <span class="k">if</span> <span class="n">lens_model_list</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lens_model_complete</span> <span class="o">=</span> <span class="n">LensModel</span><span class="p">(</span><span class="n">lens_model_list</span> <span class="o">=</span> <span class="n">lens_model_list</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="amplification_factor.integrator">
+<a class="viewcode-back" href="../../amplification_factor.html#amplification_factor.amplification_factor.amplification_factor.integrator">[docs]</a>
+    <span class="k">def</span> <span class="nf">integrator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gpu</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the amplification facator F(f) by constructing the histogram in time domain. Defines the integration window of lens plane first.        </span>
+
+<span class="sd">        :param gpu: boolean, if True, use gpu computing for integration.</span>
+<span class="sd">        :return: amplification factor in time domain.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+
+        <span class="c1"># details of the lens model and source</span>
+        <span class="n">thetaE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_macro</span><span class="p">[</span><span class="s1">&#39;theta_E&#39;</span><span class="p">]</span>
+        <span class="n">y0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_macro</span><span class="p">[</span><span class="s1">&#39;source_pos_x&#39;</span><span class="p">]</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_macro</span><span class="p">[</span><span class="s1">&#39;source_pos_y&#39;</span><span class="p">]</span>
+
+        <span class="c1"># defines the time integration</span>
+        <span class="n">binmax0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_integrator</span><span class="p">[</span><span class="s1">&#39;TimeMax&#39;</span><span class="p">]</span>
+        <span class="n">binmin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_integrator</span><span class="p">[</span><span class="s1">&#39;TimeMin&#39;</span><span class="p">]</span>
+        <span class="n">binlength</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_integrator</span><span class="p">[</span><span class="s1">&#39;TimeLength&#39;</span><span class="p">]</span>
+        <span class="n">binwidth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_integrator</span><span class="p">[</span><span class="s1">&#39;TimeStep&#39;</span><span class="p">]</span>
+
+        <span class="n">binnum</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">binmax0</span> <span class="o">-</span> <span class="n">binmin</span><span class="p">)</span> <span class="o">/</span> <span class="n">binwidth</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">binnumlength</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">binlength</span> <span class="o">/</span> <span class="n">binwidth</span><span class="p">)</span>
+        <span class="n">binmax</span> <span class="o">=</span> <span class="n">binmin</span> <span class="o">+</span> <span class="n">binwidth</span> <span class="o">*</span> <span class="p">(</span><span class="n">binnum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">binmin</span><span class="p">,</span> <span class="n">binmax</span><span class="p">,</span> <span class="n">binnum</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;bin&#39;</span><span class="p">,</span> <span class="n">binmin</span><span class="p">,</span> <span class="n">binmax</span><span class="p">)</span>
+
+        <span class="c1"># dividing the lens plane into grid</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_integrator</span><span class="p">[</span><span class="s1">&#39;PixelNum&#39;</span><span class="p">]</span>
+        <span class="n">Nblock</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_integrator</span><span class="p">[</span><span class="s1">&#39;PixelBlockMax&#39;</span><span class="p">]</span>
+
+        <span class="n">x1cen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_integrator</span><span class="p">[</span><span class="s1">&#39;WindowCenterX&#39;</span><span class="p">]</span> <span class="c1"># The positions where the window centered at, usually the lens or the macroimage in embedded lens case</span>
+        <span class="n">x2cen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_integrator</span><span class="p">[</span><span class="s1">&#39;WindowCenterY&#39;</span><span class="p">]</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_integrator</span><span class="p">[</span><span class="s1">&#39;WindowSize&#39;</span><span class="p">]</span> <span class="c1"># Size of the integration window</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">L</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">x1corn</span> <span class="o">=</span> <span class="n">x1cen</span> <span class="o">-</span> <span class="n">L</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">x2corn</span> <span class="o">=</span> <span class="n">x2cen</span> <span class="o">-</span> <span class="n">L</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">Lblock</span> <span class="o">=</span> <span class="n">Nblock</span> <span class="o">*</span> <span class="n">dx</span>
+        <span class="n">Numblocks</span> <span class="o">=</span> <span class="n">N</span> <span class="o">//</span> <span class="n">Nblock</span>
+        <span class="n">Nresidue</span> <span class="o">=</span> <span class="n">N</span> <span class="o">%</span> <span class="n">Nblock</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lens_model_complete</span><span class="p">,</span> <span class="n">Numblocks</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]),</span> <span class="n">Nblock</span><span class="p">,</span> <span class="n">Nresidue</span><span class="p">,</span> <span class="n">x1corn</span><span class="p">,</span> <span class="n">x2corn</span><span class="p">,</span> <span class="n">Lblock</span><span class="p">,</span> <span class="n">binnum</span><span class="p">,</span>
+                            <span class="n">binmin</span><span class="p">,</span> <span class="n">binmax</span><span class="p">,</span> <span class="n">thetaE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_lens</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">dx</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">gpu</span><span class="p">:</span>
+            <span class="n">bincount</span> <span class="o">=</span> <span class="n">histogram_routine_gpu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lens_model_list</span><span class="p">,</span> <span class="n">Numblocks</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]),</span> <span class="n">Nblock</span><span class="p">,</span> <span class="n">Nresidue</span><span class="p">,</span> <span class="n">x1corn</span><span class="p">,</span> <span class="n">x2corn</span><span class="p">,</span> <span class="n">Lblock</span><span class="p">,</span> <span class="n">binnum</span><span class="p">,</span>
+                            <span class="n">binmin</span><span class="p">,</span> <span class="n">binmax</span><span class="p">,</span> <span class="n">thetaE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_lens</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">dx</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bincount</span> <span class="o">=</span> <span class="n">histogram_routine_cpu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lens_model_complete</span><span class="p">,</span> <span class="n">Numblocks</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]),</span> <span class="n">Nblock</span><span class="p">,</span> <span class="n">Nresidue</span><span class="p">,</span> <span class="n">x1corn</span><span class="p">,</span> <span class="n">x2corn</span><span class="p">,</span> <span class="n">Lblock</span><span class="p">,</span> <span class="n">binnum</span><span class="p">,</span>
+                            <span class="n">binmin</span><span class="p">,</span> <span class="n">binmax</span><span class="p">,</span> <span class="n">thetaE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_lens</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">dx</span><span class="p">)</span>
+
+        
+        
+        <span class="c1"># trimming the array</span>
+        <span class="n">bincountback</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trim_zeros</span><span class="p">(</span><span class="n">bincount</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">)</span>
+        <span class="n">bincountfront</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trim_zeros</span><span class="p">(</span><span class="n">bincount</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">)</span>
+        <span class="n">fronttrimmed</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bincount</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">bincountback</span><span class="p">)</span>
+        <span class="n">backtrimmed</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bincount</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">bincountfront</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">fronttrimmed</span><span class="p">,</span> <span class="n">backtrimmed</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_F_tilde</span> <span class="o">=</span> <span class="n">bincount</span><span class="p">[</span><span class="n">fronttrimmed</span><span class="p">:</span><span class="o">-</span><span class="n">backtrimmed</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">binwidth</span><span class="p">)</span> <span class="o">/</span> <span class="n">thetaE</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ts</span> <span class="o">=</span> <span class="n">bins</span><span class="p">[</span><span class="n">fronttrimmed</span><span class="p">:</span><span class="o">-</span><span class="n">backtrimmed</span><span class="p">]</span> <span class="o">-</span> <span class="n">bins</span><span class="p">[</span><span class="n">fronttrimmed</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">binnumlength</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ts</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_F_tilde</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ts</span><span class="p">[:</span><span class="n">binnumlength</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_F_tilde</span><span class="p">[:</span><span class="n">binnumlength</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_F_tilde</span></div>
+
+
+<div class="viewcode-block" id="amplification_factor.fourier">
+<a class="viewcode-back" href="../../amplification_factor.html#amplification_factor.amplification_factor.amplification_factor.fourier">[docs]</a>
+    <span class="k">def</span> <span class="nf">fourier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">freq_end</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">type2</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the amplification factor in frequency domain</span>
+
+<span class="sd">        :param freq_end: higher end of the frequency series. Default to be 2000.</span>
+<span class="sd">        :param type2: boolean, if True, switch to fourier transform of  microlensing of a type 2 image.</span>
+<span class="sd">        :return: frequency array and amplification factor F(f) of wave optics.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="n">type2</span><span class="p">:</span>
+            <span class="n">ws</span><span class="p">,</span> <span class="n">Fw</span> <span class="o">=</span> <span class="n">iwFourier</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ts</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Tscale</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_F_tilde</span><span class="p">,</span> <span class="n">type2</span><span class="p">)</span> 
+            <span class="n">fs</span> <span class="o">=</span> <span class="n">ws</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+            <span class="n">peak</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_F_tilde</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_F_tilde</span><span class="p">))</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">peak</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">Tds</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1"># in dimension time</span>
+            <span class="n">tdiff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ts</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_Tscale</span><span class="o">-</span><span class="mi">5</span> 
+            <span class="c1"># tdiff = ts[index]*self._Tscale-Tds </span>
+            <span class="n">overall_phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="n">Tds</span><span class="o">+</span><span class="n">tdiff</span><span class="p">)</span> <span class="o">*</span> <span class="n">fs</span><span class="p">)</span>
+            <span class="n">Fw</span> <span class="o">*=</span> <span class="n">overall_phase</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ts_extended</span><span class="p">,</span> <span class="n">F_tilde_extended</span> <span class="o">=</span> <span class="n">F_tilde_extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_F_tilde</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_macro</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_integrator</span><span class="p">)</span>
+            <span class="n">F_tilde_apodized</span> <span class="o">=</span> <span class="n">coswindowback</span><span class="p">(</span><span class="n">F_tilde_extended</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+            <span class="n">ws</span><span class="p">,</span> <span class="n">Fw</span> <span class="o">=</span> <span class="n">iwFourier</span><span class="p">(</span><span class="n">ts_extended</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_Tscale</span><span class="p">,</span> <span class="n">F_tilde_apodized</span><span class="p">)</span>
+
+        <span class="kn">from</span> <span class="nn">bisect</span> <span class="kn">import</span> <span class="n">bisect_left</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">bisect_left</span><span class="p">(</span><span class="n">ws</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">freq_end</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Fws</span> <span class="o">=</span> <span class="n">ws</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">),</span> <span class="n">Fw</span>
+        <span class="k">return</span> <span class="n">ws</span><span class="p">[:</span><span class="n">i</span><span class="p">],</span> <span class="n">Fw</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> </div>
+
+
+<div class="viewcode-block" id="amplification_factor.importor">
+<a class="viewcode-back" href="../../amplification_factor.html#amplification_factor.amplification_factor.amplification_factor.importor">[docs]</a>
+    <span class="k">def</span> <span class="nf">importor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">F_tilde</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Fws</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Imports the amplification factor</span>
+
+<span class="sd">        :param ts: time series in dimensionless unit</span>
+<span class="sd">        :param F_tilde: time domain amplification factor</span>
+<span class="sd">        :param ws: sampling frequency in unit of angular frequency</span>
+<span class="sd">        :param Fws: frequency domain amplification factor </span>
+<span class="sd">        :param time: boolean, if True, plot time domain amplification factor</span>
+<span class="sd">        :param freq: boolean, if True, plot frequency domain amplification factor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">time</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ts</span> <span class="o">=</span> <span class="n">ts</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_F_tilde</span> <span class="o">=</span> <span class="n">F_tilde</span>
+        <span class="k">elif</span> <span class="n">freq</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fs</span> <span class="o">=</span> <span class="n">fs</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_Fws</span> <span class="o">=</span> <span class="n">Fws</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Please choose either time domain or frequency domain to import.&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="amplification_factor.plot_time">
+<a class="viewcode-back" href="../../amplification_factor.html#amplification_factor.amplification_factor.amplification_factor.plot_time">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">saveplot</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots the amplification factor in time domain</span>
+
+<span class="sd">        :param saveplot: where the plot is saved.</span>
+<span class="sd">        :return: axes class of matplotlib representing the plot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ts</span>
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Time data is empty. Either integrate or import time data.&#39;</span><span class="p">)</span>
+
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">usetex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s1">&#39;serif&#39;</span><span class="p">)</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+        <span class="n">ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ts</span>
+        <span class="n">F_tilde</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_F_tilde</span>
+
+        <span class="c1"># smoothen the curve(s)</span>
+        <span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">savgol_filter</span>
+        <span class="n">F_smooth</span> <span class="o">=</span> <span class="n">savgol_filter</span><span class="p">(</span><span class="n">F_tilde</span><span class="p">,</span> <span class="mi">51</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">F_smooth</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Time (1s/Tscale)&#39;</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">14</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$F(t)$&#39;</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">14</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span> <span class="o">=</span> <span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">saveplot</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">saveplot</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ax</span> </div>
+
+
+<div class="viewcode-block" id="amplification_factor.plot_freq">
+<a class="viewcode-back" href="../../amplification_factor.html#amplification_factor.amplification_factor.amplification_factor.plot_freq">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot_freq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">macromu</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">freq_end</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">,</span> <span class="n">saveplot</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">abs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pha</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots the amplification factor against frequency in semilogx</span>
+
+<span class="sd">        :param macromu: macro magnification of the strong lensed image. Default to be one.</span>
+<span class="sd">        :param freq_end: higher end of the frequency range </span>
+<span class="sd">        :param abs: boolean, if True, compute the absolute value of the amplification.</span>
+<span class="sd">        :param pha: boolean, if True, compute the phase of the amplification.</span>
+<span class="sd">        :param saveplot: where the plot is saved.</span>
+<span class="sd">        :return: axes class of matplotlib representing the plot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fs</span>
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Frequency data is empty. Either integrate or import frequency data.&#39;</span><span class="p">)</span>
+
+
+        <span class="c1"># Either plot the absolute value or the argument</span>
+        <span class="k">if</span> <span class="n">pha</span><span class="p">:</span>
+            <span class="nb">abs</span><span class="o">=</span><span class="kc">False</span>
+
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="n">usetex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;font&#39;</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s1">&#39;serif&#39;</span><span class="p">)</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+        <span class="n">fs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fs</span>
+        <span class="n">Fws</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Fws</span>
+
+        <span class="c1"># smoothen the curve(s)</span>
+        <span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">savgol_filter</span>
+        <span class="n">Fa_fil</span> <span class="o">=</span> <span class="n">savgol_filter</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Fws</span><span class="p">),</span> <span class="mi">51</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">Fp_fil</span> <span class="o">=</span> <span class="n">savgol_filter</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">Fws</span><span class="p">),</span> <span class="mi">51</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+        <span class="kn">from</span> <span class="nn">bisect</span> <span class="kn">import</span> <span class="n">bisect_left</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">bisect_left</span><span class="p">(</span><span class="n">fs</span><span class="p">,</span> <span class="n">freq_end</span><span class="p">)</span> 
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">semilogx</span><span class="p">(</span><span class="n">fs</span><span class="p">[:</span><span class="n">i</span><span class="p">],</span> <span class="n">Fa_fil</span><span class="p">[:</span><span class="n">i</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">pha</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fs</span><span class="p">[:</span><span class="n">i</span><span class="p">],</span> <span class="n">Fp_fil</span><span class="p">[:</span><span class="n">i</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Frequency (Hz)&#39;</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">14</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$|F|/\sqrt{\mu}$&#39;</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">14</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">pha</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$args(F)$&#39;</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">14</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span> <span class="o">=</span> <span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">saveplot</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">saveplot</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ax</span> </div>
+
+
+<div class="viewcode-block" id="amplification_factor.geometrical_optics">
+<a class="viewcode-back" href="../../amplification_factor.html#amplification_factor.amplification_factor.amplification_factor.geometrical_optics">[docs]</a>
+    <span class="k">def</span> <span class="nf">geometrical_optics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mus</span><span class="p">,</span> <span class="n">tds</span><span class="p">,</span> <span class="n">Img_ra</span><span class="p">,</span> <span class="n">Img_dec</span><span class="p">,</span> <span class="n">upper_lim</span> <span class="o">=</span> <span class="mi">3000</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param mus: magnifications of images.</span>
+<span class="sd">        :param tds: time delays of images.</span>
+<span class="sd">        :param Img_ra: right ascension of images relative to the center of lens plane.</span>
+<span class="sd">        :param Img_dec: declination of images relative to the center of lens plane.</span>
+<span class="sd">        :param upper_lim: desired upper limit of freqeuncy range of geometrical optics.</span>
+<span class="sd">        :return: frequency array and amplification factor F(f) of geometrical optics.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fs</span>
+        <span class="n">fs_grid</span> <span class="o">=</span> <span class="n">fs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">fs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="n">num_interp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">upper_lim</span><span class="o">-</span><span class="n">fs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">fs_grid</span><span class="p">)</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geofs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">fs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">upper_lim</span><span class="p">,</span> <span class="n">num_interp</span><span class="p">)</span>
+        
+        <span class="n">ns</span> <span class="o">=</span> <span class="n">Morse_indices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lens_model_list</span><span class="p">,</span> <span class="n">Img_ra</span><span class="p">,</span> <span class="n">Img_dec</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs_lens</span><span class="p">)</span>
+        <span class="kn">from</span> <span class="nn">lensinggw.amplification_factor.amplification_factor</span> <span class="kn">import</span> <span class="n">amplification_from_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_geoFws</span> <span class="o">=</span> <span class="n">amplification_from_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_geofs</span><span class="p">,</span> <span class="n">mus</span><span class="p">,</span> <span class="n">tds</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geofs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geoFws</span></div>
+
+    
+<div class="viewcode-block" id="amplification_factor.concatenate">
+<a class="viewcode-back" href="../../amplification_factor.html#amplification_factor.amplification_factor.amplification_factor.concatenate">[docs]</a>
+    <span class="k">def</span> <span class="nf">concatenate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transfreq</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param transfreq: transitional frequency of wave optics to geometrical optics.</span>
+<span class="sd">        :return: concatenated frequency array and amplification factor F(f).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fs</span><span class="o">-</span><span class="n">transfreq</span><span class="p">))</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fullfs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_fs</span><span class="p">[:</span><span class="n">index</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geofs</span><span class="p">[</span><span class="n">index</span><span class="p">:]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fullFws</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_Fws</span><span class="p">[:</span><span class="n">index</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geoFws</span><span class="p">[</span><span class="n">index</span><span class="p">:]))</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fullfs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fullFws</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, smcu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

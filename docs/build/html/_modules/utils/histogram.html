@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utils.histogram &mdash; wolensing 0.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=7026087e"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            wolensing
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../amplification_factor.html">amplification_factor package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../lensmodels.html">lensmodels package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plot.html">plot package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">wolensing</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">utils.histogram</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for utils.histogram</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">fast_histogram</span> <span class="kn">import</span> <span class="n">histogram1d</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">trange</span><span class="p">,</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">numba</span> <span class="k">as</span> <span class="nn">nb</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
+<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+<span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">pmap</span><span class="p">,</span> <span class="n">vmap</span><span class="p">,</span> <span class="n">jit</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">from</span> <span class="nn">wolensing.utils.utils</span> <span class="kn">import</span> <span class="n">gridfromcorn</span>
+<span class="kn">from</span> <span class="nn">wolensing.lensmodels.potential</span> <span class="kn">import</span> <span class="n">potential</span>
+
+<div class="viewcode-block" id="histogram_routine_gpu">
+<a class="viewcode-back" href="../../utils.html#utils.histogram.histogram_routine_gpu">[docs]</a>
+<span class="k">def</span> <span class="nf">histogram_routine_gpu</span><span class="p">(</span><span class="n">lens_model_complete</span><span class="p">,</span> <span class="n">Numblocks</span><span class="p">,</span> <span class="n">macroimindx</span><span class="p">,</span> <span class="n">Nblock</span><span class="p">,</span> <span class="n">Nresidue</span><span class="p">,</span> <span class="n">x1corn</span><span class="p">,</span> <span class="n">x2corn</span><span class="p">,</span> <span class="n">Lblock</span><span class="p">,</span> <span class="n">binnum</span><span class="p">,</span>
+                      <span class="n">binmin</span><span class="p">,</span> <span class="n">binmax</span><span class="p">,</span> <span class="n">Scale</span><span class="p">,</span> <span class="n">kwargs_lens</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">dx</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Obtain F(t) by constructing histogram of time delay function within the given window.</span>
+
+<span class="sd">    :param lens_model_complete: lens models of the system.</span>
+<span class="sd">    :param Numblocks: number of boxes with Nblock inside.</span>
+<span class="sd">    :param macroimindx:</span>
+<span class="sd">    :param Nblock: number of pixels in a box.</span>
+<span class="sd">    :param Nredisude: number of pixels not in a box.</span>
+<span class="sd">    :param x1corn: x-coordinate of the lower side of the window.</span>
+<span class="sd">    :param x2corn: y-coordinate of the left side of the window.</span>
+<span class="sd">    :param Lblock: size of the integration block.</span>
+<span class="sd">    :param binnum: total number of steps.</span>
+<span class="sd">    :param binmin: lower bound of the time integration.</span>
+<span class="sd">    :param binmax: upper bound of the time integration.</span>
+<span class="sd">    :param Scale: Einstein radius of the system.</span>
+<span class="sd">    :param kwargs_lens: arguments of the lens models.</span>
+<span class="sd">    :param y0: x-coordinate of source position.</span>
+<span class="sd">    :param y1: y-coordinate of source position.</span>
+<span class="sd">    :param dx: integration step of the window covering lens place.</span>
+<span class="sd">    :return: histogram of F(t).</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">bincount</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">binnum</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">y0</span><span class="p">,</span> <span class="n">y1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;start&#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span> <span class="o">=</span> <span class="p">(</span><span class="n">Numblocks</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">desc</span> <span class="o">=</span> <span class="s1">&#39;Integrating...&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Numblocks</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Numblocks</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">macroimindx</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">macroimindx</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">continue</span>
+                <span class="n">Nblock1</span> <span class="o">=</span> <span class="n">Nblock</span>
+                <span class="n">Nblock2</span> <span class="o">=</span> <span class="n">Nblock</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">Numblocks</span><span class="p">:</span>
+                    <span class="n">Nblock1</span> <span class="o">=</span> <span class="n">Nresidue</span>
+                    <span class="k">if</span> <span class="n">Nblock1</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="n">Numblocks</span><span class="p">:</span>
+                    <span class="n">Nblock2</span> <span class="o">=</span> <span class="n">Nresidue</span>
+                    <span class="k">if</span> <span class="n">Nblock2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="k">continue</span>
+                <span class="n">x1blockcorn</span> <span class="o">=</span> <span class="n">x1corn</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">Lblock</span>
+                <span class="n">x2blockcorn</span> <span class="o">=</span> <span class="n">x2corn</span> <span class="o">+</span> <span class="n">j</span> <span class="o">*</span> <span class="n">Lblock</span>
+                <span class="n">X1</span><span class="p">,</span> <span class="n">X2</span> <span class="o">=</span> <span class="n">gridfromcorn</span><span class="p">(</span><span class="n">x1blockcorn</span><span class="p">,</span> <span class="n">x2blockcorn</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">Nblock1</span><span class="p">,</span> <span class="n">Nblock2</span><span class="p">)</span>
+                <span class="n">Ts</span> <span class="o">=</span> <span class="n">Scale</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">potential</span><span class="p">(</span><span class="n">lens_model_complete</span><span class="p">,</span> <span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">kwargs_lens</span><span class="p">)</span>
+                <span class="n">bincount</span> <span class="o">+=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">binnum</span><span class="p">,</span> <span class="p">(</span><span class="n">binmin</span><span class="p">,</span> <span class="n">binmax</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">dx</span> <span class="o">**</span> <span class="mi">2</span>
+                <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">del</span> <span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">Ts</span>
+                <span class="n">k</span><span class="o">+=</span><span class="mi">1</span>
+    <span class="k">return</span> <span class="n">bincount</span></div>
+
+
+<div class="viewcode-block" id="histogram_routine_cpu">
+<a class="viewcode-back" href="../../utils.html#utils.histogram.histogram_routine_cpu">[docs]</a>
+<span class="k">def</span> <span class="nf">histogram_routine_cpu</span><span class="p">(</span><span class="n">lens_model_complete</span><span class="p">,</span> <span class="n">Numblocks</span><span class="p">,</span> <span class="n">macroimindx</span><span class="p">,</span> <span class="n">Nblock</span><span class="p">,</span> <span class="n">Nresidue</span><span class="p">,</span> <span class="n">x1corn</span><span class="p">,</span> <span class="n">x2corn</span><span class="p">,</span> <span class="n">Lblock</span><span class="p">,</span> <span class="n">binnum</span><span class="p">,</span>
+                      <span class="n">binmin</span><span class="p">,</span> <span class="n">binmax</span><span class="p">,</span> <span class="n">Scale</span><span class="p">,</span> <span class="n">kwargs_lens</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">dx</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Obtain F(t) by constructing histogram of time delay function within the given window.</span>
+
+<span class="sd">    :param lens_model_complete: lens models of the system.</span>
+<span class="sd">    :param Numblocks: number of boxes with Nblock inside.</span>
+<span class="sd">    :param macroimindx:</span>
+<span class="sd">    :param Nblock: number of pixels in a box.</span>
+<span class="sd">    :param Nredisude: number of pixels not in a box.</span>
+<span class="sd">    :param x1corn: x-coordinate of the lower side of the window.</span>
+<span class="sd">    :param x2corn: y-coordinate of the left side of the window.</span>
+<span class="sd">    :param Lblock: size of the integration block.</span>
+<span class="sd">    :param binnum: total number of steps.</span>
+<span class="sd">    :param binmin: lower bound of the time integration.</span>
+<span class="sd">    :param binmax: upper bound of the time integration.</span>
+<span class="sd">    :param Scale: Einstein radius of the system.</span>
+<span class="sd">    :param kwargs_lens: arguments of the lens models.</span>
+<span class="sd">    :param y0: x-coordinate of source position.</span>
+<span class="sd">    :param y1: y-coordinate of source position.</span>
+<span class="sd">    :param dx: integration step of the window covering lens place.</span>
+<span class="sd">    :return: histogram of F(t).</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">bincount</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">binnum</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">lens_model_complete</span><span class="o">.</span><span class="n">fermat_potential</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">y0</span><span class="p">,</span> <span class="n">y1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;start&#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span> <span class="o">=</span> <span class="p">(</span><span class="n">Numblocks</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">desc</span> <span class="o">=</span> <span class="s1">&#39;Integrating...&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Numblocks</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Numblocks</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">macroimindx</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">macroimindx</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">continue</span>
+                <span class="n">Nblock1</span> <span class="o">=</span> <span class="n">Nblock</span>
+                <span class="n">Nblock2</span> <span class="o">=</span> <span class="n">Nblock</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">Numblocks</span><span class="p">:</span>
+                    <span class="n">Nblock1</span> <span class="o">=</span> <span class="n">Nresidue</span>
+                    <span class="k">if</span> <span class="n">Nblock1</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="n">Numblocks</span><span class="p">:</span>
+                    <span class="n">Nblock2</span> <span class="o">=</span> <span class="n">Nresidue</span>
+                    <span class="k">if</span> <span class="n">Nblock2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="k">continue</span>
+                <span class="n">x1blockcorn</span> <span class="o">=</span> <span class="n">x1corn</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="n">Lblock</span>
+                <span class="n">x2blockcorn</span> <span class="o">=</span> <span class="n">x2corn</span> <span class="o">+</span> <span class="n">j</span> <span class="o">*</span> <span class="n">Lblock</span>
+                <span class="n">X1</span><span class="p">,</span> <span class="n">X2</span> <span class="o">=</span> <span class="n">gridfromcorn</span><span class="p">(</span><span class="n">x1blockcorn</span><span class="p">,</span> <span class="n">x2blockcorn</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">Nblock1</span><span class="p">,</span> <span class="n">Nblock2</span><span class="p">)</span>
+                <span class="c1"># Ts = Scale ** (-2) * potential(lens_model_complete, X1, X2, y, kwargs_lens)</span>
+                <span class="n">Ts</span> <span class="o">=</span> <span class="n">Scale</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">T</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">kwargs_lens</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">y1</span><span class="p">)</span>
+                <span class="n">bincount</span> <span class="o">+=</span> <span class="n">histogram1d</span><span class="p">(</span><span class="n">Ts</span><span class="p">,</span> <span class="n">binnum</span><span class="p">,</span> <span class="p">(</span><span class="n">binmin</span><span class="p">,</span> <span class="n">binmax</span><span class="p">))</span> <span class="o">*</span> <span class="n">dx</span> <span class="o">**</span> <span class="mi">2</span>
+                <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">del</span> <span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">Ts</span>
+                <span class="n">k</span><span class="o">+=</span><span class="mi">1</span>
+    <span class="k">return</span> <span class="n">bincount</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, smcu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

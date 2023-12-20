@@ -104,5 +104,40 @@ def Psi_SIE(X1, X2, x_center, y_center, theta_E, e1, e2):
         q = 0.99999999
     alpha_x, alpha_y = derivatives(x_rotate, y_rotate, b, s, q)
     
-    Psi = (x_rotate * alpha_x + y_rotate * alpha_y - b * s * 1.0 / 2.0 * jnp.log((psi + s) ** 2 + (1.0 - q**2) * x_rotate**2))
+    f_ = (x_rotate * alpha_x + y_rotate * alpha_y - b * s * 1.0 / 2.0 * jnp.log((psi + s) ** 2 + (1.0 - q**2) * x_rotate**2))
+    return f_
+
+
+def Psi_NFW(X1, X2, x_center, y_center, thetaE, kappa): 
+    """
+
+    :param xcoords: x points
+    :param ycoords: y points
+    :param angle: angle in radians
+    :return: x points and y points rotated ccw by angle theta
+    """
+    
+    x_shift = X1-x_center
+    y_shift = X2-y_center
+    shifted = np.array([x_shift, y_shift], dtype=np.float64) 
+    x_norm = np.linalg.norm(shifted, axis=0)
+    
+    if x_norm<1:
+        if x_norm<1e-7:
+            print('True')
+            y = np.sqrt(1-x_norm**2)
+            print(((1/2) * (np.log(1+y)+y)))
+            Psi = kappa / 2 * (1 - ((1/2) * (np.log(1+y)+y))) *  thetaE
+            print(Psi, 'si')
+        else:
+            Psi = kappa / 2 * (np.log(x_norm/2)**2 - np.arctanh(np.sqrt(1-x_norm**2))**2) *  thetaE
+    else:
+        Psi = kappa / 2 * (np.log(x_norm/2)**2 + np.arctan(np.sqrt(x_norm**2 - 1))**2) * thetaE
+    # x_safe_low = jnp.where(x_norm<1, x, 0.5*dim_1)
+    # x_safe_hi = jnp.where(x_norm<1, 2*dim_1, x)
+    # x_safe_low_norm = jnp.linalg.norm(x_safe_low)
+    # x_safe_hi_norm = jnp.linalg.norm(x_safe_hi)
+    # Psi = jnp.where(x_norm<1,
+    #     kappa / 2 * (jnp.log(x_safe_low_norm/2)**2 - jnp.arctanh(jnp.sqrt(1-x_safe_low_norm**2))**2),
+    #     kappa / 2 * (jnp.log(x_safe_hi_norm/2)**2 + jnp.arctan(jnp.sqrt(x_safe_hi_norm**2 - 1))**2))
     return Psi
