@@ -5,6 +5,8 @@ import jax.numpy as jnp
 from jax import jit
 from functools import partial
 
+from wolensing.lensmodels.hessian import Hessian_Td
+
 def fitfuncF0(t, F0, a, c):
     '''
     Fitting function of power law
@@ -58,7 +60,7 @@ def coswindowback(data, percent):
     front = [1 for i in range(len(data) - len(back))]
     return np.concatenate((front, back)) * data
 
-def F_tilde_extend(ts, F_tilde, kwargs):
+def F_tilde_extend(ts, F_tilde, kwargs_macro, kwargs):
     '''
     Extend the function with fitted power law.
 
@@ -85,8 +87,8 @@ def F_tilde_extend(ts, F_tilde, kwargs):
 
     from bisect import bisect_left
     i = bisect_left(ts, fit_start)
-    # F0 = np.sqrt(kwargs['mu'])
-    F0 = np.sqrt(1)
+    F0 = np.sqrt(kwargs_macro['mu'])
+    # F0 = np.sqrt(1)
 
     from scipy.optimize import curve_fit
     popt, pcov = curve_fit(lambda t, a, c: fitfuncF0(t, F0, a, c), ts[i:], F_tilde[i:], p0=(.1, .1))
@@ -121,3 +123,32 @@ def smooth(y, box_pts):
     box = np.ones(box_pts)/box_pts
     y_smooth = np.convolve(y, box, mode='same')
     return y_smooth
+
+def Morse_indices(lens_model_list, xs, ys, kwargs):
+    '''
+    :param lens_model_list: list of lens models.
+    :param xs: x-coordinates of position on lens plane.
+    :param ys: y-coordinates of position on lens plane.
+    :kwargs: arguemnts for the lens models.
+    :return: morse indices of the input positions.
+    '''
+    
+    ns = np.zeros(xs.shape)
+    
+    for i, (x, y) in enumerate(zip(xs, ys)):
+        hessian = Hessian_Td(lens_model_list, x, y, kwargs)
+        detH = hessian[0]*hessian[1] - hessian[2]**2
+        
+        if detH<0:
+            ns[i] = 0.5
+        elif detH>0 and hessian[0]>0 and hessian[1]>0:
+            ns[i] = 0
+        elif detH>0 and hessian[0]<0 and hessian[1]<1:
+            ns[i] = 1
+        else:
+            raise Exception('Inconclusive Hessian Matrix.')
+            
+    if xs.shape[0]%2==0 and np.count_nonzero(ns==0.5) != np.count_nonzero(ns==0):
+        warnings.warn('The number of type 1 and type 2 images should match.')
+        
+    return ns
