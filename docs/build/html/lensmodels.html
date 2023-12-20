@@ -56,7 +56,11 @@
 <li class="toctree-l3"><a class="reference internal" href="#lensmodels.lens.Psi_SIE"><code class="docutils literal notranslate"><span class="pre">Psi_SIE()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#lensmodels-potential-module">lensmodels.potential module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-lensmodels.potential">lensmodels.potential module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#lensmodels.potential.geometrical"><code class="docutils literal notranslate"><span class="pre">geometrical()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lensmodels.potential.potential"><code class="docutils literal notranslate"><span class="pre">potential()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#module-lensmodels">Module contents</a></li>
 </ul>
 </li>
@@ -198,8 +202,46 @@
 </dd></dl>
 
 </section>
-<section id="lensmodels-potential-module">
-<h2>lensmodels.potential module<a class="headerlink" href="#lensmodels-potential-module" title="Link to this heading"></a></h2>
+<section id="module-lensmodels.potential">
+<span id="lensmodels-potential-module"></span><h2>lensmodels.potential module<a class="headerlink" href="#module-lensmodels.potential" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="lensmodels.potential.geometrical">
+<span class="sig-name descname"><span class="pre">geometrical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lensmodels/potential.html#geometrical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lensmodels.potential.geometrical" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x1</strong> – x-coordinates of position on lens plane with respect to the window center.</p></li>
+<li><p><strong>x2</strong> – y-coordinates of position on lens plane with respect to the window center.</p></li>
+<li><p><strong>y</strong> – numpy array, source positions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>geometrical part of the time delay.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lensmodels.potential.potential">
+<span class="sig-name descname"><span class="pre">potential</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lens_model_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lensmodels/potential.html#potential"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lensmodels.potential.potential" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lens_model_list</strong> – list of lens models.</p></li>
+<li><p><strong>x1</strong> – x-coordinates of position on lens plane with respect to the window center.</p></li>
+<li><p><strong>x2</strong> – y-coordinates of position on lens plane with respect to the window center.</p></li>
+<li><p><strong>y</strong> – numpy array, source positions.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Kwargs<span class="colon">:</span></dt>
+<dd class="field-even"><p>arguemnts for the lens models.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>time delay function.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-lensmodels">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-lensmodels" title="Link to this heading"></a></h2>
