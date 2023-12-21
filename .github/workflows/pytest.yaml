@@ -32,7 +32,7 @@ jobs:
     - uses: actions/checkout@v4
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
+        python -m pip install wheel setuptools pip --upgrade
         sudo apt install texlive-fonts-recommended texlive-fonts-extra
         sudo apt install dvipng cm-super
         git clone https://gitlab.com/gpagano/lensinggw.git
