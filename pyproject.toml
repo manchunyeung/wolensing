@@ -1,3 +1,6 @@
+[tool.setuptools]
+py-modules = ["wolensing"]
+
 [build-system]
 requires = [
   "setuptools >= 40.9.0",
