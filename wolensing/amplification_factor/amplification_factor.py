@@ -148,7 +148,7 @@ class amplification_factor(object):
         i = bisect_left(ws, 2*np.pi*freq_end)
 
         self._fs, self._Fws = ws/(2*np.pi), Fw
-        return ws[:i], Fw[:i] 
+        return self._fs[:i], self._Fws[:i] 
 
     def importor(self, ts=None, F_tilde=None, fs=None, Fws=None, time=False, freq=False):
         """

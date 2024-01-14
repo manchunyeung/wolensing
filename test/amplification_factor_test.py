@@ -84,7 +84,7 @@ def test_plot_freq_abs(sis_amp, test_freq_data):
     import matplotlib.pyplot as plt
 
     f, ax = plt.subplots()
-    sis_amp.importor(freq=True, ws=fixed_fs, Fws=fixed_Fws)
+    sis_amp.importor(freq=True, fs=fixed_fs, Fws=fixed_Fws)
     ax = sis_amp.plot_freq(abs=True)
 
     x_plot, y_plot = ax.lines[0].get_xydata().T
@@ -103,7 +103,7 @@ def test_plot_freq_pha(sis_amp, test_freq_data):
     import matplotlib.pyplot as plt
 
     f, ax = plt.subplots()
-    sis_amp.importor(freq=True, ws=fixed_fs, Fws=fixed_Fws)
+    sis_amp.importor(freq=True, fs=fixed_fs, Fws=fixed_Fws)
     ax = sis_amp.plot_freq(pha=True)
 
     x_plot, y_plot = ax.lines[0].get_xydata().T
