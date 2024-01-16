@@ -13,7 +13,7 @@ def test_time_data():
 
 @pytest.fixture
 def test_freq_data():
-    fixed_fs = np.loadtxt('./test/test_sis_ws.txt')
+    fixed_fs = np.loadtxt('./test/test_sis_ws.txt')/(2*np.pi)
     fixed_Fws = np.loadtxt('./test/test_sis_Fws.txt', dtype=complex, converters={0: lambda s: complex(s.decode().replace('+-', '-'))})
 
     return fixed_fs, fixed_Fws
@@ -84,7 +84,7 @@ def test_plot_freq_abs(sis_amp, test_freq_data):
     import matplotlib.pyplot as plt
 
     f, ax = plt.subplots()
-    sis_amp.importor(freq=True, ws=fixed_fs, Fws=fixed_Fws)
+    sis_amp.importor(freq=True, fs=fixed_fs, Fws=fixed_Fws)
     ax = sis_amp.plot_freq(abs=True)
 
     x_plot, y_plot = ax.lines[0].get_xydata().T
@@ -103,7 +103,7 @@ def test_plot_freq_pha(sis_amp, test_freq_data):
     import matplotlib.pyplot as plt
 
     f, ax = plt.subplots()
-    sis_amp.importor(freq=True, ws=fixed_fs, Fws=fixed_Fws)
+    sis_amp.importor(freq=True, fs=fixed_fs, Fws=fixed_Fws)
     ax = sis_amp.plot_freq(pha=True)
 
     x_plot, y_plot = ax.lines[0].get_xydata().T

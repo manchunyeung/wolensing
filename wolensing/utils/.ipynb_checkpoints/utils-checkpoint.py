@@ -98,7 +98,7 @@ def F_tilde_extend(ts, F_tilde, kwargs_macro, kwargs):
     
     return ts_extended, F_tilde_extended
 
-def iwFourier(ts, Ft, dt=1e-6):
+def iwFourier(ts, Ft, type2=False):# has to be removed hardcoded part
     '''
     Fourier transform the time series data.
 
@@ -109,6 +109,11 @@ def iwFourier(ts, Ft, dt=1e-6):
     '''
 
     num = len(ts)
+    dt = ts[1] - ts[0]
+    # if type2:
+    #     dt = 1e-6
+    # else:
+    dt = 1e-5
     ws = 2 * np.pi * fftfreq(num, dt)[:num // 2]
     Fw = np.conjugate(fft(Ft)[:num // 2 ] * (1.j) * ws * dt)
     print('total time', num*dt)
