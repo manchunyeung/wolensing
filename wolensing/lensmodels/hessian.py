@@ -24,8 +24,6 @@ def Hessian_Td(lens_model_list, x, y, kwargs):
         elif lens_type == 'POINT_MASS':
             hessian -= Hessian_PM(x_shift, y_shift, thetaE)  # Make sure Psi_PM is JAX-compatible
     
-    print(hessian)
-    
     return hessian
     
 def Hessian_SIS(x, y, thetaE):

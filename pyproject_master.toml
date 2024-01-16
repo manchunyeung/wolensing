@@ -1,0 +1,34 @@
+[project]
+version = "0.0.11"
+name = "wolensing"
+authors = [
+  { name="Simon Man-Chun Yeung, Mark Ho-Yeuk Cheung", email="yeungm@uwm.edu" },
+]
+description = "A package for computing wave optics amplification factor."
+readme = "README.rst"
+requires-python = ">=3.6,<3.12"
+classifiers = [
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+  "lenstronomy",
+  "jax",
+  "jaxlib",
+  "matplotlib",
+  "numpy>=1.18.1",
+  "fast_histogram",
+  "scipy>1.4.1",
+  "pycbc",
+  "tqdm",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/manchunyeung/wolensing"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
