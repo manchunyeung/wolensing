@@ -38,7 +38,7 @@ The package is available on `pip` and open source.
 
 Most gravitational wave lensing studies are focused around strong lensing which employs geometrical optics. In the geometrical optics approximation, images of different time delays, magnifications are created, and the frequency evolutions of the images are the same. For lenses of smaller masses of order of 3 solar mass or lower, the Schwarzschild radius is comparable to the wavelength of gravitational wave, diffraction effect takes place. Frequency evolution can be described by amplification factor with diffraction integral, and the computational cost has significantly increased. 
 
-`wolensing` computes the amplification factor for general lenses. To enhance the computational speed, the package has built-in simple lens models with `jax`. Combining with geometrical optics in high frequency regime, the amplification factor enables detailed analyses of different lens systems. Embedded lens system is also supported. [@Cheung_2020, @Yeung_2021] analysed microlensing on type-I and type-II images created by SIS galaxy.
+`wolensing` computes the amplification factor for general lenses. To enhance the computational speed, the package has built-in simple lens models with `jax`. Combining with geometrical optics in high frequency regime, the amplification factor enables detailed analyses of different lens systems. Embedded lens system is also supported. [@Cheung_2021, @Yeung_2023] analysed microlensing on type-I and type-II images created by SIS galaxy.
 
 # Acknowledgements
 
