@@ -3,7 +3,6 @@ name: Update-Joss
 on: 
   push:
     branches:
-      - paper
       - 40-joss-paper
 
 jobs:
