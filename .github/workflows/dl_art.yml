@@ -1,0 +1,17 @@
+name: Update-Joss
+
+on: 
+  push:
+    branches:
+      - paper
+      - 40-joss-paper
+
+jobs:
+  paper:
+    runs-on: ubuntu-latest
+    name: Download draft
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+            name: my-art
+            path: paper/
