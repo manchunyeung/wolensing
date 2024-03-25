@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>wolensing &mdash; wolensing 0.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=7026087e"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="amplification_factor package" href="amplification_factor.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            wolensing
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="amplification_factor.html">amplification_factor package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lensmodels.html">lensmodels package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plot.html">plot package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">wolensing</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">wolensing</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <a class="reference external image-reference" href="https://github.com/manchunyeung/wolensing/actions/workflows/pytest.yaml"><img alt="https://github.com/manchunyeung/wolensing/actions/workflows/pytest.yaml/badge.svg" src="https://github.com/manchunyeung/wolensing/actions/workflows/pytest.yaml/badge.svg" /></a>
+<a class="reference external image-reference" href="https://github.com/mhycheung/jaxqualin/blob/main/LICENSE"><img alt="https://img.shields.io/badge/license-MIT-blue.svg" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
+<a class="reference external image-reference" href="https://manchunyeung.github.io/wolensing/"><img alt="https://badgen.net/badge/Read/thedoc/blue" src="https://badgen.net/badge/Read/thedoc/blue" /></a>
+<section id="wolensing">
+<h1>wolensing<a class="headerlink" href="#wolensing" title="Link to this heading"></a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">wolensing</span></code> is a software package to simulate lensed gravitational waves. It computes the full wave optics amplification factor within the range of LIGO sensitivity and is compatible with arbitrary lens models. <code class="docutils literal notranslate"><span class="pre">wolensing</span></code> also supports jax to accelerate the computation.</p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<p>First install <code class="docutils literal notranslate"><span class="pre">lensingGW</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">gitlab</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">gpagano</span><span class="o">/</span><span class="n">lensinggw</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">lensinggw</span>
+<span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">wolensing</span></code> can be installed with github or pip:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">wolensing</span>
+</pre></div>
+</div>
+</section>
+<section id="examples-notebooks">
+<h2>Examples Notebooks<a class="headerlink" href="#examples-notebooks" title="Link to this heading"></a></h2>
+<p>Examples notebooks showing the computation of wave optics amplification factor for different lens models and the plots of time delay contour are available at <a class="reference external" href="https://github.com/manchunyeung/wolensing">https://github.com/manchunyeung/wolensing</a></p>
+<hr class="docutils" />
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="amplification_factor.html">amplification_factor package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="amplification_factor.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amplification_factor.html#module-amplification_factor.amplification_factor">amplification_factor.amplification_factor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amplification_factor.html#module-amplification_factor">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lensmodels.html">lensmodels package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lensmodels.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lensmodels.html#module-lensmodels.lens">lensmodels.lens module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lensmodels.html#module-lensmodels.potential">lensmodels.potential module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lensmodels.html#module-lensmodels">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="plot.html">plot package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="plot.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot.html#module-plot.plot">plot.plot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot.html#module-plot">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#module-utils.histogram">utils.histogram module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#module-utils.utils">utils.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#module-utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="amplification_factor.html" class="btn btn-neutral float-right" title="amplification_factor package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, smcu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
