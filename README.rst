@@ -6,7 +6,7 @@
     :target: https://github.com/mhycheung/jaxqualin/blob/main/LICENSE
 
 .. image:: https://badgen.net/badge/Read/the doc/blue
-    :target: https://manchunyeung.github.io/wolensing/
+    :target: https://wolensing.readthedocs.io/en/latest/
 
 wolensing
 =========
