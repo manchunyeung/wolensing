@@ -1,5 +1,5 @@
 [project]
-version = "0.0.1"
+version = "0.0.2"
 name = "wolensing"
 authors = [
   { name="Simon Man-Chun Yeung, Mark Ho-Yeuk Cheung", email="yeungm@uwm.edu" },
@@ -30,5 +30,8 @@ dependencies = [
 "Homepage" = "https://github.com/manchunyeung/wolensing"
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = [
+  "setuptools >= 40.9.0",
+  "wheel",
+]
+build-backend = "setuptools.build_meta"
