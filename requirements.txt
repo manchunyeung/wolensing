@@ -1,4 +1,4 @@
-numpy>=1.18.1
+numpy>=1.21
 lenstronomy==1.5.1
 scipy>=1.4.1
 matplotlib
@@ -7,3 +7,4 @@ tqdm
 pycbc
 jax
 jaxlib==0.4.20
+extension-helpers

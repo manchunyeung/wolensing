@@ -24,6 +24,7 @@ dependencies = [
   "scipy>1.4.1",
   "pycbc",
   "tqdm",
+  "extension-helpers"
 ]
 
 [project.urls]
