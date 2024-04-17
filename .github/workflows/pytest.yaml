@@ -9,8 +9,8 @@
 name: Pytest
 
 on:
-  pull_request:
-    branches: [main]
+  push:
+    branches: [pre-release]
 
 permissions:
   contents: write
@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.9", "3.10", "3.11"]
 
     steps:
     - uses: actions/checkout@v4
@@ -32,7 +32,16 @@ jobs:
     - uses: actions/checkout@v4
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
+        python -m pip install wheel setuptools pip --upgrade
+        sudo apt install texlive-fonts-recommended texlive-fonts-extra
+        sudo apt install dvipng cm-super
+        git clone https://gitlab.com/gpagano/lensinggw.git
+        cd lensinggw/
+        python setup.py install
+        cd ../
+        pip install -r requirements.txt
+        python -m pip install --upgrade build twine pytest numba
+        pip install .
         pip install pytest
     - name: Test with pytest
       run: |
