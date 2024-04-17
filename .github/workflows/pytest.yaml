@@ -36,10 +36,10 @@ jobs:
         sudo apt install texlive-fonts-recommended texlive-fonts-extra
         sudo apt install dvipng cm-super
         git clone https://gitlab.com/gpagano/lensinggw.git
+        pip install -r requirements.txt
         cd lensinggw/
         python setup.py install
         cd ../
-        pip install -r requirements.txt
         python -m pip install --upgrade build twine pytest numba
         pip install .
         pip install pytest
