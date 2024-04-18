@@ -16,13 +16,6 @@ wolensing
 Installation
 ------------
 
-First install ``lensingGW``::
-
-
-  git clone https://gitlab.com/gpagano/lensinggw.git
-  cd lensinggw
-  python setup.py install
-
 ``wolensing`` can be installed with github or pip::
 
   pip install wolensing
