@@ -4,6 +4,7 @@ from scipy.fftpack import fft
 import jax.numpy as jnp
 from jax import jit
 from wolensing.lensmodels.hessian import Hessian_Td
+import wolensing.utils.constants as const
 
 def fitfuncF0(t, F0, a, c):
     '''
@@ -166,14 +167,15 @@ def Einstein_radius(zL, zS, mL):
     '''
 
     from astropy.cosmology import FlatLambdaCDM
+    import astropy.units as u
     cosmo = FlatLambdaCDM(H0=69.7, Om0=0.306, Tcmb0=2.725)
 
     DL       = cosmo.angular_diameter_distance(zL)
     DS       = cosmo.angular_diameter_distance(zS)
     DLS      = cosmo.angular_diameter_distance_z1z2(zL, zS)
     D        = DLS/(DL*DS)
-    D        = np.float64(D/(Mpc))
-    theta_E2 = (4*G*mL*Msun_Kg*D)/c**2
+    D        = np.float64(D/(u.Mpc))
+    theta_E2 = (4*const.G*mL*const.M_sun*D)/const.c**2
     theta_E  = np.sqrt(theta_E2)
 
     return theta_E
