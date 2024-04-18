@@ -10,7 +10,7 @@ name: Pytest
 
 on:
   push:
-    branches: [master]
+    branches: [pre-release]
 
 permissions:
   contents: write
@@ -35,10 +35,6 @@ jobs:
         python -m pip install wheel setuptools pip --upgrade
         sudo apt install texlive-fonts-recommended texlive-fonts-extra
         sudo apt install dvipng cm-super
-        git clone https://gitlab.com/gpagano/lensinggw.git
-        cd lensinggw/
-        python setup.py install
-        cd ../
         pip install -r requirements.txt
         python -m pip install --upgrade build twine pytest numba
         pip install .
