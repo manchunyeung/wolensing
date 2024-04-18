@@ -1,0 +1,4 @@
+sphinx-rtd-theme
+numpy
+matplotlib
+jax
