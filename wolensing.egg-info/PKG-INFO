@@ -1,0 +1,61 @@
+Metadata-Version: 2.1
+Name: wolensing
+Version: 0.0.2
+Summary: A package for computing wave optics amplification factor.
+Author-email: "Simon Man-Chun Yeung, Mark Ho-Yeuk Cheung" <yeungm@uwm.edu>
+Project-URL: Homepage, https://github.com/manchunyeung/wolensing
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: <3.12,>=3.6
+Description-Content-Type: text/x-rst
+License-File: LICENSE
+Requires-Dist: lenstronomy
+Requires-Dist: jax
+Requires-Dist: jaxlib
+Requires-Dist: matplotlib
+Requires-Dist: numpy>=1.18.1
+Requires-Dist: fast_histogram
+Requires-Dist: scipy>1.4.1
+Requires-Dist: pycbc
+Requires-Dist: tqdm
+
+
+.. image:: https://github.com/manchunyeung/wolensing/actions/workflows/pytest.yaml/badge.svg
+    :target: https://github.com/manchunyeung/wolensing/actions/workflows/pytest.yaml
+
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg
+    :target: https://github.com/mhycheung/jaxqualin/blob/main/LICENSE
+
+.. image:: https://badgen.net/badge/Read/the doc/blue
+    :target: https://manchunyeung.github.io/wolensing/
+
+wolensing
+=========
+
+``wolensing`` is a software package to simulate lensed gravitational waves. It computes the full wave optics amplification factor within the range of LIGO sensitivity and is compatible with arbitrary lens models. ``wolensing`` also supports jax to accelerate the computation.
+
+Installation
+------------
+
+First install ``lensingGW``::
+
+
+  git clone https://gitlab.com/gpagano/lensinggw.git
+  cd lensinggw
+  python setup.py install
+
+``wolensing`` can be installed with github or pip::
+
+  pip install wolensing
+
+
+Examples Notebooks
+-------------------
+
+Examples notebooks showing the computation of wave optics amplification factor for different lens models and the plots of time delay contour are available at `https://github.com/manchunyeung/wolensing <https://github.com/manchunyeung/wolensing>`_
+
+
+

@@ -2,8 +2,8 @@ import pytest
 import numpy as np
 
 from lenstronomy.LensModel.lens_model import LensModel
-import lensinggw.constants.constants as const
-from lensinggw.utils.utils import param_processing
+import wolensing.utils.constants as const
+from wolensing.utils.utils import Einstein_radius
 import wolensing.amplification_factor.amplification_factor as af
 
 @pytest.fixture
@@ -22,7 +22,7 @@ def sis_amp():
     textendmax = 1/df
     tlength = .13
     textend = textendmax-tlength
-    thetaE = param_processing(zL, zS, mL1)
+    thetaE = Einstein_radius(zL, zS, mL1)
     beta0, beta1 = 0.1 * thetaE, 0 * thetaE
     eta10, eta11 = 0 * thetaE, 0 * thetaE
     eta0, eta1 = 0., 0.
@@ -37,7 +37,7 @@ def sis_amp():
     Tscale = 4 * (1 + zL) * mL1 * M_sun * G / c ** 3
 
     mL3 = 10
-    thetaE3 = param_processing(zL, zS, mL3)
+    thetaE3 = Einstein_radius(zL, zS, mL3)
 
     kwargs_macro = {'source_pos_x': beta0,
                     'source_pos_y': beta1,

@@ -1,0 +1,9 @@
+lenstronomy
+jax
+jaxlib
+matplotlib
+numpy>=1.18.1
+fast_histogram
+scipy>1.4.1
+pycbc
+tqdm

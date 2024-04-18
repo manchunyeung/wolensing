@@ -85,7 +85,7 @@ def test_plot_freq_abs(sis_amp, test_freq_data):
 
     f, ax = plt.subplots()
     sis_amp.importor(freq=True, fs=fixed_fs, Fws=fixed_Fws)
-    ax = sis_amp.plot_freq(abs=True)
+    ax = sis_amp.plot_freq(abs=True, smooth=True)
 
     x_plot, y_plot = ax.lines[0].get_xydata().T
     np.testing.assert_array_equal(y_plot, Fa_fil)
@@ -104,7 +104,7 @@ def test_plot_freq_pha(sis_amp, test_freq_data):
 
     f, ax = plt.subplots()
     sis_amp.importor(freq=True, fs=fixed_fs, Fws=fixed_Fws)
-    ax = sis_amp.plot_freq(pha=True)
+    ax = sis_amp.plot_freq(pha=True, smooth=True)
 
     x_plot, y_plot = ax.lines[0].get_xydata().T
     np.testing.assert_array_equal(y_plot, Fp_fil)

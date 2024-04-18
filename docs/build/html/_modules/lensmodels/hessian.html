@@ -73,7 +73,6 @@
              
   <h1>Source code for lensmodels.hessian</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
 
 <div class="viewcode-block" id="Hessian_Td">
 <a class="viewcode-back" href="../../lensmodels.html#lensmodels.hessian.Hessian_Td">[docs]</a>
@@ -99,8 +98,6 @@
             <span class="n">hessian</span> <span class="o">-=</span> <span class="n">Hessian_SIS</span><span class="p">(</span><span class="n">x_shift</span><span class="p">,</span> <span class="n">y_shift</span><span class="p">,</span> <span class="n">thetaE</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">lens_type</span> <span class="o">==</span> <span class="s1">&#39;POINT_MASS&#39;</span><span class="p">:</span>
             <span class="n">hessian</span> <span class="o">-=</span> <span class="n">Hessian_PM</span><span class="p">(</span><span class="n">x_shift</span><span class="p">,</span> <span class="n">y_shift</span><span class="p">,</span> <span class="n">thetaE</span><span class="p">)</span>  <span class="c1"># Make sure Psi_PM is JAX-compatible</span>
-    
-    <span class="nb">print</span><span class="p">(</span><span class="n">hessian</span><span class="p">)</span>
     
     <span class="k">return</span> <span class="n">hessian</span></div>
 

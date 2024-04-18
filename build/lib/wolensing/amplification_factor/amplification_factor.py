@@ -4,12 +4,12 @@ from scipy.optimize import curve_fit
 from fast_histogram import histogram1d
 from scipy.fft import fftfreq
 from scipy.fftpack import fft
+import lensinggw.constants.constants as const
 from tqdm import trange, tqdm
 
 from wolensing.utils.utils import *
 from wolensing.utils.histogram import *
 from wolensing.lensmodels.potential import potential
-import wolensing.utils.constants as const 
 
 G = const.G  # gravitational constant [m^3 kg^-1 s^-2]
 c = const.c  # speed of light [m/s]
@@ -205,10 +205,11 @@ class amplification_factor(object):
         plt.show()
         return ax 
 
-    def plot_freq(self, freq_end = 2000, saveplot=None, abs=True, pha=False, smooth=False):
+    def plot_freq(self, macromu = 1, freq_end = 2000, saveplot=None, abs=True, pha=False, smooth=True):
         """
         Plots the amplification factor against frequency in semilogx
 
+        :param macromu: macro magnification of the strong lensed image. Default to be one.
         :param freq_end: higher end of the frequency range 
         :param abs: boolean, if True, compute the absolute value of the amplification.
         :param pha: boolean, if True, compute the phase of the amplification.
@@ -244,13 +245,13 @@ class amplification_factor(object):
             Fa_fil = savgol_filter(np.abs(Fws), 51, 3)
             Fp_fil = savgol_filter(np.angle(Fws), 51, 3)
             if abs:
-                ax.semilogx(fs[:i], Fa_fil[:i]/self._kwargs_macro['mu'], linewidth=1)
+                ax.semilogx(fs[:i], Fa_fil[:i], linewidth=1)
             elif pha:
                 ax.semilogx(fs[:i], Fp_fil[:i], linewidth=1)
 
         else:
             if abs:
-                ax.semilogx(fs[:i], np.abs(Fws[:i])/self._kwargs_macro['mu'], linewidth=1)
+                ax.semilogx(fs[:i], np.abs(Fws[:i]), linewidth=1)
             elif pha:
                 ax.semilogx(fs[:i], np.angle(Fws[:i]), linewidth=1)
 
@@ -286,7 +287,8 @@ class amplification_factor(object):
         self._geofs = np.linspace(fs[0], upper_lim, num_interp)
         
         ns = Morse_indices(self._lens_model_list, Img_ra, Img_dec, self._kwargs_lens)
-        self._geoFws = compute_geometrical(self._geofs, mus, tds, ns)
+        from lensinggw.amplification_factor.amplification_factor import amplification_from_data
+        self._geoFws = amplification_from_data(self._geofs, mus, tds, ns)
         
         return self._geofs, self._geoFws
     
