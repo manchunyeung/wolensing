@@ -2,3 +2,7 @@ sphinx-rtd-theme
 numpy
 matplotlib
 jax
+lenstronomy
+scipy
+tqdm
+fast_histogram

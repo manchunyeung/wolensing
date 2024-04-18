@@ -50,21 +50,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-utils.histogram">utils.histogram module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#utils.histogram.histogram_routine_gpu"><code class="docutils literal notranslate"><span class="pre">histogram_routine_gpu()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#utils.histogram.histogram_routine_cpu1"><code class="docutils literal notranslate"><span class="pre">histogram_routine_cpu1()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#utils.histogram.process_block"><code class="docutils literal notranslate"><span class="pre">process_block()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#utils.histogram.histogram_routine_cpu"><code class="docutils literal notranslate"><span class="pre">histogram_routine_cpu()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#module-utils.utils">utils.utils module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#utils.utils.fitfuncF0"><code class="docutils literal notranslate"><span class="pre">fitfuncF0()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#utils.utils.fitfunc"><code class="docutils literal notranslate"><span class="pre">fitfunc()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#utils.utils.gridfromcorn"><code class="docutils literal notranslate"><span class="pre">gridfromcorn()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#utils.utils.coswindowback"><code class="docutils literal notranslate"><span class="pre">coswindowback()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#utils.utils.F_tilde_extend"><code class="docutils literal notranslate"><span class="pre">F_tilde_extend()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#utils.utils.iwFourier"><code class="docutils literal notranslate"><span class="pre">iwFourier()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#utils.utils.smooth"><code class="docutils literal notranslate"><span class="pre">smooth()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#utils-utils-module">utils.utils module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-utils">Module contents</a></li>
 </ul>
 </li>
@@ -104,7 +93,8 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.histogram.histogram_routine_gpu">
 <span class="sig-name descname"><span class="pre">histogram_routine_gpu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lens_model_complete</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Numblocks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">macroimindx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nblock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nresidue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1corn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2corn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Lblock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs_lens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/histogram.html#histogram_routine_gpu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.histogram.histogram_routine_gpu" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Obtain F(t) by constructing histogram of time delay function within the given window.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>lens_model_complete</strong> – lens models of the system.</p></li>
@@ -130,166 +120,41 @@
 </dd>
 </dl>
 </dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="utils.histogram.histogram_routine_cpu1">
-<span class="sig-name descname"><span class="pre">histogram_routine_cpu1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lens_model_complete</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Numblocks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">macroimindx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nblock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nresidue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1corn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2corn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Lblock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs_lens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/histogram.html#histogram_routine_cpu1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.histogram.histogram_routine_cpu1" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>lens_model_complete</strong> – lens models of the system.</p></li>
-<li><p><strong>Numblocks</strong> – number of boxes with Nblock inside.</p></li>
-<li><p><strong>macroimindx</strong> – </p></li>
-<li><p><strong>Nblock</strong> – number of pixels in a box.</p></li>
-<li><p><strong>Nredisude</strong> – number of pixels not in a box.</p></li>
-<li><p><strong>x1corn</strong> – x-coordinate of the lower side of the window.</p></li>
-<li><p><strong>x2corn</strong> – y-coordinate of the left side of the window.</p></li>
-<li><p><strong>Lblock</strong> – size of the integration block.</p></li>
-<li><p><strong>binnum</strong> – total number of steps.</p></li>
-<li><p><strong>binmin</strong> – lower bound of the time integration.</p></li>
-<li><p><strong>binmax</strong> – upper bound of the time integration.</p></li>
-<li><p><strong>Scale</strong> – Einstein radius of the system.</p></li>
-<li><p><strong>kwargs_lens</strong> – arguments of the lens models.</p></li>
-<li><p><strong>y0</strong> – x-coordinate of source position.</p></li>
-<li><p><strong>y1</strong> – y-coordinate of source position.</p></li>
-<li><p><strong>dx</strong> – integration step of the window covering lens place.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>histogram of F(t).</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="utils.histogram.process_block">
-<span class="sig-name descname"><span class="pre">process_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/histogram.html#process_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.histogram.process_block" title="Link to this definition"></a></dt>
-<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="utils.histogram.histogram_routine_cpu">
 <span class="sig-name descname"><span class="pre">histogram_routine_cpu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lens_model_complete</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Numblocks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">macroimindx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nblock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nresidue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x1corn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2corn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Lblock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs_lens</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/histogram.html#histogram_routine_cpu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.histogram.histogram_routine_cpu" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Obtain F(t) by constructing histogram of time delay function within the given window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lens_model_complete</strong> – lens models of the system.</p></li>
+<li><p><strong>Numblocks</strong> – number of boxes with Nblock inside.</p></li>
+<li><p><strong>macroimindx</strong> – </p></li>
+<li><p><strong>Nblock</strong> – number of pixels in a box.</p></li>
+<li><p><strong>Nredisude</strong> – number of pixels not in a box.</p></li>
+<li><p><strong>x1corn</strong> – x-coordinate of the lower side of the window.</p></li>
+<li><p><strong>x2corn</strong> – y-coordinate of the left side of the window.</p></li>
+<li><p><strong>Lblock</strong> – size of the integration block.</p></li>
+<li><p><strong>binnum</strong> – total number of steps.</p></li>
+<li><p><strong>binmin</strong> – lower bound of the time integration.</p></li>
+<li><p><strong>binmax</strong> – upper bound of the time integration.</p></li>
+<li><p><strong>Scale</strong> – Einstein radius of the system.</p></li>
+<li><p><strong>kwargs_lens</strong> – arguments of the lens models.</p></li>
+<li><p><strong>y0</strong> – x-coordinate of source position.</p></li>
+<li><p><strong>y1</strong> – y-coordinate of source position.</p></li>
+<li><p><strong>dx</strong> – integration step of the window covering lens place.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>histogram of F(t).</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
-<section id="module-utils.utils">
-<span id="utils-utils-module"></span><h2>utils.utils module<a class="headerlink" href="#module-utils.utils" title="Link to this heading"></a></h2>
-<dl class="py function">
-<dt class="sig sig-object py" id="utils.utils.fitfuncF0">
-<span class="sig-name descname"><span class="pre">fitfuncF0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#fitfuncF0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.utils.fitfuncF0" title="Link to this definition"></a></dt>
-<dd><p>Fitting function of power law</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>t</strong> – independent variable.</p></li>
-<li><p><strong>F0</strong> – costant that the power law converges to.</p></li>
-<li><p><strong>a</strong> – parameter multiplying the variable.</p></li>
-<li><p><strong>c</strong> – exponent parameter to the variable.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>fitted power law function.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="utils.utils.fitfunc">
-<span class="sig-name descname"><span class="pre">fitfunc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#fitfunc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.utils.fitfunc" title="Link to this definition"></a></dt>
-<dd><p>Fitting function of power law</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>t</strong> – independent variable.</p></li>
-<li><p><strong>a</strong> – parameter multiplying the variable.</p></li>
-<li><p><strong>c</strong> – exponent parameter to the variable.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>fitted power law function.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="utils.utils.gridfromcorn">
-<span class="sig-name descname"><span class="pre">gridfromcorn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x1corn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2corn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#gridfromcorn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.utils.gridfromcorn" title="Link to this definition"></a></dt>
-<dd><p>Construct blocks for integration.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x1corn</strong> – x-coordinate of the left bottom corner of the block.</p></li>
-<li><p><strong>x2corn</strong> – y-coordinate of the left bottom corner of the block.</p></li>
-<li><p><strong>dx</strong> – steps of integration window.</p></li>
-<li><p><strong>num1</strong> – number of points on the horizontal side of the box.</p></li>
-<li><p><strong>num2</strong> – number of points on the vertical side of the box.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>numpy meshgrid of the box.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="utils.utils.coswindowback">
-<span class="sig-name descname"><span class="pre">coswindowback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#coswindowback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.utils.coswindowback" title="Link to this definition"></a></dt>
-<dd><p>Cosine apodization function for a percentage of points at
-the end of a timeseries of length len(data)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> – data to apodize.</p></li>
-<li><p><strong>percent</strong> – percentage of data being apodized.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>apodized results.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="utils.utils.F_tilde_extend">
-<span class="sig-name descname"><span class="pre">F_tilde_extend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F_tilde</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#F_tilde_extend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.utils.F_tilde_extend" title="Link to this definition"></a></dt>
-<dd><p>Extend the function with fitted power law.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ts</strong> – time series.</p></li>
-<li><p><strong>F_tilde</strong> – data.</p></li>
-<li><p><strong>kwargs</strong> – arguments for integration.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>extended ts and F_tilde.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="utils.utils.iwFourier">
-<span class="sig-name descname"><span class="pre">iwFourier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ft</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#iwFourier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.utils.iwFourier" title="Link to this definition"></a></dt>
-<dd><p>Fourier transform the time series data.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ts</strong> – time series</p></li>
-<li><p><strong>Ft</strong> – data</p></li>
-<li><p><strong>type2</strong> – boolean, if True, use the appropriate time step for type 2 image.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>sampling frequency and transformed data in frequency domain.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="utils.utils.smooth">
-<span class="sig-name descname"><span class="pre">smooth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_pts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#smooth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.utils.smooth" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
+<section id="utils-utils-module">
+<h2>utils.utils module<a class="headerlink" href="#utils-utils-module" title="Link to this heading"></a></h2>
 </section>
 <section id="module-utils">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-utils" title="Link to this heading"></a></h2>

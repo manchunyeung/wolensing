@@ -73,10 +73,8 @@
              
   <h1>Source code for lensmodels.potential</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="c1"># from numba import jit</span>
-<span class="kn">from</span> <span class="nn">.lens</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">wolensing.lensmodels.lens</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">jit</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span><span class="p">,</span> <span class="n">wraps</span>
 
 <div class="viewcode-block" id="geometrical">
 <a class="viewcode-back" href="../../lensmodels.html#lensmodels.potential.geometrical">[docs]</a>
@@ -89,10 +87,7 @@
 <span class="sd">    :return: geometrical part of the time delay.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-    <span class="c1"># if isinstance(x1, np.ndarray): </span>
     <span class="n">geo</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">[:,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
-    <span class="c1"># else:</span>
-    <span class="c1">#     geo = (1/2) * jnp.linalg.norm(x-y, axis=0)**2</span>
     <span class="k">return</span> <span class="n">geo</span></div>
 
 
@@ -120,15 +115,13 @@
             <span class="n">potential</span> <span class="o">+=</span> <span class="n">Psi_PM</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">x_center</span><span class="p">,</span> <span class="n">y_center</span><span class="p">,</span> <span class="n">thetaE</span><span class="p">)</span>  <span class="c1"># Make sure Psi_PM is JAX-compatible</span>
         <span class="k">elif</span> <span class="n">lens_type</span> <span class="o">==</span> <span class="s1">&#39;NFW&#39;</span><span class="p">:</span>
             <span class="n">potential</span> <span class="o">+=</span> <span class="n">Psi_NFW</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">x_center</span><span class="p">,</span> <span class="n">y_center</span><span class="p">,</span> <span class="n">thetaE</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">lens_type</span> <span class="o">==</span> <span class="s1">&#39;SIE&#39;</span><span class="p">:</span>
+            <span class="n">e1</span> <span class="o">=</span> <span class="n">lens_kwargs</span><span class="p">[</span><span class="s1">&#39;e1&#39;</span><span class="p">]</span>
+            <span class="n">e2</span> <span class="o">=</span> <span class="n">lens_kwargs</span><span class="p">[</span><span class="s1">&#39;e2&#39;</span><span class="p">]</span>
+            <span class="n">potential</span> <span class="o">+=</span> <span class="n">Psi_SIE</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">x_center</span><span class="p">,</span> <span class="n">y_center</span><span class="p">,</span> <span class="n">thetaE</span><span class="p">,</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">)</span>
 
     <span class="n">geo</span> <span class="o">=</span> <span class="n">geometrical</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-    <span class="c1"># if geo&lt;potential:</span>
-    <span class="c1">#     fermat_potential = geo</span>
-    <span class="c1"># else:</span>
     <span class="n">fermat_potential</span> <span class="o">=</span> <span class="n">geo</span> <span class="o">-</span> <span class="n">potential</span>
-    <span class="c1"># print(geo, &#39;geo&#39;)</span>
-    <span class="c1"># print(potential, &#39;pot&#39;)</span>
-    <span class="c1"># print(fermat_potential, &#39;fermat&#39;)</span>
     <span class="k">return</span> <span class="n">fermat_potential</span></div>
 
 

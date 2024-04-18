@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to wolensing’s documentation! &mdash; wolensing 0.0.0 documentation</title>
+  <title>wolensing &mdash; wolensing 0.0.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -63,7 +63,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Welcome to wolensing’s documentation!</li>
+      <li class="breadcrumb-item active">wolensing</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -73,8 +73,29 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="welcome-to-wolensing-s-documentation">
-<h1>Welcome to wolensing’s documentation!<a class="headerlink" href="#welcome-to-wolensing-s-documentation" title="Link to this heading"></a></h1>
+  <a class="reference external image-reference" href="https://github.com/manchunyeung/wolensing/actions/workflows/pytest.yaml"><img alt="https://github.com/manchunyeung/wolensing/actions/workflows/pytest.yaml/badge.svg" src="https://github.com/manchunyeung/wolensing/actions/workflows/pytest.yaml/badge.svg" /></a>
+<a class="reference external image-reference" href="https://github.com/mhycheung/jaxqualin/blob/main/LICENSE"><img alt="https://img.shields.io/badge/license-MIT-blue.svg" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
+<a class="reference external image-reference" href="https://manchunyeung.github.io/wolensing/"><img alt="https://badgen.net/badge/Read/thedoc/blue" src="https://badgen.net/badge/Read/thedoc/blue" /></a>
+<section id="wolensing">
+<h1>wolensing<a class="headerlink" href="#wolensing" title="Link to this heading"></a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">wolensing</span></code> is a software package to simulate lensed gravitational waves. It computes the full wave optics amplification factor within the range of LIGO sensitivity and is compatible with arbitrary lens models. <code class="docutils literal notranslate"><span class="pre">wolensing</span></code> also supports jax to accelerate the computation.</p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<p>First install <code class="docutils literal notranslate"><span class="pre">lensingGW</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">gitlab</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">gpagano</span><span class="o">/</span><span class="n">lensinggw</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">lensinggw</span>
+<span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">wolensing</span></code> can be installed with github or pip:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">wolensing</span>
+</pre></div>
+</div>
+</section>
+<section id="examples-notebooks">
+<h2>Examples Notebooks<a class="headerlink" href="#examples-notebooks" title="Link to this heading"></a></h2>
+<p>Examples notebooks showing the computation of wave optics amplification factor for different lens models and the plots of time delay contour are available at <a class="reference external" href="https://github.com/manchunyeung/wolensing">https://github.com/manchunyeung/wolensing</a></p>
+<hr class="docutils" />
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
@@ -86,6 +107,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="lensmodels.html">lensmodels package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="lensmodels.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lensmodels.html#module-lensmodels.hessian">lensmodels.hessian module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lensmodels.html#module-lensmodels.lens">lensmodels.lens module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lensmodels.html#module-lensmodels.potential">lensmodels.potential module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lensmodels.html#module-lensmodels">Module contents</a></li>
@@ -100,12 +122,13 @@
 <li class="toctree-l1"><a class="reference internal" href="utils.html">utils package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="utils.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html#module-utils.histogram">utils.histogram module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html#module-utils.utils">utils.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html#utils-utils-module">utils.utils module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html#module-utils">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </div>
+</section>
 </section>
 <section id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>

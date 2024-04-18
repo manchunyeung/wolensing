@@ -72,9 +72,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for lensmodels.lens</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+<span></span><span class="kn">import</span> <span class="nn">jax</span>
+<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">jit</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">hyp2f1</span>
 
 <div class="viewcode-block" id="Psi_SIS">
 <a class="viewcode-back" href="../../lensmodels.html#lensmodels.lens.Psi_SIS">[docs]</a>
@@ -121,34 +123,13 @@
 
 <div class="viewcode-block" id="derivatives">
 <a class="viewcode-back" href="../../lensmodels.html#lensmodels.lens.derivatives">[docs]</a>
-<span class="k">def</span> <span class="nf">derivatives</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the deflection angles.</span>
-
-<span class="sd">    :param x: x-coordinate in image plane relative to center (major axis)</span>
-<span class="sd">    :param y: y-coordinate in image plane relative to center (minor axis)</span>
-<span class="sd">    :param b: critical radius</span>
-<span class="sd">    :param t: projected power-law slope</span>
-<span class="sd">    :param q: axis ratio</span>
-<span class="sd">    :return: f_x, f_y</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># elliptical radius, eq. (5)</span>
-    <span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
-    <span class="n">Z</span><span class="o">.</span><span class="n">real</span> <span class="o">=</span> <span class="n">q</span> <span class="o">*</span> <span class="n">x</span>
-    <span class="n">Z</span><span class="o">.</span><span class="n">imag</span> <span class="o">=</span> <span class="n">y</span>
-    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
-    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="mf">0.000000001</span><span class="p">)</span>
-
-    <span class="c1"># angular dependency with extra factor of R, eq. (23)</span>
-    <span class="n">R_omega</span> <span class="o">=</span> <span class="n">Z</span> <span class="o">*</span> <span class="n">hyp2f1</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">t</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">t</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">q</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Z</span> <span class="o">/</span> <span class="n">Z</span><span class="o">.</span><span class="n">conj</span><span class="p">()))</span>
-
-    <span class="c1"># deflection, eq. (22)</span>
-    <span class="n">alpha</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span> <span class="o">/</span> <span class="n">R</span><span class="p">)</span> <span class="o">**</span> <span class="n">t</span> <span class="o">*</span> <span class="n">R_omega</span>
-
-    <span class="c1"># return real and imaginary part</span>
-    <span class="n">alpha_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">alpha</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">posinf</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mi">10</span><span class="p">,</span> <span class="n">neginf</span><span class="o">=-</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">10</span><span class="p">))</span>
-    <span class="n">alpha_imag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">alpha</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">posinf</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mi">10</span><span class="p">,</span> <span class="n">neginf</span><span class="o">=-</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">10</span><span class="p">))</span>
-
-    <span class="k">return</span> <span class="n">alpha_real</span><span class="p">,</span> <span class="n">alpha_imag</span></div>
+<span class="nd">@jit</span>
+<span class="k">def</span> <span class="nf">derivatives</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns df/dx and df/dy of the function.&quot;&quot;&quot;</span>
+    <span class="n">psi</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">q</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">s</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">f_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">/</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">q</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">q</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span> <span class="o">/</span> <span class="p">(</span><span class="n">psi</span> <span class="o">+</span> <span class="n">s</span><span class="p">)))</span>
+    <span class="n">f_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">/</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">q</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">arctanh</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">q</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">y</span> <span class="o">/</span> <span class="p">(</span><span class="n">psi</span> <span class="o">+</span> <span class="n">q</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">s</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">f_x</span><span class="p">,</span> <span class="n">f_y</span></div>
 
 
 <div class="viewcode-block" id="ellipticity2phi_q">
@@ -161,9 +142,9 @@
 <span class="sd">    :param e2: eccentricity in xy-direction</span>
 <span class="sd">    :return: angle in radian, axis ratio (minor/major)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">e2</span><span class="p">,</span> <span class="n">e1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">e1</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">e2</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="mf">0.9999</span><span class="p">)</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">e2</span><span class="p">,</span> <span class="n">e1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">e1</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">e2</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="mf">0.9999</span><span class="p">)</span>
     <span class="n">q</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">phi</span><span class="p">,</span> <span class="n">q</span></div>
 
@@ -179,24 +160,44 @@
 <span class="sd">    :param angle: angle in radians</span>
 <span class="sd">    :return: x points and y points rotated ccw by angle theta</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">xcoords</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span> <span class="o">+</span> <span class="n">ycoords</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="o">-</span><span class="n">xcoords</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span> <span class="o">+</span> <span class="n">ycoords</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">xcoords</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span> <span class="o">+</span> <span class="n">ycoords</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="o">-</span><span class="n">xcoords</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span> <span class="o">+</span> <span class="n">ycoords</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Psi_SIE">
 <a class="viewcode-back" href="../../lensmodels.html#lensmodels.lens.Psi_SIE">[docs]</a>
-<span class="k">def</span> <span class="nf">Psi_SIE</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">x_center</span><span class="p">,</span> <span class="n">y_center</span><span class="p">,</span> <span class="n">thetaE</span><span class="p">,</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">Psi_SIE</span><span class="p">(</span><span class="n">X1</span><span class="p">,</span> <span class="n">X2</span><span class="p">,</span> <span class="n">x_center</span><span class="p">,</span> <span class="n">y_center</span><span class="p">,</span> <span class="n">theta_E</span><span class="p">,</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the Psi of SIE model.</span>
+<span class="sd">    </span>
+<span class="sd">    :param X1: x-coordinate in image plane relative to center</span>
+<span class="sd">    :param X2: y-coordinate in image plane relative to center</span>
+<span class="sd">    :param x_center: x_coordinate of the window center</span>
+<span class="sd">    :param y_center: y_coordinate of the window center</span>
+<span class="sd">    :param thetaE: Einstein radius of the given lens model</span>
+<span class="sd">    :param e1: ellipticity</span>
+<span class="sd">    :param e2: ellipticity</span>
+<span class="sd">    :return: deflecetion potential of SIE model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">gamma</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">t</span> <span class="o">=</span> <span class="n">gamma</span><span class="o">-</span><span class="mi">1</span>
     <span class="n">phi_G</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">ellipticity2phi_q</span><span class="p">(</span><span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">)</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="n">theta_E</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+    <span class="n">theta_E</span> <span class="o">=</span> <span class="n">theta_E</span> <span class="o">/</span> <span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mf">1.</span><span class="o">+</span><span class="n">q</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">q</span><span class="p">)))</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">theta_E</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">1</span><span class="o">+</span><span class="n">q</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">s_scale</span> <span class="o">=</span> <span class="mf">0.0000000001</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">s_scale</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">q</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">q</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
 
     <span class="n">x_shift</span> <span class="o">=</span> <span class="n">X1</span><span class="o">-</span><span class="n">x_center</span>
-    <span class="n">y_shift</span> <span class="o">=</span> <span class="n">X2</span><span class="o">-</span><span class="n">y_center</span>
-       
-    <span class="n">x_rotate</span> <span class="o">=</span> <span class="n">rotate</span><span class="p">(</span><span class="n">x_shift</span><span class="p">,</span> <span class="n">y_shift</span><span class="p">,</span> <span class="n">phi_G</span><span class="p">)</span>
-    <span class="n">alpha_x</span><span class="p">,</span> <span class="n">alpha_y</span> <span class="o">=</span> <span class="n">derivatives</span><span class="p">(</span><span class="n">x_rotate</span><span class="p">,</span> <span class="n">y_rotate</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
-    <span class="n">Psi</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">alpha_x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">alpha_y</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">Psi</span></div>
+    <span class="n">y_shift</span> <span class="o">=</span> <span class="n">X2</span><span class="o">-</span><span class="n">y_center</span>   
+    <span class="n">x_rotate</span><span class="p">,</span> <span class="n">y_rotate</span> <span class="o">=</span> <span class="n">rotate</span><span class="p">(</span><span class="n">x_shift</span><span class="p">,</span> <span class="n">y_shift</span><span class="p">,</span> <span class="n">phi_G</span><span class="p">)</span>
+    
+    <span class="n">psi</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">q</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">s</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">x_rotate</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">y_rotate</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">q</span><span class="o">&gt;=</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="mf">0.99999999</span>
+    <span class="n">alpha_x</span><span class="p">,</span> <span class="n">alpha_y</span> <span class="o">=</span> <span class="n">derivatives</span><span class="p">(</span><span class="n">x_rotate</span><span class="p">,</span> <span class="n">y_rotate</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">q</span><span class="p">)</span>
+    
+    <span class="n">f_</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_rotate</span> <span class="o">*</span> <span class="n">alpha_x</span> <span class="o">+</span> <span class="n">y_rotate</span> <span class="o">*</span> <span class="n">alpha_y</span> <span class="o">-</span> <span class="n">b</span> <span class="o">*</span> <span class="n">s</span> <span class="o">*</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">log</span><span class="p">((</span><span class="n">psi</span> <span class="o">+</span> <span class="n">s</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">q</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">x_rotate</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">f_</span></div>
+
 
 
 <div class="viewcode-block" id="Psi_NFW">
@@ -212,10 +213,6 @@
     
     <span class="n">x_shift</span> <span class="o">=</span> <span class="n">X1</span><span class="o">-</span><span class="n">x_center</span>
     <span class="n">y_shift</span> <span class="o">=</span> <span class="n">X2</span><span class="o">-</span><span class="n">y_center</span>
-    <span class="c1"># if isinstance(x_shift, ):</span>
-    <span class="c1"># if x_shift == 0:</span>
-    <span class="c1">#     if x_shift == y_shift:</span>
-    <span class="c1">#         x_shift = 0.01</span>
     <span class="n">shifted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x_shift</span><span class="p">,</span> <span class="n">y_shift</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span> 
     <span class="n">x_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">shifted</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     

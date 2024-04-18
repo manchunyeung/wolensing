@@ -4,6 +4,14 @@ lensmodels package
 Submodules
 ----------
 
+lensmodels.hessian module
+-------------------------
+
+.. automodule:: lensmodels.hessian
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 lensmodels.lens module
 ----------------------
 

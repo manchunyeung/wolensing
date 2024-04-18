@@ -47,6 +47,12 @@
 <li class="toctree-l1"><a class="reference internal" href="amplification_factor.html">amplification_factor package</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">lensmodels package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-lensmodels.hessian">lensmodels.hessian module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#lensmodels.hessian.Hessian_Td"><code class="docutils literal notranslate"><span class="pre">Hessian_Td()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lensmodels.hessian.Hessian_SIS"><code class="docutils literal notranslate"><span class="pre">Hessian_SIS()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lensmodels.hessian.Hessian_PM"><code class="docutils literal notranslate"><span class="pre">Hessian_PM()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#module-lensmodels.lens">lensmodels.lens module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#lensmodels.lens.Psi_SIS"><code class="docutils literal notranslate"><span class="pre">Psi_SIS()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#lensmodels.lens.Psi_PM"><code class="docutils literal notranslate"><span class="pre">Psi_PM()</span></code></a></li>
@@ -98,6 +104,63 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
+<section id="module-lensmodels.hessian">
+<span id="lensmodels-hessian-module"></span><h2>lensmodels.hessian module<a class="headerlink" href="#module-lensmodels.hessian" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="lensmodels.hessian.Hessian_Td">
+<span class="sig-name descname"><span class="pre">Hessian_Td</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lens_model_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lensmodels/hessian.html#Hessian_Td"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lensmodels.hessian.Hessian_Td" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lens_model_list</strong> – list of lens models.</p></li>
+<li><p><strong>x</strong> – x-coordinates of position on lens plane.</p></li>
+<li><p><strong>y</strong> – y-coordinates of position on lens plane.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Kwargs<span class="colon">:</span></dt>
+<dd class="field-even"><p>arguemnts for the lens models.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>independent components of hessian matrix of time delay function.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lensmodels.hessian.Hessian_SIS">
+<span class="sig-name descname"><span class="pre">Hessian_SIS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thetaE</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lensmodels/hessian.html#Hessian_SIS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lensmodels.hessian.Hessian_SIS" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – x-coordinates of position on lens plane with respect to the lens position.</p></li>
+<li><p><strong>y</strong> – y-coordinates of position on lens plane with respect to the lens position.</p></li>
+<li><p><strong>thetaE</strong> – Einstein radius of the lens.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>independent components of hessian matrix of SIS profile.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="lensmodels.hessian.Hessian_PM">
+<span class="sig-name descname"><span class="pre">Hessian_PM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thetaE</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lensmodels/hessian.html#Hessian_PM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lensmodels.hessian.Hessian_PM" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – x-coordinates of position on lens plane with respect to the lens position.</p></li>
+<li><p><strong>y</strong> – y-coordinates of position on lens plane with respect to the lens position.</p></li>
+<li><p><strong>thetaE</strong> – Einstein radius of the lens.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>independent components of hessian matrix of PM profile.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="module-lensmodels.lens">
 <span id="lensmodels-lens-module"></span><h2>lensmodels.lens module<a class="headerlink" href="#module-lensmodels.lens" title="Link to this heading"></a></h2>
 <dl class="py function">
@@ -142,22 +205,8 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lensmodels.lens.derivatives">
-<span class="sig-name descname"><span class="pre">derivatives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lensmodels/lens.html#derivatives"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lensmodels.lens.derivatives" title="Link to this definition"></a></dt>
-<dd><p>Returns the deflection angles.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> – x-coordinate in image plane relative to center (major axis)</p></li>
-<li><p><strong>y</strong> – y-coordinate in image plane relative to center (minor axis)</p></li>
-<li><p><strong>b</strong> – critical radius</p></li>
-<li><p><strong>t</strong> – projected power-law slope</p></li>
-<li><p><strong>q</strong> – axis ratio</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>f_x, f_y</p>
-</dd>
-</dl>
+<span class="sig-name descname"><span class="pre">derivatives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lensmodels/lens.html#derivatives"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lensmodels.lens.derivatives" title="Link to this definition"></a></dt>
+<dd><p>Returns df/dx and df/dy of the function.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -196,8 +245,25 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lensmodels.lens.Psi_SIE">
-<span class="sig-name descname"><span class="pre">Psi_SIE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thetaE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lensmodels/lens.html#Psi_SIE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lensmodels.lens.Psi_SIE" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">Psi_SIE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta_E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/lensmodels/lens.html#Psi_SIE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#lensmodels.lens.Psi_SIE" title="Link to this definition"></a></dt>
+<dd><p>Return the Psi of SIE model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X1</strong> – x-coordinate in image plane relative to center</p></li>
+<li><p><strong>X2</strong> – y-coordinate in image plane relative to center</p></li>
+<li><p><strong>x_center</strong> – x_coordinate of the window center</p></li>
+<li><p><strong>y_center</strong> – y_coordinate of the window center</p></li>
+<li><p><strong>thetaE</strong> – Einstein radius of the given lens model</p></li>
+<li><p><strong>e1</strong> – ellipticity</p></li>
+<li><p><strong>e2</strong> – ellipticity</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>deflecetion potential of SIE model</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="lensmodels.lens.Psi_NFW">

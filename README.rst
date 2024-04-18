@@ -6,7 +6,7 @@
     :target: https://github.com/mhycheung/jaxqualin/blob/main/LICENSE
 
 .. image:: https://badgen.net/badge/Read/the doc/blue
-    :target: https://manchunyeung.github.io/wolensing/
+    :target: https://wolensing.readthedocs.io/en/latest/
 
 wolensing
 =========
@@ -15,13 +15,6 @@ wolensing
 
 Installation
 ------------
-
-First install ``lensingGW``::
-
-
-  git clone https://gitlab.com/gpagano/lensinggw.git
-  cd lensinggw
-  python setup.py install
 
 ``wolensing`` can be installed with github or pip::
 
