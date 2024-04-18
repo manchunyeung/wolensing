@@ -30,6 +30,18 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - uses: actions/checkout@v4
+    - name: Dynamic versioning with date and time
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        VERSION=$(v0.0.3)
+        echo "__version__ = \"$VERSION\"" > wolensing/__about__.py
+        git add wolensing/__about__.py
+        git commit -m "Versioning: $VERSION"
+        git tag $VERSION
+        git push
+        git push --tags
+    - uses: actions/checkout@v4
     - name: Install dependencies
       run: |
         python -m pip install wheel setuptools pip --upgrade

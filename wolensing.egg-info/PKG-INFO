@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: wolensing
-Version: 0.0.2
+Version: 0.0.3
 Summary: A package for computing wave optics amplification factor.
 Author-email: "Simon Man-Chun Yeung, Mark Ho-Yeuk Cheung" <yeungm@uwm.edu>
 Project-URL: Homepage, https://github.com/manchunyeung/wolensing
@@ -16,11 +16,13 @@ Requires-Dist: lenstronomy
 Requires-Dist: jax
 Requires-Dist: jaxlib
 Requires-Dist: matplotlib
-Requires-Dist: numpy>=1.18.1
+Requires-Dist: numpy>=1.21
 Requires-Dist: fast_histogram
 Requires-Dist: scipy>1.4.1
 Requires-Dist: pycbc
 Requires-Dist: tqdm
+Requires-Dist: mpmath
+Requires-Dist: extension-helpers
 
 
 .. image:: https://github.com/manchunyeung/wolensing/actions/workflows/pytest.yaml/badge.svg
@@ -30,7 +32,7 @@ Requires-Dist: tqdm
     :target: https://github.com/mhycheung/jaxqualin/blob/main/LICENSE
 
 .. image:: https://badgen.net/badge/Read/the doc/blue
-    :target: https://manchunyeung.github.io/wolensing/
+    :target: https://wolensing.readthedocs.io/en/latest/
 
 wolensing
 =========
@@ -39,13 +41,6 @@ wolensing
 
 Installation
 ------------
-
-First install ``lensingGW``::
-
-
-  git clone https://gitlab.com/gpagano/lensinggw.git
-  cd lensinggw
-  python setup.py install
 
 ``wolensing`` can be installed with github or pip::
 
