@@ -1,15 +1,5 @@
-[tool.setuptools]
-py-modules = ["wolensing"]
-
-[build-system]
-requires = [
-  "setuptools >= 40.9.0",
-  "wheel",
-]
-build-backend = "setuptools.build_meta"
-
 [project]
-version = "0.0.1"
+version = "0.0.3"
 name = "wolensing"
 authors = [
   { name="Simon Man-Chun Yeung, Mark Ho-Yeuk Cheung", email="yeungm@uwm.edu" },
@@ -39,4 +29,13 @@ dependencies = [
 [project.urls]
 "Homepage" = "https://github.com/manchunyeung/wolensing"
 
+[tool.setuptools]
+py-modules = ["wolensing"]
+
+[build-system]
+requires = [
+  "setuptools >= 40.9.0",
+  "wheel",
+]
+build-backend = "setuptools.build_meta"
 
