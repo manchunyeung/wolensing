@@ -1,5 +1,4 @@
 import numpy as np
-import warnings
 
 def Hessian_Td(lens_model_list, x, y, kwargs):
     '''

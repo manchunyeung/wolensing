@@ -3,7 +3,6 @@ from scipy.fft import fftfreq
 from scipy.fftpack import fft
 import jax.numpy as jnp
 from jax import jit
-from functools import partial
 
 from wolensing.lensmodels.hessian import Hessian_Td
 
@@ -147,3 +146,9 @@ def Morse_indices(lens_model_list, xs, ys, kwargs):
         warnings.warn('The number of type 1 and type 2 images should match.')
         
     return ns
+
+def compute_geometrical(geofs, mus, tds, ns):
+    Fmag = 0
+    for i in range(len(mus)):
+        Fmag += np.sqrt(np.abs(mus[i]))* np.exp(1j*np.pi*(2.*geofs*tds[i] - ns[i]))
+    return Fmag

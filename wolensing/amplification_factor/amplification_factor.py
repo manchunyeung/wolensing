@@ -4,12 +4,12 @@ from scipy.optimize import curve_fit
 from fast_histogram import histogram1d
 from scipy.fft import fftfreq
 from scipy.fftpack import fft
-import lensinggw.constants.constants as const
 from tqdm import trange, tqdm
 
 from wolensing.utils.utils import *
 from wolensing.utils.histogram import *
 from wolensing.lensmodels.potential import potential
+import wolensing.utils.constants as const 
 
 G = const.G  # gravitational constant [m^3 kg^-1 s^-2]
 c = const.c  # speed of light [m/s]
@@ -287,8 +287,7 @@ class amplification_factor(object):
         self._geofs = np.linspace(fs[0], upper_lim, num_interp)
         
         ns = Morse_indices(self._lens_model_list, Img_ra, Img_dec, self._kwargs_lens)
-        from lensinggw.amplification_factor.amplification_factor import amplification_from_data
-        self._geoFws = amplification_from_data(self._geofs, mus, tds, ns)
+        self._geoFws = compute_geometrical(self._geofs, mus, tds, ns)
         
         return self._geofs, self._geoFws
     
