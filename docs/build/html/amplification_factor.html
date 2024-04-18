@@ -46,20 +46,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">amplification_factor package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-amplification_factor.amplification_factor">amplification_factor.amplification_factor module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#amplification_factor.amplification_factor.amplification_factor"><code class="docutils literal notranslate"><span class="pre">amplification_factor</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#amplification_factor.amplification_factor.amplification_factor.__init__"><code class="docutils literal notranslate"><span class="pre">amplification_factor.__init__()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#amplification_factor.amplification_factor.amplification_factor.integrator"><code class="docutils literal notranslate"><span class="pre">amplification_factor.integrator()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#amplification_factor.amplification_factor.amplification_factor.fourier"><code class="docutils literal notranslate"><span class="pre">amplification_factor.fourier()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#amplification_factor.amplification_factor.amplification_factor.importor"><code class="docutils literal notranslate"><span class="pre">amplification_factor.importor()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#amplification_factor.amplification_factor.amplification_factor.plot_time"><code class="docutils literal notranslate"><span class="pre">amplification_factor.plot_time()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#amplification_factor.amplification_factor.amplification_factor.plot_freq"><code class="docutils literal notranslate"><span class="pre">amplification_factor.plot_freq()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#amplification_factor.amplification_factor.amplification_factor.geometrical_optics"><code class="docutils literal notranslate"><span class="pre">amplification_factor.geometrical_optics()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#amplification_factor.amplification_factor.amplification_factor.concatenate"><code class="docutils literal notranslate"><span class="pre">amplification_factor.concatenate()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#amplification-factor-amplification-factor-module">amplification_factor.amplification_factor module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-amplification_factor">Module contents</a></li>
 </ul>
 </li>
@@ -97,143 +84,8 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="module-amplification_factor.amplification_factor">
-<span id="amplification-factor-amplification-factor-module"></span><h2>amplification_factor.amplification_factor module<a class="headerlink" href="#module-amplification_factor.amplification_factor" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="amplification_factor.amplification_factor.amplification_factor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">amplification_factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lens_model_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs_lens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs_macro</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amplification_factor/amplification_factor.html#amplification_factor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amplification_factor.amplification_factor.amplification_factor" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="amplification_factor.amplification_factor.amplification_factor.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lens_model_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs_lens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs_macro</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amplification_factor/amplification_factor.html#amplification_factor.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amplification_factor.amplification_factor.amplification_factor.__init__" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>lens_model_list</strong> – list of lens models</p></li>
-<li><p><strong>kwargs_lens</strong> – arguments for integrating the diffraction integral</p></li>
-<li><p><strong>kwargs_macro</strong> – arguments of the macromodel</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="amplification_factor.amplification_factor.amplification_factor.integrator">
-<span class="sig-name descname"><span class="pre">integrator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amplification_factor/amplification_factor.html#amplification_factor.integrator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amplification_factor.amplification_factor.amplification_factor.integrator" title="Link to this definition"></a></dt>
-<dd><p>Computes the amplification facator F(f) by constructing the histogram in time domain. Defines the integration window of lens plane first.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>gpu</strong> – boolean, if True, use gpu computing for integration.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>amplification factor in time domain.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="amplification_factor.amplification_factor.amplification_factor.fourier">
-<span class="sig-name descname"><span class="pre">fourier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amplification_factor/amplification_factor.html#amplification_factor.fourier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amplification_factor.amplification_factor.amplification_factor.fourier" title="Link to this definition"></a></dt>
-<dd><p>Compute the amplification factor in frequency domain</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>freq_end</strong> – higher end of the frequency series. Default to be 2000.</p></li>
-<li><p><strong>type2</strong> – boolean, if True, switch to fourier transform of  microlensing of a type 2 image.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>frequency array and amplification factor F(f) of wave optics.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="amplification_factor.amplification_factor.amplification_factor.importor">
-<span class="sig-name descname"><span class="pre">importor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F_tilde</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Fws</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amplification_factor/amplification_factor.html#amplification_factor.importor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amplification_factor.amplification_factor.amplification_factor.importor" title="Link to this definition"></a></dt>
-<dd><p>Imports the amplification factor</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>ts</strong> – time series in dimensionless unit</p></li>
-<li><p><strong>F_tilde</strong> – time domain amplification factor</p></li>
-<li><p><strong>ws</strong> – sampling frequency in unit of angular frequency</p></li>
-<li><p><strong>Fws</strong> – frequency domain amplification factor</p></li>
-<li><p><strong>time</strong> – boolean, if True, plot time domain amplification factor</p></li>
-<li><p><strong>freq</strong> – boolean, if True, plot frequency domain amplification factor</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="amplification_factor.amplification_factor.amplification_factor.plot_time">
-<span class="sig-name descname"><span class="pre">plot_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">saveplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amplification_factor/amplification_factor.html#amplification_factor.plot_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amplification_factor.amplification_factor.amplification_factor.plot_time" title="Link to this definition"></a></dt>
-<dd><p>Plots the amplification factor in time domain</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>saveplot</strong> – where the plot is saved.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>axes class of matplotlib representing the plot.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="amplification_factor.amplification_factor.amplification_factor.plot_freq">
-<span class="sig-name descname"><span class="pre">plot_freq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">macromu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveplot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amplification_factor/amplification_factor.html#amplification_factor.plot_freq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amplification_factor.amplification_factor.amplification_factor.plot_freq" title="Link to this definition"></a></dt>
-<dd><p>Plots the amplification factor against frequency in semilogx</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>macromu</strong> – macro magnification of the strong lensed image. Default to be one.</p></li>
-<li><p><strong>freq_end</strong> – higher end of the frequency range</p></li>
-<li><p><strong>abs</strong> – boolean, if True, compute the absolute value of the amplification.</p></li>
-<li><p><strong>pha</strong> – boolean, if True, compute the phase of the amplification.</p></li>
-<li><p><strong>saveplot</strong> – where the plot is saved.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>axes class of matplotlib representing the plot.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="amplification_factor.amplification_factor.amplification_factor.geometrical_optics">
-<span class="sig-name descname"><span class="pre">geometrical_optics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Img_ra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Img_dec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amplification_factor/amplification_factor.html#amplification_factor.geometrical_optics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amplification_factor.amplification_factor.amplification_factor.geometrical_optics" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>mus</strong> – magnifications of images.</p></li>
-<li><p><strong>tds</strong> – time delays of images.</p></li>
-<li><p><strong>Img_ra</strong> – right ascension of images relative to the center of lens plane.</p></li>
-<li><p><strong>Img_dec</strong> – declination of images relative to the center of lens plane.</p></li>
-<li><p><strong>upper_lim</strong> – desired upper limit of freqeuncy range of geometrical optics.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>frequency array and amplification factor F(f) of geometrical optics.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="amplification_factor.amplification_factor.amplification_factor.concatenate">
-<span class="sig-name descname"><span class="pre">concatenate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transfreq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/amplification_factor/amplification_factor.html#amplification_factor.concatenate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#amplification_factor.amplification_factor.amplification_factor.concatenate" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>transfreq</strong> – transitional frequency of wave optics to geometrical optics.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>concatenated frequency array and amplification factor F(f).</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+<section id="amplification-factor-amplification-factor-module">
+<h2>amplification_factor.amplification_factor module<a class="headerlink" href="#amplification-factor-amplification-factor-module" title="Link to this heading"></a></h2>
 </section>
 <section id="module-amplification_factor">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-amplification_factor" title="Link to this heading"></a></h2>

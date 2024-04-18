@@ -6,3 +6,5 @@ lenstronomy
 scipy
 tqdm
 fast_histogram
+mpmath
+wolensing
