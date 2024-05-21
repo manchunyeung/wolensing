@@ -30,14 +30,14 @@ imindex = 0
 y0, y1 = 0.1, 0 # source position
 l0, l1 = 0.05, 0 # lens position
 
-ym = 100
+ym = 1.
 angle = np.radians(float(0.))
 zS = 1.0
 zL = 0.5
 
 # masses
 mL1 = 1 * 1e10
-mL2 = 100
+mL2 = 50
 mtot = mL1 + mL2
 
 # convert to radians
@@ -120,11 +120,11 @@ thetaE3 = param_processing(zL, zS, mL3)
 kwargs_macro = {'source_pos_x': beta0,
                 'source_pos_y': beta1,
                 'theta_E': thetaE,
-                'mu': np.abs(Macromu[imindex]),
+                'mu': np.abs(Macromus[imindex]),
                }
 
 kwargs_integrator = {'InputScaled': False,
-                     'PixelNum': int(args.pixel),
+                     'PixelNum': int(300000),
                      'PixelBlockMax': 2000,
                      'WindowSize': 10.*200*thetaE3,
                      'WindowCenterX': MacroImg_ra[imindex],
@@ -140,4 +140,9 @@ kwargs_integrator = {'InputScaled': False,
 
 amplification = af.amplification_factor(lens_model_list=lens_model_list, kwargs_lens=kwargs_lens_list, kwargs_macro=kwargs_macro, **kwargs_integrator)
 ts, Ft = amplification.integrator(gpu=True)
+amplification._ts = np.array(ts)
+amplification._F_tilde = np.array(Ft)
 ws, Fws = amplification.fourier(type2=True)
+
+np.savetxt('./data/t2_50ws.txt', ws)
+np.savetxt('./data/t2_50Fws.txt', Fws)
