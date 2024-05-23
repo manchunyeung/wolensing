@@ -124,6 +124,11 @@ class amplification_factor(object):
         self._ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
         if binnumlength < len(self._ts):
             self._ts, self._F_tilde = self._ts[:binnumlength], self._F_tilde[:binnumlength]
+
+        if isinstance(self._ts, jnp.ndarray):
+            self._ts = np.array(self._ts)
+            self._F_tilde = np.array(self._F_tilde)
+
         return self._ts, self._F_tilde
 
     def fourier(self, freq_end=2000, type2=False):
@@ -277,7 +282,7 @@ class amplification_factor(object):
         plt.show()
         return ax 
 
-    def geometrical_optics(self, mus, tds, Img_ra, Img_dec, upper_lim = 3000):
+    def geometrical_optics(self, mus, tds, Img_ra, Img_dec, upper_lim = 3000, type2=False):
         """
         :param mus: magnifications of images.
         :param tds: time delays of images.
@@ -291,12 +296,17 @@ class amplification_factor(object):
         
         num_interp = int((upper_lim-fs[0])/fs_grid) 
         self._geofs = np.linspace(fs[0], upper_lim, num_interp)
-        
+
         #from wolensing.utils.utils import Morse_indices
         ns = Morse_indices(self._lens_model_list, Img_ra, Img_dec, self._kwargs_lens)
         from lensinggw.amplification_factor.amplification_factor import amplification_from_data
         self._geoFws = amplification_from_data(self._geofs, mus, tds, ns)
         
+        if type2:
+            index = np.argmin(tds)
+            overall_phase = np.exp(-1 * 2 * np.pi * 1j * (tds[index]) * fs)
+            self._geoFws *= overall_phase
+
         return self._geofs, self._geoFws
     
     def concatenate(self, transfreq = 1000):
