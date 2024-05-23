@@ -112,6 +112,12 @@ class amplification_factor(object):
         self._ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
         if binnumlength < len(self._ts):
             self._ts, self._F_tilde = self._ts[:binnumlength], self._F_tilde[:binnumlength]
+
+        import jax.numpy as jnp
+        if isinstance(self._ts, jnp.ndarray):
+            self._ts = np.array(self._ts)
+            self._F_tilde = np.array(self._F_tilde)
+
         return self._ts, self._F_tilde
 
     def fourier(self, freq_end=2000, type2=False):
@@ -270,7 +276,7 @@ class amplification_factor(object):
         plt.show()
         return ax 
 
-    def geometrical_optics(self, mus, tds, Img_ra, Img_dec, upper_lim = 3000):
+    def geometrical_optics(self, mus, tds, Img_ra, Img_dec, upper_lim = 3000, type2 = False):
         """
         :param mus: magnifications of images.
         :param tds: time delays of images.
@@ -287,6 +293,11 @@ class amplification_factor(object):
         
         ns = Morse_indices(self._lens_model_list, Img_ra, Img_dec, self._kwargs_lens)
         self._geoFws = compute_geometrical(self._geofs, mus, tds, ns)
+
+        if type2:
+            index = np.argmin(tds)
+            overall_phase = np.exp(-1 * 2 * np.pi * 1j * (tds[index]) * fs)
+            self._geoFws *= overall_phase
         
         return self._geofs, self._geoFws
     
