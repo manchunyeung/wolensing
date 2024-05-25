@@ -114,7 +114,7 @@ class amplification_factor(object):
             self._ts, self._F_tilde = self._ts[:binnumlength], self._F_tilde[:binnumlength]
 
         import jax.numpy as jnp
-        if isinstance(self._ts, jnp.ndarray):
+        if isinstance(self._ts, jnp.ndarray) or isinstance(self._F_tilde, jnp.ndarray):
             self._ts = np.array(self._ts)
             self._F_tilde = np.array(self._F_tilde)
 
