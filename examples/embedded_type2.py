@@ -1,10 +1,10 @@
 ## has to be removed hardcoded part !/users/man-chun.yeung/microlensing/env/bin/python3
 
-import sys
-import os
-path = os.getcwd()
-dir = os.path.abspath(os.path.join(path, os.pardir))
-sys.path.append(dir)
+# import sys
+# import os
+# path = os.getcwd()
+# dir = os.path.abspath(os.path.join(path, os.pardir))
+# sys.path.append(dir)
 
 from jax import config
 config.update("jax_enable_x64", True)
@@ -140,8 +140,8 @@ kwargs_integrator = {'InputScaled': False,
 
 amplification = af.amplification_factor(lens_model_list=lens_model_list, kwargs_lens=kwargs_lens_list, kwargs_macro=kwargs_macro, **kwargs_integrator)
 ts, Ft = amplification.integrator(gpu=True)
-amplification._ts = np.array(ts)
-amplification._F_tilde = np.array(Ft)
+# amplification._ts = np.array(ts)
+# amplification._F_tilde = np.array(Ft)
 ws, Fws = amplification.fourier(type2=True)
 
 np.savetxt('./data/t2_50ws.txt', ws)

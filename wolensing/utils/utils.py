@@ -3,9 +3,8 @@ from scipy.fft import fftfreq
 from scipy.fftpack import fft
 import jax.numpy as jnp
 from jax import jit
-from functools import partial
-
 from wolensing.lensmodels.hessian import Hessian_Td
+import wolensing.utils.constants as const
 
 def fitfuncF0(t, F0, a, c):
     '''
@@ -142,8 +141,41 @@ def Morse_indices(lens_model_list, xs, ys, kwargs):
             ns[i] = 1
         else:
             raise Exception('Inconclusive Hessian Matrix.')
-            
-    if xs.shape[0]%2==0 and np.count_nonzero(ns==0.5) != np.count_nonzero(ns==0):
-        warnings.warn('The number of type 1 and type 2 images should match.')
         
     return ns
+
+def compute_geometrical(geofs, mus, tds, ns):
+    '''
+    :param geofs: frequency series to compute geometrical optics
+    :param mus: magnifications of images
+    :param tds: time delays of images
+    :param ns: morse indices of images
+    :return: geometrical optics magnification factor
+    '''
+
+    Fmag = 0
+    for i in range(len(mus)):
+        Fmag += np.sqrt(np.abs(mus[i]))* np.exp(1j*np.pi*(2.*geofs*tds[i] - ns[i]))
+    return Fmag
+
+def Einstein_radius(zL, zS, mL):
+    '''
+    :param zL: redshift where the lens locates
+    :param zS: redshift where the source locates
+    :param mL: lens mass
+    :return: Einstein radius of the lens system
+    '''
+
+    from astropy.cosmology import FlatLambdaCDM
+    import astropy.units as u
+    cosmo = FlatLambdaCDM(H0=69.7, Om0=0.306, Tcmb0=2.725)
+
+    DL       = cosmo.angular_diameter_distance(zL)
+    DS       = cosmo.angular_diameter_distance(zS)
+    DLS      = cosmo.angular_diameter_distance_z1z2(zL, zS)
+    D        = DLS/(DL*DS)
+    D        = np.float64(D/(u.Mpc))
+    theta_E2 = (4*const.G*mL*const.M_sun*D)/const.c**2
+    theta_E  = np.sqrt(theta_E2)
+
+    return theta_E

@@ -1,4 +1,5 @@
 import numpy as np
+import warnings
 
 def Hessian_Td(lens_model_list, x, y, kwargs):
     '''
@@ -22,6 +23,8 @@ def Hessian_Td(lens_model_list, x, y, kwargs):
             hessian -= Hessian_SIS(x_shift, y_shift, thetaE)
         elif lens_type == 'POINT_MASS':
             hessian -= Hessian_PM(x_shift, y_shift, thetaE)  # Make sure Psi_PM is JAX-compatible
+    
+    print(hessian)
     
     return hessian
     
