@@ -1,13 +1,13 @@
 import numpy as np
 from fast_histogram import histogram1d
 from tqdm import trange, tqdm
-from utils.utils import gridfromcorn
 import numba as nb
-from lensmodels.potential import potential
 import multiprocessing as mp
 import jax.numpy as jnp
 from jax import pmap, vmap, jit
 import multiprocessing
+from wolensing.utils.utils import gridfromcorn
+from wolensing.lensmodels.potential import potential
 
 def histogram_routine_gpu(lens_model_complete, Numblocks, macroimindx, Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
                       binmin, binmax, Scale, kwargs_lens, y0, y1, dx):
@@ -58,9 +58,6 @@ def histogram_routine_gpu(lens_model_complete, Numblocks, macroimindx, Nblock, N
                 x2blockcorn = x2corn + j * Lblock
                 X1, X2 = gridfromcorn(x1blockcorn, x2blockcorn, dx, Nblock1, Nblock2)
                 Ts = Scale ** (-2) * potential(lens_model_complete, X1, X2, y, kwargs_lens)
-                # print('y', y0, y1)
-                # print('exit', Ts)
-                # exit()
                 bincount += jnp.histogram(Ts, binnum, (binmin, binmax))[0] * dx ** 2
                 pbar.update(1)
                 del X1, X2, Ts
@@ -116,9 +113,7 @@ def histogram_routine_cpu(lens_model_complete, Numblocks, macroimindx, Nblock, N
                 x1blockcorn = x1corn + i * Lblock
                 x2blockcorn = x2corn + j * Lblock
                 X1, X2 = gridfromcorn(x1blockcorn, x2blockcorn, dx, Nblock1, Nblock2)
-                # Ts = Scale ** (-2) * potential(lens_model_complete, X1, X2, y, kwargs_lens)
                 Ts = Scale ** (-2) * T(X1, X2, kwargs_lens, y0, y1)
-                print(Ts[0,0], 'test')
                 bincount += histogram1d(Ts, binnum, (binmin, binmax)) * dx ** 2
                 pbar.update(1)
                 del X1, X2, Ts

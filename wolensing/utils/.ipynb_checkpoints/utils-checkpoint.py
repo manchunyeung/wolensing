@@ -5,13 +5,7 @@ import jax.numpy as jnp
 from jax import jit
 from functools import partial
 
-import sys
-import os
-path = os.getcwd()
-dir = os.path.abspath(os.path.join(path, os.pardir))
-sys.path.append(dir)
-
-from lensmodels.hessian import Hessian_Td
+from wolensing.lensmodels.hessian import Hessian_Td
 
 def fitfuncF0(t, F0, a, c):
     '''

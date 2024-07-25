@@ -4,7 +4,6 @@ from scipy.optimize import curve_fit
 from fast_histogram import histogram1d
 from scipy.fft import fftfreq
 from scipy.fftpack import fft
-import lensinggw.constants.constants as const
 from tqdm import trange, tqdm
 
 import sys
@@ -16,6 +15,7 @@ sys.path.append(dir)
 from utils.utils import *
 from utils.histogram import *
 from lensmodels.potential import potential
+import utils.constants as const 
 
 G = const.G  # gravitational constant [m^3 kg^-1 s^-2]
 c = const.c  # speed of light [m/s]
@@ -69,7 +69,6 @@ class amplification_factor(object):
         :return: amplification factor in time domain.
         """
 
-
         # details of the lens model and source
         thetaE = self._kwargs_macro['theta_E']
         y0 = self._kwargs_macro['source_pos_x']
@@ -85,7 +84,6 @@ class amplification_factor(object):
         binnumlength = int(binlength / binwidth)
         binmax = binmin + binwidth * (binnum + 1)
         bins = np.linspace(binmin, binmax, binnum)
-        print('bin', binmin, binmax)
 
         # dividing the lens plane into grid
         N = self._kwargs_integrator['PixelNum']
@@ -102,9 +100,6 @@ class amplification_factor(object):
         Numblocks = N // Nblock
         Nresidue = N % Nblock
 
-        print(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
-                            binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
-
         if gpu:
             bincount = histogram_routine_gpu(self._lens_model_list, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
                             binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
@@ -113,19 +108,23 @@ class amplification_factor(object):
                             binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
 
         
-        
+        print(bincount)
         # trimming the array
         bincountback = np.trim_zeros(bincount, 'f')
         bincountfront = np.trim_zeros(bincount, 'b')
         fronttrimmed = len(bincount) - len(bincountback)
         backtrimmed = len(bincount) - len(bincountfront) + 1
-        print(fronttrimmed, backtrimmed, len(bins))
+        # self._ts = bins
+        # self._F_tilde = bincount/ (2 * np.pi * binwidth) / thetaE ** 2
+        # return bins, bincount/ (2 * np.pi * binwidth) / thetaE ** 2
+        print(fronttrimmed, backtrimmed, 'shi')
         self._F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
         self._ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
         if binnumlength < len(self._ts):
             self._ts, self._F_tilde = self._ts[:binnumlength], self._F_tilde[:binnumlength]
 
-        if isinstance(self._ts, jnp.ndarray):
+        import jax.numpy as jnp
+        if isinstance(self._ts, jnp.ndarray) or isinstance(self._F_tilde, jnp.ndarray):
             self._ts = np.array(self._ts)
             self._F_tilde = np.array(self._F_tilde)
 
@@ -139,27 +138,27 @@ class amplification_factor(object):
         :param type2: boolean, if True, switch to fourier transform of  microlensing of a type 2 image.
         :return: frequency array and amplification factor F(f) of wave optics.
         """
+        dt = self._kwargs_integrator['TimeStep']*self._Tscale # precise timestep for fourier transform
         
         if type2:
-            ws, Fw = iwFourier(self._ts * self._Tscale, self._F_tilde, type2) 
+            ws, Fw = iwFourier(self._ts * self._Tscale, self._F_tilde, dt) 
             fs = ws/(2*np.pi)
             peak = np.where(self._F_tilde == np.amax(self._F_tilde))
             index = int(peak[0])
-            Tds = 5 # in dimension time
-            tdiff = self._ts[index]*self._Tscale-5 
-            # tdiff = ts[index]*self._Tscale-Tds 
+            Tds = (self._kwargs_integrator['T0'] - self._kwargs_integrator['TimeMin']) * self._Tscale  # in dimension time
+            tdiff = self._ts[index]*self._Tscale - Tds
             overall_phase = np.exp(-1 * 2 * np.pi * 1j * (Tds+tdiff) * fs)
             Fw *= overall_phase
         else:
             ts_extended, F_tilde_extended = F_tilde_extend(self._ts, self._F_tilde, self._kwargs_macro, self._kwargs_integrator)
             F_tilde_apodized = coswindowback(F_tilde_extended, 50)
-            ws, Fw = iwFourier(ts_extended*self._Tscale, F_tilde_apodized)
+            ws, Fw = iwFourier(ts_extended*self._Tscale, F_tilde_apodized, dt)
 
         from bisect import bisect_left
         i = bisect_left(ws, 2*np.pi*freq_end)
 
         self._fs, self._Fws = ws/(2*np.pi), Fw
-        return ws[:i], Fw[:i] 
+        return self._fs[:i], self._Fws[:i] 
 
     def importor(self, ts=None, F_tilde=None, fs=None, Fws=None, time=False, freq=False):
         """
@@ -222,11 +221,10 @@ class amplification_factor(object):
         plt.show()
         return ax 
 
-    def plot_freq(self, macromu = 1, freq_end = 2000, saveplot=None, abs=True, pha=False):
+    def plot_freq(self, freq_end = 2000, saveplot=None, abs=True, pha=False, smooth=False):
         """
         Plots the amplification factor against frequency in semilogx
 
-        :param macromu: macro magnification of the strong lensed image. Default to be one.
         :param freq_end: higher end of the frequency range 
         :param abs: boolean, if True, compute the absolute value of the amplification.
         :param pha: boolean, if True, compute the phase of the amplification.
@@ -252,19 +250,25 @@ class amplification_factor(object):
 
         fs = self._fs
         Fws = self._Fws
-
-        # smoothen the curve(s)
-        from scipy.signal import savgol_filter
-        Fa_fil = savgol_filter(np.abs(Fws), 51, 3)
-        Fp_fil = savgol_filter(np.angle(Fws), 51, 3)
-
+        
         from bisect import bisect_left
         i = bisect_left(fs, freq_end) 
 
-        if abs:
-            ax.semilogx(fs[:i], Fa_fil[:i], linewidth=1)
-        elif pha:
-            ax.plot(fs[:i], Fp_fil[:i], linewidth=1)
+        # smoothen the curve(s)
+        if smooth:
+            from scipy.signal import savgol_filter
+            Fa_fil = savgol_filter(np.abs(Fws), 51, 3)
+            Fp_fil = savgol_filter(np.angle(Fws), 51, 3)
+            if abs:
+                ax.semilogx(fs[:i], Fa_fil[:i]/self._kwargs_macro['mu'], linewidth=1)
+            elif pha:
+                ax.semilogx(fs[:i], Fp_fil[:i], linewidth=1)
+
+        else:
+            if abs:
+                ax.semilogx(fs[:i], np.abs(Fws[:i])/self._kwargs_macro['mu'], linewidth=1)
+            elif pha:
+                ax.semilogx(fs[:i], np.angle(Fws[:i]), linewidth=1)
 
         ax.set_xlabel(r'Frequency (Hz)', fontsize = 14)
         if abs:
@@ -282,7 +286,7 @@ class amplification_factor(object):
         plt.show()
         return ax 
 
-    def geometrical_optics(self, mus, tds, Img_ra, Img_dec, upper_lim = 3000, type2=False):
+    def geometrical_optics(self, mus, tds, Img_ra, Img_dec, upper_lim = 3000, type2 = False):
         """
         :param mus: magnifications of images.
         :param tds: time delays of images.
@@ -296,17 +300,15 @@ class amplification_factor(object):
         
         num_interp = int((upper_lim-fs[0])/fs_grid) 
         self._geofs = np.linspace(fs[0], upper_lim, num_interp)
-
-        #from wolensing.utils.utils import Morse_indices
-        ns = Morse_indices(self._lens_model_list, Img_ra, Img_dec, self._kwargs_lens)
-        from lensinggw.amplification_factor.amplification_factor import amplification_from_data
-        self._geoFws = amplification_from_data(self._geofs, mus, tds, ns)
         
+        ns = Morse_indices(self._lens_model_list, Img_ra, Img_dec, self._kwargs_lens)
+        self._geoFws = compute_geometrical(self._geofs, mus, tds, ns)
+
         if type2:
             index = np.argmin(tds)
             overall_phase = np.exp(-1 * 2 * np.pi * 1j * (tds[index]) * fs)
             self._geoFws *= overall_phase
-
+        
         return self._geofs, self._geoFws
     
     def concatenate(self, transfreq = 1000):
