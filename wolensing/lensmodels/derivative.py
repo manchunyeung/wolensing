@@ -1,6 +1,6 @@
 import numpy as np
 
-def Hessian_Td(lens_model_list, x, y, kwargs):
+def derivative_Td(lens_model_list, x, y, kwargs):
     '''
     :param lens_model_list: list of lens models.
     :param x: x-coordinates of position on lens plane.
@@ -9,7 +9,7 @@ def Hessian_Td(lens_model_list, x, y, kwargs):
     :return: independent components of hessian matrix of time delay function.    
     '''
     
-    hessian = np.array([1.,1.,0.])
+    derivative = np.array([1.,1.,0.])
     
     for lens_type, lens_kwargs in zip(lens_model_list, kwargs):
         thetaE = lens_kwargs['theta_E']
@@ -19,13 +19,13 @@ def Hessian_Td(lens_model_list, x, y, kwargs):
         x_shift, y_shift = x-x_center, y-y_center
 
         if lens_type == 'SIS':
-            hessian -= Hessian_SIS(x_shift, y_shift, thetaE)
+            derivative -= derivative_SIS(x_shift, y_shift, thetaE)
         elif lens_type == 'POINT_MASS':
-            hessian -= Hessian_PM(x_shift, y_shift, thetaE)  # Make sure Psi_PM is JAX-compatible
+            derivative -= derivative_PM(x_shift, y_shift, thetaE)  # Make sure Psi_PM is JAX-compatible
     
-    return hessian
+    return derivative
     
-def Hessian_SIS(x, y, thetaE):
+def derivative_SIS(x, y, thetaE):
     '''
     :param x: x-coordinates of position on lens plane with respect to the lens position.
     :param y: y-coordinates of position on lens plane with respect to the lens position.
@@ -33,13 +33,12 @@ def Hessian_SIS(x, y, thetaE):
     :return: independent components of hessian matrix of SIS profile.    
     '''
     
-    prefactor = thetaE * np.sqrt(x**2 + y**2)**(-3.)
-    f_xx = y**2 * prefactor
-    f_yy = x**2 * prefactor
-    f_xy = -x * y * prefactor
-    return f_xx, f_yy, f_xy
+    prefactor = thetaE * np.sqrt(x**2 + y**2)**(-1.)
+    f_x = x * prefactor
+    f_y = y * prefactor
+    return f_x, f_y
 
-def Hessian_PM(x, y, thetaE):
+def derivative_PM(x, y, thetaE):
     '''
     :param x: x-coordinates of position on lens plane with respect to the lens position.
     :param y: y-coordinates of position on lens plane with respect to the lens position.
@@ -47,9 +46,8 @@ def Hessian_PM(x, y, thetaE):
     :return: independent components of hessian matrix of PM profile.    
     '''
     
-    prefactor = thetaE**2 * (x**2 + y**2)**(-2.)
-    f_xx = (-x**2 + y**2) * prefactor
-    f_yy = -1 * f_xx
-    f_xy = (-2 * x * y) * prefactor
-    return f_xx, f_yy, f_xy
+    prefactor = thetaE**2 * (x**2 + y**2)**(-1.)
+    f_x = x * prefactor
+    f_y = y * prefactor
+    return f_x, f_y
     

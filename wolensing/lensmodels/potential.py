@@ -2,15 +2,39 @@ import numpy as np
 from wolensing.lensmodels.lens import *
 from jax import jit
 
+def redudant_psi(density, radius, zL, zS):
+    '''
+    '''
+    density = kwargs['density']
+    radius = kwargs['radius']
+    zL = kwargs['zL']
+    zS = kwargs['zS']
+
+    def critical_density(zL, zS):
+        from astropy.cosmology import FlatLambdaCDM
+        cosmo = FlatLambdaCDM(H0=69.7, Om0=0.306, Tcmb0=2.725)
+        DL       = cosmo.angular_diameter_distance(zL)
+        DS       = cosmo.angular_diameter_distance(zS)
+        DLS      = cosmo.angular_diameter_distance_z1z2(zL, zS)
+
+        from wolensing.utils import constants as const
+        return const.c**2 * DL * 1e-6 / (4*np.pi*(const.G / 3.08567758128e16)*DLS*DS)
+
+    convergence = density / critical_density(zS, zL) #density = M/pc2
+    return convergence * radius**2 * np.log(radius)
+
 @jit
 def geometrical(x1, x2, y):
     '''
     :param x1: x-coordinates of position on lens plane with respect to the window center.
     :param x2: y-coordinates of position on lens plane with respect to the window center.
     :param y: numpy array, source positions.
-    :return: geometrical part of the time delay function.
+    :return: geometrical part of the time delay.
     '''
     x = jnp.array([x1, x2], dtype=jnp.float64)
+    if x1.ndim != 3:
+        geo = (1/2) * jnp.linalg.norm(x-y.reshape(x.shape), axis=0)**2
+        return geo
     geo = (1/2) * jnp.linalg.norm(x-y[:, jnp.newaxis, jnp.newaxis], axis=0)**2
     return geo
 
@@ -43,5 +67,9 @@ def potential(lens_model_list, x1, x2, y, kwargs):
 
     geo = geometrical(x1, x2, y)
     fermat_potential = geo - potential
+    print(fermat_potential)
+    # if kwargs['field']:
+    #     redudant = redundant_psi(kwargs)
+    #     fermat_potential -= redundant
     return fermat_potential
 

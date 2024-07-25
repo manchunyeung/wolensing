@@ -7,15 +7,9 @@ from scipy.fftpack import fft
 import lensinggw.constants.constants as const
 from tqdm import trange, tqdm
 
-import sys
-import os
-path = os.getcwd()
-dir = os.path.abspath(os.path.join(path, os.pardir))
-sys.path.append(dir)
-
-from utils.utils import *
-from utils.histogram import *
-from lensmodels.potential import potential
+from wolensing.utils.utils import *
+from wolensing.utils.histogram import *
+from wolensing.lensmodels.potential import potential
 
 G = const.G  # gravitational constant [m^3 kg^-1 s^-2]
 c = const.c  # speed of light [m/s]
@@ -85,7 +79,6 @@ class amplification_factor(object):
         binnumlength = int(binlength / binwidth)
         binmax = binmin + binwidth * (binnum + 1)
         bins = np.linspace(binmin, binmax, binnum)
-        print('bin', binmin, binmax)
 
         # dividing the lens plane into grid
         N = self._kwargs_integrator['PixelNum']
@@ -102,8 +95,6 @@ class amplification_factor(object):
         Numblocks = N // Nblock
         Nresidue = N % Nblock
 
-        print(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
-                            binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
 
         if gpu:
             bincount = histogram_routine_gpu(self._lens_model_list, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
@@ -112,14 +103,11 @@ class amplification_factor(object):
             bincount = histogram_routine_cpu(self._lens_model_complete, Numblocks, np.array([[None, None]]), Nblock, Nresidue, x1corn, x2corn, Lblock, binnum,
                             binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
 
-        
-        
         # trimming the array
         bincountback = np.trim_zeros(bincount, 'f')
         bincountfront = np.trim_zeros(bincount, 'b')
         fronttrimmed = len(bincount) - len(bincountback)
         backtrimmed = len(bincount) - len(bincountfront) + 1
-        print(fronttrimmed, backtrimmed, len(bins))
         self._F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
         self._ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
         if binnumlength < len(self._ts):
@@ -132,7 +120,7 @@ class amplification_factor(object):
 
         :param freq_end: higher end of the frequency series. Default to be 2000.
         :param type2: boolean, if True, switch to fourier transform of  microlensing of a type 2 image.
-        :return: frequency array and amplification factor F(f) of wave optics.
+        :return: amplification factor in frequency domain.
         """
         
         if type2:
@@ -146,17 +134,16 @@ class amplification_factor(object):
             overall_phase = np.exp(-1 * 2 * np.pi * 1j * (Tds+tdiff) * fs)
             Fw *= overall_phase
         else:
-            ts_extended, F_tilde_extended = F_tilde_extend(self._ts, self._F_tilde, self._kwargs_macro, self._kwargs_integrator)
-            F_tilde_apodized = coswindowback(F_tilde_extended, 50)
-            ws, Fw = iwFourier(ts_extended*self._Tscale, F_tilde_apodized)
+            ts_extended, F_tilde_extended = F_tilde_extend(self._ts, self._F_tilde, self._kwargs_integrator)
+            ws, Fw = iwFourier(ts_extended*self._Tscale, F_tilde_extended)
 
         from bisect import bisect_left
-        i = bisect_left(ws, 2*np.pi*freq_end)
+        i = bisect_left(ws, 2*np.pi*2000)
 
-        self._fs, self._Fws = ws/(2*np.pi), Fw
+        self._ws, self._Fws = ws, Fw
         return ws[:i], Fw[:i] 
 
-    def importor(self, ts=None, F_tilde=None, fs=None, Fws=None, time=False, freq=False):
+    def importor(self, ts=None, F_tilde=None, ws=None, Fws=None, time=False, freq=False):
         """
         Imports the amplification factor
 
@@ -171,7 +158,7 @@ class amplification_factor(object):
             self._ts = ts
             self._F_tilde = F_tilde
         elif freq:
-            self._fs = fs
+            self._ws = ws
             self._Fws = Fws
         else:
             raise Exception('Please choose either time domain or frequency domain to import.')
@@ -217,11 +204,10 @@ class amplification_factor(object):
         plt.show()
         return ax 
 
-    def plot_freq(self, macromu = 1, freq_end = 2000, saveplot=None, abs=True, pha=False):
+    def plot_freq(self, freq_end = 2000, saveplot=None, abs=True, pha=False):
         """
         Plots the amplification factor against frequency in semilogx
 
-        :param macromu: macro magnification of the strong lensed image. Default to be one.
         :param freq_end: higher end of the frequency range 
         :param abs: boolean, if True, compute the absolute value of the amplification.
         :param pha: boolean, if True, compute the phase of the amplification.
@@ -230,7 +216,7 @@ class amplification_factor(object):
         """
 
         try:
-            self._fs
+            self._ws
         except NameError:
             raise Exception('Frequency data is empty. Either integrate or import frequency data.')
 
@@ -245,8 +231,10 @@ class amplification_factor(object):
         plt.rc('font', family='serif')
         fig, ax = plt.subplots()
 
-        fs = self._fs
+        ws = self._ws
         Fws = self._Fws
+
+        fs=ws/(2*np.pi)
 
         # smoothen the curve(s)
         from scipy.signal import savgol_filter
@@ -259,7 +247,7 @@ class amplification_factor(object):
         if abs:
             ax.semilogx(fs[:i], Fa_fil[:i], linewidth=1)
         elif pha:
-            ax.plot(fs[:i], Fp_fil[:i], linewidth=1)
+            ax.semilogx(fs[:i], Fp_fil[:i], linewidth=1)
 
         ax.set_xlabel(r'Frequency (Hz)', fontsize = 14)
         if abs:
@@ -276,37 +264,3 @@ class amplification_factor(object):
 
         plt.show()
         return ax 
-
-    def geometrical_optics(self, mus, tds, Img_ra, Img_dec, upper_lim = 3000):
-        """
-        :param mus: magnifications of images.
-        :param tds: time delays of images.
-        :param Img_ra: right ascension of images relative to the center of lens plane.
-        :param Img_dec: declination of images relative to the center of lens plane.
-        :param upper_lim: desired upper limit of freqeuncy range of geometrical optics.
-        :return: frequency array and amplification factor F(f) of geometrical optics.
-        """
-        fs = self._fs
-        fs_grid = fs[1]-fs[0]
-        
-        num_interp = int((upper_lim-fs[0])/fs_grid) 
-        self._geofs = np.linspace(fs[0], upper_lim, num_interp)
-        
-        #from wolensing.utils.utils import Morse_indices
-        ns = Morse_indices(self._lens_model_list, Img_ra, Img_dec, self._kwargs_lens)
-        from lensinggw.amplification_factor.amplification_factor import amplification_from_data
-        self._geoFws = amplification_from_data(self._geofs, mus, tds, ns)
-        
-        return self._geofs, self._geoFws
-    
-    def concatenate(self, transfreq = 1000):
-        """
-        :param transfreq: transitional frequency of wave optics to geometrical optics.
-        :return: concatenated frequency array and amplification factor F(f).
-        """
-        index = (np.abs(self._fs-transfreq)).argmin()
-        
-        self._fullfs = np.concatenate((self._fs[:index], self._geofs[index:]))
-        self._fullFws = np.concatenate((self._Fws[:index], self._geoFws[index:]))
-        
-        return self._fullfs, self._fullFws
