@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from lenstronomy.LensModel.lens_model import LensModel
 
 def plot_contour(ax, lens_model_list, window_center1, window_center2, window_length, kwargs_lens_list, beta0, beta1, Img_ra=None, Img_dec=None,
-                 T0 = 0, Tfac = 1, micro = False):
+                 T0 = 0, Tfac = 1, micro = False, contour_line = 50):
     """
     Given a square window, plot the time delay contour and the positions of lensed images on the lens plane
 
@@ -43,7 +43,7 @@ def plot_contour(ax, lens_model_list, window_center1, window_center2, window_len
     Ts -= T0
 
     # Plot the figure
-    CS = ax.contour(X1s, X2s, Ts, 50)
+    CS = ax.contour(X1s, X2s, Ts, contour_line)
     ax.clabel(CS, CS.levels)
     ax.scatter(window_center1, window_center2)
     if Img_ra is not None:
