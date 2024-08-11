@@ -1,31 +1,43 @@
 import numpy as np
 
-def derivative_Td(lens_model_list, x, y, kwargs):
+def Gradient_Td(lens_model_list, x, y, kwargs_lens, kwargs_macro, matrix=False):
     '''
     :param lens_model_list: list of lens models.
     :param x: x-coordinates of position on lens plane.
     :param y: y-coordinates of position on lens plane.
     :kwargs: arguemnts for the lens models.
-    :return: independent components of hessian matrix of time delay function.    
+    :return: gradient of time delay at the input position.
     '''
     
-    derivative = np.array([1.,1.,0.])
-    
-    for lens_type, lens_kwargs in zip(lens_model_list, kwargs):
+    source_x = kwargs_macro['source_pos_x']
+    source_y = kwargs_macro['source_pos_y']
+
+    td_x = x - source_x
+    td_y = y - source_y
+
+    for lens_type, lens_kwargs in zip(lens_model_list, kwargs_lens):
         thetaE = lens_kwargs['theta_E']
         x_center = lens_kwargs['center_x']
         y_center = lens_kwargs['center_y']
 
-        x_shift, y_shift = x-x_center, y-y_center
+        x_shif:Q
+        t, y_shift = x-x_center, y-y_center
 
         if lens_type == 'SIS':
-            derivative -= derivative_SIS(x_shift, y_shift, thetaE)
+            f_x, f_y = Gradient_SIS(x_shift, y_shift, thetaE)
+            td_x -= f_x
+            td_y -= f_y
         elif lens_type == 'POINT_MASS':
-            derivative -= derivative_PM(x_shift, y_shift, thetaE)  # Make sure Psi_PM is JAX-compatible
+            f_x, f_y = Gradient_PM(x_shift, y_shift, thetaE)
+            td_x -= f_x
+            td_y -= f_y
     
-    return derivative
+    if matrix:
+        return np.array([td_x, td_y])
     
-def derivative_SIS(x, y, thetaE):
+    return td_x, td_y
+    
+def Gradient_SIS(x, y, thetaE):
     '''
     :param x: x-coordinates of position on lens plane with respect to the lens position.
     :param y: y-coordinates of position on lens plane with respect to the lens position.
@@ -33,12 +45,12 @@ def derivative_SIS(x, y, thetaE):
     :return: independent components of hessian matrix of SIS profile.    
     '''
     
-    prefactor = thetaE * np.sqrt(x**2 + y**2)**(-1.)
+    prefactor = thetaE / np.sqrt(x**2 + y**2)
     f_x = x * prefactor
-    f_y = y * prefactor
+
     return f_x, f_y
 
-def derivative_PM(x, y, thetaE):
+def Gradient_PM(x, y, thetaE):
     '''
     :param x: x-coordinates of position on lens plane with respect to the lens position.
     :param y: y-coordinates of position on lens plane with respect to the lens position.
@@ -46,8 +58,9 @@ def derivative_PM(x, y, thetaE):
     :return: independent components of hessian matrix of PM profile.    
     '''
     
-    prefactor = thetaE**2 * (x**2 + y**2)**(-1.)
+    prefactor = thetaE**2 / (x**2 + y**2)
     f_x = x * prefactor
     f_y = y * prefactor
+
     return f_x, f_y
     

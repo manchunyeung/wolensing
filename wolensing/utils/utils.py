@@ -3,8 +3,9 @@ from scipy.fft import fftfreq
 from scipy.fftpack import fft
 import jax.numpy as jnp
 from jax import jit
-from wolensing.lensmodels.hessian import Hessian_Td
+from lensmodels.hessian import Hessian_Td
 import wolensing.utils.constants as const
+from lensmodels.derivative import Gradient_Td
 
 Mpc = 3.085677581491367e+22
 def fitfuncF0(t, F0, a, c):
@@ -181,3 +182,73 @@ def Einstein_radius(zL, zS, mL):
     theta_E  = np.sqrt(theta_E2)
 
     return theta_E
+
+def Newtons_method(lens_model_list, kwargs_lens, kwargs_macro, kwargs_integrator, max_step=100000, tol=1e-10):
+    ''' 
+    :param lens_model_list: list of lens models.
+    :param x: x-coordinates of position on lens plane.
+    :param y: y-coordinates of position on lens plane.
+    :kwargs: arguemnts for the lens models.
+    :param max_step: maximum number of steps for Newton's method.
+    :param tol: tolerance for convergence.
+    :return: x and y coordinates of the converged position.
+    '''   
+    x1cen = kwargs_integrator['WindowCenterX'] # The positions where the window centered at, usually the lens or the macroimage in embedded lens case
+    x2cen = kwargs_integrator['WindowCenterY']
+    L = 1. * kwargs_integrator['WindowSize'] # Size of the integration window
+
+    x1corn = x1cen - L / 2
+    x2corn = x2cen - L / 2
+
+    print('x1corn', x1corn)
+    print('x2corn', x2corn) 
+    print('L', L)
+
+    x_coords = np.random.uniform(x1corn, x1corn+L, 1000)
+    y_coords = np.random.uniform(x2corn, x2corn+L, 1000)
+
+    x_coords = np.array(1.20797754e-06)
+    y_coords = np.array(-1.45006811e-11)
+
+    x_array = []
+    y_array = []
+
+    for i in range(len(x_coords)):
+        for j in range(len(y_coords)):
+
+            x_start = x_coords[i]
+            y_start = y_coords[j]
+
+            for k in range(max_step):
+                H_inv = np.linalg.inv(Hessian_Td(lens_model_list, x_start, y_start, kwargs_lens, matrix=True))
+                grad = Gradient_Td(lens_model_list, x_start, y_start, kwargs_lens, kwargs_macro, matrix=True)
+
+                new_x = x_start - np.dot(H_inv, grad)[0]
+                new_y = y_start - np.dot(H_inv, grad)[1]
+
+                if np.sqrt((new_x - x_start)**2 + (new_y - y_start)**2) < tol:
+                    x_array.append(new_x)
+                    y_array.append(new_y)
+                    break
+
+                x_start = new_x
+                y_start = new_y
+
+                if k == max_step - 1:
+                    x_array.append(new_x)
+                    y_array.append(new_y)
+
+    def remove_duplicates(x, y, tol=1e-5):
+        x_unique = []
+        y_unique = []
+
+        for i in range(len(x)):
+            current_norm = np.sqrt(x[i]**2 + y[i]**2)
+            if not any(np.isclose(current_norm, np.sqrt(unique_x**2 + unique_y**2), atol=tol) for unique_x, unique_y in zip(x_unique, y_unique)):
+                x_unique.append(x[i])
+                y_unique.append(y[i])
+                
+        return x_unique, y_unique
+
+    x_array, y_array = remove_duplicates(x_array, y_array)
+    return x_array, y_array
