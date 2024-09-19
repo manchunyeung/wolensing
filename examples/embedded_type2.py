@@ -127,7 +127,7 @@ kwargs_macro = {'source_pos_x': beta0,
                }
 
 kwargs_integrator = {'InputScaled': False,
-                     'PixelNum': int(3000),
+                     'PixelNum': int(300000),
                      'PixelBlockMax': 2000,
                      'WindowSize': 10.*200*thetaE3,
                      'WindowCenterX': MacroImg_ra[imindex],

@@ -3,9 +3,15 @@ import matplotlib
 import numpy as np
 import matplotlib.pyplot as plt
 from lenstronomy.LensModel.lens_model import LensModel
+from matplotlib.patches import FancyArrowPatch
 
-def plot_contour(ax, lens_model_list, window_center1, window_center2, window_length, kwargs_lens_list, beta0, beta1, Img_ra, Img_dec,
-                 T0 = 0, Tfac = 1, micro = False):
+import sys
+sys.path.append("..")
+
+from lensmodels.derivative import Gradient_Td
+
+def plot_contour(ax, lens_model_list, window_center1, window_center2, window_length, kwargs_lens_list, beta0, beta1, Img_ra=None, Img_dec=None, crit_ra=None, crit_dec=None, caustic_ra=None, caustic_dec=None,
+                 T0 = 0, Tfac = 1, contour = 50, micro = False, gradient=False):
     """
     Given a square window, plot the time delay contour and the positions of lensed images on the lens plane
 
@@ -41,10 +47,30 @@ def plot_contour(ax, lens_model_list, window_center1, window_center2, window_len
     X1s, X2s = np.meshgrid(x1s,x2s)
     Ts = Tfac * lens_model_complete.fermat_potential(X1s,X2s,kwargs_lens_list, beta0, beta1)
     Ts -= T0
+    
 
     # Plot the figure
-    CS = ax.contour(X1s, X2s, Ts, 50)
+    CS = ax.contour(X1s, X2s, Ts, contour)
     ax.clabel(CS, CS.levels)
+    if gradient:
+        
+        kwargs_macro = {'source_pos_x': beta0, 'source_pos_y': beta1}
+        td_x, td_y = Gradient_Td(lens_model_list, X1s, X2s, kwargs_lens_list, kwargs_macro)
+        
+        norm = np.linalg.norm(np.array((td_x, td_y)), axis=0)
+        u = td_x / norm
+        v = td_y / norm
+        
+        print(u, v, 'arrow')
+        step = 20
+        scale = 5e10
+        ax.quiver(X1s[::step, ::step], X2s[::step, ::step], u[::step, ::step], v[::step, ::step], units='xy', scale=scale, color='gray')
+        # arrow = FancyArrowPatch((35, 35), (35+34*0.2, 35+0), arrowstyle='simple',
+                            # color='r', mutation_scale=10)  
+        # ax.add_patch(arrow)
+    if crit_ra is not None and crit_dec is not None: 
+        ax.scatter(crit_ra, crit_dec, markersize=2, color='red')
     ax.scatter(window_center1, window_center2)
-    ax.scatter(Img_ra[:], Img_dec[:])
+    if Img_ra is not None:
+        ax.scatter(Img_ra[:], Img_dec[:])
     return ax

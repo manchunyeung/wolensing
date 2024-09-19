@@ -1,0 +1,7 @@
+Low mass
+iden 1, 2, 3
+rand 1, 2, 3
+
+High mass
+iden 4, 5
+rand 4, 5

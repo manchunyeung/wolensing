@@ -20,8 +20,7 @@ def Gradient_Td(lens_model_list, x, y, kwargs_lens, kwargs_macro, matrix=False):
         x_center = lens_kwargs['center_x']
         y_center = lens_kwargs['center_y']
 
-        x_shif:Q
-        t, y_shift = x-x_center, y-y_center
+        x_shift, y_shift = x-x_center, y-y_center
 
         if lens_type == 'SIS':
             f_x, f_y = Gradient_SIS(x_shift, y_shift, thetaE)
@@ -47,6 +46,7 @@ def Gradient_SIS(x, y, thetaE):
     
     prefactor = thetaE / np.sqrt(x**2 + y**2)
     f_x = x * prefactor
+    f_y = y * prefactor
 
     return f_x, f_y
 
