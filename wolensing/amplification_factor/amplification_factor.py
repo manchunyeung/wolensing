@@ -141,6 +141,7 @@ class amplification_factor(object):
         dt = self._kwargs_integrator['TimeStep']*self._Tscale # precise timestep for fourier transform
         
         if type2:
+            print(self._ts, dt)
             ws, Fw = iwFourier(self._ts * self._Tscale, self._F_tilde, dt) 
             fs = ws/(2*np.pi)
             peak = np.where(self._F_tilde == np.amax(self._F_tilde))
