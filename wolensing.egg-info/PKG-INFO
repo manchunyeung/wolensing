@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: wolensing
-Version: 0.0.7
+Version: 0.0.8
 Summary: A package for computing wave optics amplification factor.
 Author-email: "Simon Man-Chun Yeung, Mark Ho-Yeuk Cheung" <yeungm@uwm.edu>
 Project-URL: Homepage, https://github.com/manchunyeung/wolensing
@@ -24,6 +24,8 @@ Requires-Dist: tqdm
 Requires-Dist: mpmath
 Requires-Dist: extension-helpers
 
+.. image:: https://raw.githubusercontent.com/manchun.yeung/wolensing/tree/pre-release/.github/images/wolensing.png
+    :align: center
 
 .. image:: https://github.com/manchunyeung/wolensing/actions/workflows/pytest.yaml/badge.svg
     :target: https://github.com/manchunyeung/wolensing/actions/workflows/pytest.yaml
