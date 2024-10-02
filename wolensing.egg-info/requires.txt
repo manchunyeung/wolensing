@@ -1,5 +1,5 @@
 lenstronomy
-jax
+jax>=0.4.27
 jaxlib
 matplotlib
 numpy>=1.21

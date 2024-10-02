@@ -1,3 +1,5 @@
+.. image:: https://raw.githubusercontent.com/manchun.yeung/wolensing/tree/pre-release/.github/images/wolensing.png
+    :align: center
 
 .. image:: https://github.com/manchunyeung/wolensing/actions/workflows/pytest.yaml/badge.svg
     :target: https://github.com/manchunyeung/wolensing/actions/workflows/pytest.yaml

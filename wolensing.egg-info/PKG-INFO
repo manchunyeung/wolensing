@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: wolensing
-Version: 0.0.4
+Version: 0.0.7
 Summary: A package for computing wave optics amplification factor.
 Author-email: "Simon Man-Chun Yeung, Mark Ho-Yeuk Cheung" <yeungm@uwm.edu>
 Project-URL: Homepage, https://github.com/manchunyeung/wolensing
@@ -9,11 +9,11 @@ Classifier: Programming Language :: Python :: 3.10
 Classifier: Programming Language :: Python :: 3.11
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
-Requires-Python: <3.12,>=3.6
+Requires-Python: <3.12,>=3.9
 Description-Content-Type: text/x-rst
 License-File: LICENSE
 Requires-Dist: lenstronomy
-Requires-Dist: jax
+Requires-Dist: jax>=0.4.27
 Requires-Dist: jaxlib
 Requires-Dist: matplotlib
 Requires-Dist: numpy>=1.21
