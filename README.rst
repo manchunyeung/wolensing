@@ -1,3 +1,5 @@
+.. image:: https://github.com/manchunyeung/wolensing/blob/master/.github/images/wolensing.png
+    :align: center
 
 .. image:: https://github.com/manchunyeung/wolensing/actions/workflows/pytest.yaml/badge.svg
     :target: https://github.com/manchunyeung/wolensing/actions/workflows/pytest.yaml

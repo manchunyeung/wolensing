@@ -6,5 +6,5 @@ fast_histogram
 tqdm
 pycbc
 jax
-jaxlib==0.4.20
+jaxlib==0.4.27
 extension-helpers

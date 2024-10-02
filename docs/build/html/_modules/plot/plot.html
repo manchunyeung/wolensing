@@ -1,19 +1,21 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>plot.plot &mdash; wolensing 0.0.0 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>plot.plot &mdash; wolensing 0.0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=7026087e"></script>
-        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/documentation_options.js?v=f7cdbf68"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -77,11 +79,15 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">lenstronomy.LensModel.lens_model</span> <span class="kn">import</span> <span class="n">LensModel</span>
+<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span> <span class="n">FancyArrowPatch</span>
+
+<span class="kn">from</span> <span class="nn">wolensing.lensmodels.derivative</span> <span class="kn">import</span> <span class="n">Gradient_Td</span>
+
 
 <div class="viewcode-block" id="plot_contour">
 <a class="viewcode-back" href="../../plot.html#plot.plot.plot_contour">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_contour</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">lens_model_list</span><span class="p">,</span> <span class="n">window_center1</span><span class="p">,</span> <span class="n">window_center2</span><span class="p">,</span> <span class="n">window_length</span><span class="p">,</span> <span class="n">kwargs_lens_list</span><span class="p">,</span> <span class="n">beta0</span><span class="p">,</span> <span class="n">beta1</span><span class="p">,</span> <span class="n">Img_ra</span><span class="p">,</span> <span class="n">Img_dec</span><span class="p">,</span>
-                 <span class="n">T0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Tfac</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">micro</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">plot_contour</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">lens_model_list</span><span class="p">,</span> <span class="n">window_center1</span><span class="p">,</span> <span class="n">window_center2</span><span class="p">,</span> <span class="n">window_length</span><span class="p">,</span> <span class="n">kwargs_lens_list</span><span class="p">,</span> <span class="n">beta0</span><span class="p">,</span> <span class="n">beta1</span><span class="p">,</span> <span class="n">Img_ra</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Img_dec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">crit_ra</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">crit_dec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">caustic_ra</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">caustic_dec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">T0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Tfac</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">contour</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span> <span class="n">micro</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">gradient</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given a square window, plot the time delay contour and the positions of lensed images on the lens plane</span>
 
@@ -117,12 +123,32 @@
     <span class="n">X1s</span><span class="p">,</span> <span class="n">X2s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x1s</span><span class="p">,</span><span class="n">x2s</span><span class="p">)</span>
     <span class="n">Ts</span> <span class="o">=</span> <span class="n">Tfac</span> <span class="o">*</span> <span class="n">lens_model_complete</span><span class="o">.</span><span class="n">fermat_potential</span><span class="p">(</span><span class="n">X1s</span><span class="p">,</span><span class="n">X2s</span><span class="p">,</span><span class="n">kwargs_lens_list</span><span class="p">,</span> <span class="n">beta0</span><span class="p">,</span> <span class="n">beta1</span><span class="p">)</span>
     <span class="n">Ts</span> <span class="o">-=</span> <span class="n">T0</span>
+    
 
     <span class="c1"># Plot the figure</span>
-    <span class="n">CS</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">X1s</span><span class="p">,</span> <span class="n">X2s</span><span class="p">,</span> <span class="n">Ts</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+    <span class="n">CS</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">contour</span><span class="p">(</span><span class="n">X1s</span><span class="p">,</span> <span class="n">X2s</span><span class="p">,</span> <span class="n">Ts</span><span class="p">,</span> <span class="n">contour</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">clabel</span><span class="p">(</span><span class="n">CS</span><span class="p">,</span> <span class="n">CS</span><span class="o">.</span><span class="n">levels</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">gradient</span><span class="p">:</span>
+        
+        <span class="n">kwargs_macro</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;source_pos_x&#39;</span><span class="p">:</span> <span class="n">beta0</span><span class="p">,</span> <span class="s1">&#39;source_pos_y&#39;</span><span class="p">:</span> <span class="n">beta1</span><span class="p">}</span>
+        <span class="n">td_x</span><span class="p">,</span> <span class="n">td_y</span> <span class="o">=</span> <span class="n">Gradient_Td</span><span class="p">(</span><span class="n">lens_model_list</span><span class="p">,</span> <span class="n">X1s</span><span class="p">,</span> <span class="n">X2s</span><span class="p">,</span> <span class="n">kwargs_lens_list</span><span class="p">,</span> <span class="n">kwargs_macro</span><span class="p">)</span>
+        
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">td_x</span><span class="p">,</span> <span class="n">td_y</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">td_x</span> <span class="o">/</span> <span class="n">norm</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">td_y</span> <span class="o">/</span> <span class="n">norm</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="s1">&#39;arrow&#39;</span><span class="p">)</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="mi">20</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="mf">5e10</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">quiver</span><span class="p">(</span><span class="n">X1s</span><span class="p">[::</span><span class="n">step</span><span class="p">,</span> <span class="p">::</span><span class="n">step</span><span class="p">],</span> <span class="n">X2s</span><span class="p">[::</span><span class="n">step</span><span class="p">,</span> <span class="p">::</span><span class="n">step</span><span class="p">],</span> <span class="n">u</span><span class="p">[::</span><span class="n">step</span><span class="p">,</span> <span class="p">::</span><span class="n">step</span><span class="p">],</span> <span class="n">v</span><span class="p">[::</span><span class="n">step</span><span class="p">,</span> <span class="p">::</span><span class="n">step</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;xy&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+        <span class="c1"># arrow = FancyArrowPatch((35, 35), (35+34*0.2, 35+0), arrowstyle=&#39;simple&#39;,</span>
+                            <span class="c1"># color=&#39;r&#39;, mutation_scale=10)  </span>
+        <span class="c1"># ax.add_patch(arrow)</span>
+    <span class="k">if</span> <span class="n">crit_ra</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">crit_dec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">crit_ra</span><span class="p">,</span> <span class="n">crit_dec</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">window_center1</span><span class="p">,</span> <span class="n">window_center2</span><span class="p">)</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">Img_ra</span><span class="p">[:],</span> <span class="n">Img_dec</span><span class="p">[:])</span>
+    <span class="k">if</span> <span class="n">Img_ra</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">Img_ra</span><span class="p">[:],</span> <span class="n">Img_dec</span><span class="p">[:])</span>
     <span class="k">return</span> <span class="n">ax</span></div>
 
 </pre></div>
@@ -134,7 +160,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023, smcu.</p>
+    <p>&#169; Copyright 2023, smcy.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -1,11 +1,12 @@
 import numpy as np
 
-def Hessian_Td(lens_model_list, x, y, kwargs):
+def Hessian_Td(lens_model_list, x, y, kwargs, matrix=False):
     '''
     :param lens_model_list: list of lens models.
     :param x: x-coordinates of position on lens plane.
     :param y: y-coordinates of position on lens plane.
     :kwargs: arguemnts for the lens models.
+    :param matrix: return hessian matrix if True.
     :return: independent components of hessian matrix of time delay function.    
     '''
     
@@ -21,8 +22,11 @@ def Hessian_Td(lens_model_list, x, y, kwargs):
         if lens_type == 'SIS':
             hessian -= Hessian_SIS(x_shift, y_shift, thetaE)
         elif lens_type == 'POINT_MASS':
-            hessian -= Hessian_PM(x_shift, y_shift, thetaE)  # Make sure Psi_PM is JAX-compatible
+            hessian -= Hessian_PM(x_shift, y_shift, thetaE)
     
+    if matrix:
+        return np.array([[hessian[0], hessian[2]], [hessian[2], hessian[1]]])
+
     return hessian
     
 def Hessian_SIS(x, y, thetaE):
@@ -37,6 +41,7 @@ def Hessian_SIS(x, y, thetaE):
     f_xx = y**2 * prefactor
     f_yy = x**2 * prefactor
     f_xy = -x * y * prefactor
+
     return f_xx, f_yy, f_xy
 
 def Hessian_PM(x, y, thetaE):
@@ -51,5 +56,6 @@ def Hessian_PM(x, y, thetaE):
     f_xx = (-x**2 + y**2) * prefactor
     f_yy = -1 * f_xx
     f_xy = (-2 * x * y) * prefactor
+    
     return f_xx, f_yy, f_xy
     

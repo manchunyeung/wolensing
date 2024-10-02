@@ -1,20 +1,22 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>utils package &mdash; wolensing 0.0.0 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>utils package &mdash; wolensing 0.0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=7026087e"></script>
-        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/documentation_options.js?v=f7cdbf68"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -53,7 +55,19 @@
 <li class="toctree-l3"><a class="reference internal" href="#utils.histogram.histogram_routine_cpu"><code class="docutils literal notranslate"><span class="pre">histogram_routine_cpu()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#utils-utils-module">utils.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-utils.utils">utils.utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#utils.utils.fitfuncF0"><code class="docutils literal notranslate"><span class="pre">fitfuncF0()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.utils.fitfunc"><code class="docutils literal notranslate"><span class="pre">fitfunc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.utils.gridfromcorn"><code class="docutils literal notranslate"><span class="pre">gridfromcorn()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.utils.coswindowback"><code class="docutils literal notranslate"><span class="pre">coswindowback()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.utils.F_tilde_extend"><code class="docutils literal notranslate"><span class="pre">F_tilde_extend()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.utils.iwFourier"><code class="docutils literal notranslate"><span class="pre">iwFourier()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.utils.smooth"><code class="docutils literal notranslate"><span class="pre">smooth()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.utils.Morse_indices"><code class="docutils literal notranslate"><span class="pre">Morse_indices()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.utils.compute_geometrical"><code class="docutils literal notranslate"><span class="pre">compute_geometrical()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#utils.utils.Einstein_radius"><code class="docutils literal notranslate"><span class="pre">Einstein_radius()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#module-utils">Module contents</a></li>
 </ul>
 </li>
@@ -99,7 +113,7 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>lens_model_complete</strong> – lens models of the system.</p></li>
 <li><p><strong>Numblocks</strong> – number of boxes with Nblock inside.</p></li>
-<li><p><strong>macroimindx</strong> – </p></li>
+<li><p><strong>macroimindx</strong></p></li>
 <li><p><strong>Nblock</strong> – number of pixels in a box.</p></li>
 <li><p><strong>Nredisude</strong> – number of pixels not in a box.</p></li>
 <li><p><strong>x1corn</strong> – x-coordinate of the lower side of the window.</p></li>
@@ -130,7 +144,7 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>lens_model_complete</strong> – lens models of the system.</p></li>
 <li><p><strong>Numblocks</strong> – number of boxes with Nblock inside.</p></li>
-<li><p><strong>macroimindx</strong> – </p></li>
+<li><p><strong>macroimindx</strong></p></li>
 <li><p><strong>Nblock</strong> – number of pixels in a box.</p></li>
 <li><p><strong>Nredisude</strong> – number of pixels not in a box.</p></li>
 <li><p><strong>x1corn</strong> – x-coordinate of the lower side of the window.</p></li>
@@ -153,8 +167,179 @@
 </dd></dl>
 
 </section>
-<section id="utils-utils-module">
-<h2>utils.utils module<a class="headerlink" href="#utils-utils-module" title="Link to this heading"></a></h2>
+<section id="module-utils.utils">
+<span id="utils-utils-module"></span><h2>utils.utils module<a class="headerlink" href="#module-utils.utils" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.utils.fitfuncF0">
+<span class="sig-name descname"><span class="pre">fitfuncF0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#fitfuncF0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.utils.fitfuncF0" title="Link to this definition"></a></dt>
+<dd><p>Fitting function of power law</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> – independent variable.</p></li>
+<li><p><strong>F0</strong> – costant that the power law converges to.</p></li>
+<li><p><strong>a</strong> – parameter multiplying the variable.</p></li>
+<li><p><strong>c</strong> – exponent parameter to the variable.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>fitted power law function.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.utils.fitfunc">
+<span class="sig-name descname"><span class="pre">fitfunc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#fitfunc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.utils.fitfunc" title="Link to this definition"></a></dt>
+<dd><p>Fitting function of power law</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> – independent variable.</p></li>
+<li><p><strong>a</strong> – parameter multiplying the variable.</p></li>
+<li><p><strong>c</strong> – exponent parameter to the variable.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>fitted power law function.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.utils.gridfromcorn">
+<span class="sig-name descname"><span class="pre">gridfromcorn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x1corn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x2corn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#gridfromcorn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.utils.gridfromcorn" title="Link to this definition"></a></dt>
+<dd><p>Construct blocks for integration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x1corn</strong> – x-coordinate of the left bottom corner of the block.</p></li>
+<li><p><strong>x2corn</strong> – y-coordinate of the left bottom corner of the block.</p></li>
+<li><p><strong>dx</strong> – steps of integration window.</p></li>
+<li><p><strong>num1</strong> – number of points on the horizontal side of the box.</p></li>
+<li><p><strong>num2</strong> – number of points on the vertical side of the box.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy meshgrid of the box.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.utils.coswindowback">
+<span class="sig-name descname"><span class="pre">coswindowback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#coswindowback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.utils.coswindowback" title="Link to this definition"></a></dt>
+<dd><p>Cosine apodization function for a percentage of points at
+the end of a timeseries of length len(data)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – data to apodize.</p></li>
+<li><p><strong>percent</strong> – percentage of data being apodized.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>apodized results.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.utils.F_tilde_extend">
+<span class="sig-name descname"><span class="pre">F_tilde_extend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">F_tilde</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs_macro</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#F_tilde_extend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.utils.F_tilde_extend" title="Link to this definition"></a></dt>
+<dd><p>Extend the function with fitted power law.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ts</strong> – time series.</p></li>
+<li><p><strong>F_tilde</strong> – data.</p></li>
+<li><p><strong>kwargs</strong> – arguments for integration.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>extended ts and F_tilde.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.utils.iwFourier">
+<span class="sig-name descname"><span class="pre">iwFourier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ft</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#iwFourier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.utils.iwFourier" title="Link to this definition"></a></dt>
+<dd><p>Fourier transform the time series data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ts</strong> – time series</p></li>
+<li><p><strong>Ft</strong> – data</p></li>
+<li><p><strong>type2</strong> – boolean, if True, use the appropriate time step for type 2 image.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>sampling frequency and transformed data in frequency domain.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.utils.smooth">
+<span class="sig-name descname"><span class="pre">smooth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_pts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#smooth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.utils.smooth" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.utils.Morse_indices">
+<span class="sig-name descname"><span class="pre">Morse_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lens_model_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#Morse_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.utils.Morse_indices" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lens_model_list</strong> – list of lens models.</p></li>
+<li><p><strong>xs</strong> – x-coordinates of position on lens plane.</p></li>
+<li><p><strong>ys</strong> – y-coordinates of position on lens plane.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Kwargs<span class="colon">:</span></dt>
+<dd class="field-even"><p>arguemnts for the lens models.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>morse indices of the input positions.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.utils.compute_geometrical">
+<span class="sig-name descname"><span class="pre">compute_geometrical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geofs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#compute_geometrical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.utils.compute_geometrical" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>geofs</strong> – frequency series to compute geometrical optics</p></li>
+<li><p><strong>mus</strong> – magnifications of images</p></li>
+<li><p><strong>tds</strong> – time delays of images</p></li>
+<li><p><strong>ns</strong> – morse indices of images</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>geometrical optics magnification factor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.utils.Einstein_radius">
+<span class="sig-name descname"><span class="pre">Einstein_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zS</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mL</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/utils/utils.html#Einstein_radius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.utils.Einstein_radius" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>zL</strong> – redshift where the lens locates</p></li>
+<li><p><strong>zS</strong> – redshift where the source locates</p></li>
+<li><p><strong>mL</strong> – lens mass</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Einstein radius of the lens system</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-utils">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-utils" title="Link to this heading"></a></h2>
@@ -171,7 +356,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023, smcu.</p>
+    <p>&#169; Copyright 2023, smcy.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
