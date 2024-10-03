@@ -1,4 +1,4 @@
-.. image:: https://github.com/manchunyeung/wolensing/blob/pre-release/.github/images/wolensing.png
+.. image:: https://raw.githubusercontent.com/manchunyeung/wolensing/master/.github/images/wolensing.png
     :align: center
 
 .. image:: https://github.com/manchunyeung/wolensing/actions/workflows/pytest.yaml/badge.svg
