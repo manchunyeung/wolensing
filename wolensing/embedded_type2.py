@@ -143,6 +143,7 @@ kwargs_integrator = {'InputScaled': False,
 
 amplification = af.amplification_factor(lens_model_list=lens_model_list, kwargs_lens=kwargs_lens_list, kwargs_macro=kwargs_macro, **kwargs_integrator)
 ts, Ft = amplification.integrator(gpu=True)
+exit()
 print(type(ts))
 amplification._ts = np.array(ts)
 amplification._F_tilde = np.array(Ft)
