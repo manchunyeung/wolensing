@@ -12,8 +12,7 @@ def geometrical(x1, x2, y):
     :return: geometrical part of the time delay.
     '''
     x = jnp.array([x1, x2], dtype=jnp.float64)
-    if x1.ndim != 3:
-        print(yes)
+    if x.ndim != 3:
         geo = (1/2) * jnp.linalg.norm(x-y.reshape(x.shape), axis=0)**2
         return geo
     geo = (1/2) * jnp.linalg.norm(x-y[:, jnp.newaxis, jnp.newaxis], axis=0)**2

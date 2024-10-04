@@ -102,12 +102,16 @@ class amplification_factor(object):
                             binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
 
         
-        
+        print(bincount)
         # trimming the array
         bincountback = np.trim_zeros(bincount, 'f')
         bincountfront = np.trim_zeros(bincount, 'b')
         fronttrimmed = len(bincount) - len(bincountback)
         backtrimmed = len(bincount) - len(bincountfront) + 1
+        # self._ts = bins
+        # self._F_tilde = bincount/ (2 * np.pi * binwidth) / thetaE ** 2
+        # return bins, bincount/ (2 * np.pi * binwidth) / thetaE ** 2
+        print(fronttrimmed, backtrimmed, 'shi')
         self._F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
         self._ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
         if binnumlength < len(self._ts):
@@ -131,6 +135,7 @@ class amplification_factor(object):
         dt = self._kwargs_integrator['TimeStep']*self._Tscale # precise timestep for fourier transform
         
         if type2:
+            print(self._ts, dt)
             ws, Fw = iwFourier(self._ts * self._Tscale, self._F_tilde, dt) 
             fs = ws/(2*np.pi)
             peak = np.where(self._F_tilde == np.amax(self._F_tilde))
