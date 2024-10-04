@@ -1,12 +1,12 @@
 [project]
-version = "0.0.3"
+version = "0.0.10"
 name = "wolensing"
 authors = [
   { name="Simon Man-Chun Yeung, Mark Ho-Yeuk Cheung", email="yeungm@uwm.edu" },
 ]
 description = "A package for computing wave optics amplification factor."
 readme = "README.rst"
-requires-python = ">=3.6,<3.12"
+requires-python = ">=3.9,<3.12"
 classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -16,9 +16,10 @@ classifiers = [
 ]
 dependencies = [
   "lenstronomy",
-  "jax",
+  "jax>=0.4.27",
   "jaxlib",
   "matplotlib",
+  "numba==0.59.0",
   "numpy>=1.21",
   "fast_histogram",
   "scipy>1.4.1",
@@ -31,13 +32,10 @@ dependencies = [
 [project.urls]
 "Homepage" = "https://github.com/manchunyeung/wolensing"
 
-[tool.setuptools]
-py-modules = ["wolensing"]
 
 [build-system]
-requires = [
-  "setuptools >= 40.9.0",
-  "wheel",
-]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
+[tool.hatch.build.targets.wheel]
+packages = ["wolensing"]

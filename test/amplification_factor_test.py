@@ -14,7 +14,9 @@ def test_time_data():
 @pytest.fixture
 def test_freq_data():
     fixed_fs = np.loadtxt('./test/test_sis_ws.txt')/(2*np.pi)
-    fixed_Fws = np.loadtxt('./test/test_sis_Fws.txt', dtype=complex, converters={0: lambda s: complex(s.decode().replace('+-', '-'))})
+    # fixed_Fws = np.loadtxt('./test/test_sis_Fws.txt', dtype=complex, converters={0: lambda s: complex(s.decode().replace('+-', '-'))})
+
+    fixed_Fws = np.array([complex(line.strip()) for line in open('./test/test_sis_Fws.txt')])
 
     return fixed_fs, fixed_Fws
 
