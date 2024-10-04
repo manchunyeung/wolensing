@@ -1,10 +1,11 @@
-numpy>=1.21
+numpy<=2.0
 lenstronomy==1.5.1
 scipy>=1.4.1
 matplotlib==3.3.4
 fast_histogram
 tqdm
 pycbc
+numba==0.60.0
 jax
 jaxlib==0.4.27
 extension-helpers
