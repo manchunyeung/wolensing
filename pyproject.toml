@@ -19,8 +19,10 @@ dependencies = [
   "jax>=0.4.27",
   "jaxlib",
   "matplotlib",
-  "numba==0.60.0"
-  "numpy<=2.0",
+  "numba==0.59.0; python_version=='3.9'",
+  "numpy>=1.21; python_version=='3.9'",
+  "numba==0.60.0; python_version>='3.10'",
+  "numpy<=2.0 ; python_version>='3.10'",
   "fast_histogram",
   "scipy>1.4.1",
   "pycbc",
