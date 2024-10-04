@@ -19,7 +19,7 @@ dependencies = [
   "jax>=0.4.27",
   "jaxlib",
   "matplotlib",
-  "numpy>=1.21",
+  "numpy<=1.27",
   "fast_histogram",
   "scipy>1.4.1",
   "pycbc",
