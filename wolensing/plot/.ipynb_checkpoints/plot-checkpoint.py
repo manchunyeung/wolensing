@@ -69,7 +69,7 @@ def plot_contour(ax, lens_model_list, window_center1, window_center2, window_len
                             # color='r', mutation_scale=10)  
         # ax.add_patch(arrow)
     if crit_ra is not None and crit_dec is not None: 
-        ax.scatter(crit_ra, crit_dec, markersize=2, color='red')
+        ax.scatter(crit_ra, crit_dec, s=2, color='red')
     ax.scatter(window_center1, window_center2)
     if Img_ra is not None:
         ax.scatter(Img_ra[:], Img_dec[:])
