@@ -6,4 +6,5 @@ examples/SimonWorking&NotWorking_example_type2(1).ipynb
 examples/data/
 examples/*.txt
 */.ipynb_checkpoints
-examples/*.pdf
+examples/*.pd
+wolensing/success/single_mass/data
