@@ -30,9 +30,12 @@ def Gradient_Td(lens_model_list, x, y, kwargs_lens, kwargs_macro, matrix=False):
             f_x, f_y = Gradient_PM(x_shift, y_shift, thetaE)
             td_x -= f_x
             td_y -= f_y
+<<<<<<< HEAD
         elif lens_type == 'SIE':
             td_x -= f_x
             td_y -= f_y
+=======
+>>>>>>> 05c6cb0c90922e0b5a54961674e74efb6e9368dc
     
     if matrix:
         return np.array([td_x, td_y])
@@ -66,6 +69,7 @@ def Gradient_PM(x, y, thetaE):
     f_y = y * prefactor
 
     return f_x, f_y
+<<<<<<< HEAD
 
 def Gradient_SIE(x, y, b, s, q):
     if q >= 1:
@@ -78,3 +82,6 @@ def Gradient_SIE(x, y, b, s, q):
         * np.arctanh(np.sqrt(1.0 - q**2) * y / (psi + q**2 * s))
     )
     return f_x, f_y
+=======
+    
+>>>>>>> 05c6cb0c90922e0b5a54961674e74efb6e9368dc

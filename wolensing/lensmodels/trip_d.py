@@ -1,4 +1,5 @@
 import numpy as np
+<<<<<<< HEAD
 from scipy.special import airy as Air
 from wolensing.lensmodels.hessian import Hessian_Td
 from wolensing.utils.utils import Einstein_radius
@@ -51,6 +52,11 @@ def analytic_fold(lens_model_list, x, y, source, kwargs, zL, zS, mL, fs):
 def total_triple_d(lens_model_list, x, y, kwargs):
     # triple_d = np.float64(0)
     triple_d = np.array([0., 0., 0., 0.])TEMA
+=======
+
+def total_triple_d(lens_model_list, x, y, kwargs):
+    triple_d = np.float64(0)
+>>>>>>> 05c6cb0c90922e0b5a54961674e74efb6e9368dc
     
     for lens_type, lens_kwargs in zip(lens_model_list, kwargs):
         thetaE = np.float64(lens_kwargs['theta_E'])
@@ -60,11 +66,17 @@ def total_triple_d(lens_model_list, x, y, kwargs):
         x_shift, y_shift = np.float64(x-x_center), np.float64(y-y_center)
 
         if lens_type == 'SIS':
+<<<<<<< HEAD
             triple_d -= TripD_SIS(x_shift, y_shift, thetaE)
         elif lens_type == 'POINT_MASS':
             triple_d -= TripD_PM(x_shift, y_shift, thetaE)
         elif lens_type == 'SIE':
             triple_d -= TripD_SIE(x, y, b, s, q)
+=======
+            triple_d += TripD_SIS(x_shift, y_shift, thetaE)
+        elif lens_type == 'POINT_MASS':
+            triple_d += TripD_PM(x_shift, y_shift, thetaE)
+>>>>>>> 05c6cb0c90922e0b5a54961674e74efb6e9368dc
     return triple_d
     
 def TripD_SIS(x, y, thetaE):
@@ -74,9 +86,15 @@ def TripD_SIS(x, y, thetaE):
     f_xxx = -3*y*y*x*prefac
     f_xxy = -y*(-2*x**2+y**2) * prefac
     f_yyx = -x*(-2*y**2+x**2) * prefac
+<<<<<<< HEAD
 
     # total = f_yyy * y**3 + f_xxx * x**3 + 3 * f_xxy * (x**2 * y) + 3 * f_yyx * (y**2 * x)
     return f_xxx, f_xxy, f_yyx, f_yyy
+=======
+    
+    total = f_yyy * y**5 + f_xxx * x**3 + 3 * f_xxy * (x**2 * y) + 3 * f_yyx * (y**2 * x)
+    return total
+>>>>>>> 05c6cb0c90922e0b5a54961674e74efb6e9368dc
 
 def TripD_PM(x, y, thetaE):
     prefac = thetaE**2 * np.power((x**2 + y**2), -3)
@@ -86,6 +104,7 @@ def TripD_PM(x, y, thetaE):
     f_xxy = -2*y*(-3*x**2+y**2) * prefac
     f_yyx = -2*x*(-3*y**2+x**2) * prefac
     
+<<<<<<< HEAD
     # total = f_yyy * y**3 + f_xxx * x**3 + 3 * f_xxy * (x**2 * y) + 3 * f_yyx * (y**2 * x)
     # return total
     return f_xxx, f_xxy, f_yyx, f_yyy
@@ -115,3 +134,7 @@ def TripD_SIE(x, y, b, s, q):
     f_yyx = np.sin(theta)**2 * np.cos(theta) * f__yyy - (1/4) * (np.sin(theta) - 3 * np.sin(3 * theta)) * f__yyx - 2 * np.cos(theta) * ((-1 + 3 * np.cos(2 * theta)) * f__xxy + np.sin(2 * theta) * f__xxx) 
 
     return f_xxx, f_xxy, f_yyx, f_yyy
+=======
+    total = f_yyy * y**3 + f_xxx * x**3 + 3 * f_xxy * (x**2 * y) + 3 * f_yyx * (y**2 * x)
+    return total
+>>>>>>> 05c6cb0c90922e0b5a54961674e74efb6e9368dc
