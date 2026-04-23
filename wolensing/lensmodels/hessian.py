@@ -1,5 +1,15 @@
 import numpy as np
 
+<<<<<<< HEAD
+import sys
+import os
+dir = '/home/manchun.yeung/microlensing/wolensing/wolensing'
+sys.path.append(dir)
+
+from lensmodels.derivative import Gradient_SIE as sie_d
+
+=======
+>>>>>>> 05c6cb0c90922e0b5a54961674e74efb6e9368dc
 def Hessian_Td(lens_model_list, x, y, kwargs, matrix=False):
     '''
     :param lens_model_list: list of lens models.
@@ -23,6 +33,11 @@ def Hessian_Td(lens_model_list, x, y, kwargs, matrix=False):
             hessian -= Hessian_SIS(x_shift, y_shift, thetaE)
         elif lens_type == 'POINT_MASS':
             hessian -= Hessian_PM(x_shift, y_shift, thetaE)
+<<<<<<< HEAD
+        elif lens_type == 'SIE':
+            hessian -= Hessian_SIE(x_shift, y_shift, thetaE)
+=======
+>>>>>>> 05c6cb0c90922e0b5a54961674e74efb6e9368dc
     
     if matrix:
         return np.array([[hessian[0], hessian[2]], [hessian[2], hessian[1]]])
@@ -59,3 +74,19 @@ def Hessian_PM(x, y, thetaE):
     
     return f_xx, f_yy, f_xy
     
+<<<<<<< HEAD
+def Hessian_SIE(x, y, b, s, q):
+    """Returns Hessian matrix of function d^2f/dx^2, d^2/dxdy, d^2/dydx,
+    d^f/dy^2."""
+    alpha_ra, alpha_dec = sie_d(x, y, b, s, q)
+    diff = 0.0000000001
+    alpha_ra_dx, alpha_dec_dx = sie_d(x + diff, y, b, s, q)
+    alpha_ra_dy, alpha_dec_dy = sie_d(x, y + diff, b, s, q)
+
+    f_xx = (alpha_ra_dx - alpha_ra) / diff
+    f_xy = (alpha_ra_dy - alpha_ra) / diff
+    f_yx = (alpha_dec_dx - alpha_dec) / diff
+    f_yy = (alpha_dec_dy - alpha_dec) / diff
+    return f_xx, f_xy, f_yx, f_yy
+=======
+>>>>>>> 05c6cb0c90922e0b5a54961674e74efb6e9368dc

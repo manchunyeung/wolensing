@@ -7,3 +7,4 @@ examples/data/
 examples/*.txt
 */.ipynb_checkpoints
 examples/*.pdf
+wolensing/success/single_mass/data
