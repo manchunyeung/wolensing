@@ -107,7 +107,7 @@ def Time_delay(Img_ra, Img_dec, source_pos_x, source_pos_y, zL, zS, lens_model_l
     DLS        = cosmo.angular_diameter_distance_z1z2(zL, zS)
     D          = DLS/(DL*DS)
     D          = np.float64(D/(Mpc))
-    prefactor  = (1+zL)/(D*c)
+    prefactor  = (1+zL)/(D*const.c)
     shift2     = (Img_ra-source_pos_x)**2+(Img_dec-source_pos_y)**2
     potential  = 0.0
 
@@ -131,21 +131,22 @@ def injection_radius(zL, masses, mass_density, cosmo=None):
     r'''
     Computes the injection radius for a given mass distribution
 
+    :param zL: lens redshift
+    :type zL: float
     :param masses: masses of the objects
     :type masses: array
     :param mass_density: mass density of the objects in M/pc2
     :type mass_density: float
     :param cosmo: cosmology used to compute angular diameter distances, *optional*. If not specified, a FlatLambdaCDM instance with H0=69.7, Om0=0.306, Tcmb0=2.725 is considered
     :type cosmo: instance of the astropy cosmology class
-    :param zL: lens redshift
-    :type zL: float
 
     :returns: injection radius in radians
     :rtype: float
  
     '''
-    from astropy.cosmology import FlatLambdaCDM
-    cosmo = FlatLambdaCDM(H0=69.7, Om0=0.306, Tcmb0=2.725)
+    if cosmo is None:
+        from astropy.cosmology import FlatLambdaCDM
+        cosmo = FlatLambdaCDM(H0=69.7, Om0=0.306, Tcmb0=2.725)
     D_l = cosmo.angular_diameter_distance(zL) #MPc
 
     total_mass = np.sum(masses)
