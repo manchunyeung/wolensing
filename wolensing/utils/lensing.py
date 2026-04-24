@@ -1,6 +1,7 @@
 import numpy as np
 import astropy.units as u
-import lensinggw.constants.constants as const
+import wolensing.utils.constants as const
+from lenstronomy.LensModel.lens_model import LensModel
 
 Mpc = const.Mpc
 
@@ -31,7 +32,7 @@ def Einstein_radius(zL, zS, mL):
 
 def Magnifications(Img_ra, Img_dec, lens_model_list, kwargs_lens_list, diff=None):
 
-    """     
+    r"""     
     Computes image magnifications for a given lens model 
      
     :param Img_ra: images right ascensions (arbitrary units)
@@ -50,7 +51,6 @@ def Magnifications(Img_ra, Img_dec, lens_model_list, kwargs_lens_list, diff=None
     :returns: images magnifications
     :rtype: array
 
-    ref: lensinggw.utils.utils.magnifications
     """   
     # instantiate the lens model
     lens_model = LensModel(lens_model_list=lens_model_list)
@@ -60,18 +60,22 @@ def Magnifications(Img_ra, Img_dec, lens_model_list, kwargs_lens_list, diff=None
     
     return mu
 
-def Time_delay(zL, zS, Img_ra, Img_dec, lens_model_list, kwargs_lens_list, scaled=False, scale_factor=None, cosmo=None):
-    """    
+def Time_delay(Img_ra, Img_dec, source_pos_x, source_pos_y, zL, zS, lens_model_list, kwargs_lens_list, scaled=False, scale_factor=None, cosmo=None):
+    r"""    
     Computes image time delays for a given lens model 
 
-    :param zL: lens redshift
-    :type zL: float
-    :param zS: source redshift
-    :type zS: float
     :param Img_ra: images right ascensions (arbitrary units)
     :type Img_ra: array
     :param Img_dec: images declinations (arbitrary units)
     :type Img_dec: array
+    :param source_pos_x: source position x-coordinate (same units as Img_ra)
+    :type source_pos_x: float
+    :param source_pos_y: source position y-coordinate (same units as Img_dec)
+    :type source_pos_y: float
+    :param zL: lens redshift
+    :type zL: float
+    :param zS: source redshift
+    :type zS: float
     :param lens_model_list: names of the lens profiles to be considered for the lens model
     :type lens_model_list: list of strings
     :param kwargs_lens_list: keyword arguments of the lens parameters matching each lens profile in *lens_model_list*
@@ -80,14 +84,12 @@ def Time_delay(zL, zS, Img_ra, Img_dec, lens_model_list, kwargs_lens_list, scale
     :type scaled: bool
     :param scale_factor: scale factor, *optional*. Used to account for the proper conversion factor in the time delays when coordinates are given in arbitrary units, as per :math:`x_{a.u.} = x_{radians}/scale\_factor`. Only considered when *scaled* is *True*
     :type scale_factor: float
-    :param cosmo: cosmology used to compute angular diameter distances, *optional*. If not specified, a :math:`\\mathrm{FlatLambdaCDM}` instance with :math:`H_0=69.7, \Omega_0=0.306, T_{cmb0}=2.725` is considered
+    :param cosmo: cosmology used to compute angular diameter distances, *optional*. If not specified, a FlatLambdaCDM instance with H0=69.7, Om0=0.306, Tcmb0=2.725 is considered
     :type cosmo: instance of the astropy cosmology class
     
     :returns: time delay in seconds
     :rtype: array
 
-    ref: lensinggw.utils.utils.TimeDelay
-        
     """
     
     # set a default cosmology if not specified
@@ -115,9 +117,7 @@ def Time_delay(zL, zS, Img_ra, Img_dec, lens_model_list, kwargs_lens_list, scale
     # if scaled, account for it
     if (scaled):
         if scale_factor is None:
-            sys.stderr.write('\n\nMust specify a scale factor to use scaled units\n')
-            sys.stderr.write('Aborting\n')
-            exit(-1)
+            raise ValueError("Must specify scale_factor when scaled=True")
         else:
             td *= scale_factor**2
             
@@ -127,14 +127,14 @@ def Time_delay(zL, zS, Img_ra, Img_dec, lens_model_list, kwargs_lens_list, scale
     return td
 
 def injection_radius(zL, masses, mass_density, cosmo=None):
-    '''
+    r'''
     Computes the injection radius for a given mass distribution
 
     :param masses: masses of the objects
     :type masses: array
     :param mass_density: mass density of the objects in M/pc2
     :type mass_density: float
-    :param cosmo: cosmology used to compute angular diameter distances, *optional*. If not specified, a :math:`\\mathrm{FlatLambdaCDM}` instance with :math:`H_0=69.7, \Omega_0=0.306, T_{cmb0}=2.725` is considered
+    :param cosmo: cosmology used to compute angular diameter distances, *optional*. If not specified, a FlatLambdaCDM instance with H0=69.7, Om0=0.306, Tcmb0=2.725 is considered
     :type cosmo: instance of the astropy cosmology class
     :param zL: lens redshift
     :type zL: float

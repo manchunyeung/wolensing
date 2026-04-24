@@ -1,4 +1,4 @@
-numpy<=1.27
+numpy
 astropy
 lenstronomy>=1.14.0,<2
 scipy>=1.4.1

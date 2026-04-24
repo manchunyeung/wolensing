@@ -1,5 +1,5 @@
 [project]
-version = "0.0.10"
+version = "0.0.12"
 name = "wolensing"
 authors = [
   { name="Simon Man-Chun Yeung, Mark Ho-Yeuk Cheung", email="yeungm@uwm.edu" },
@@ -20,7 +20,7 @@ dependencies = [
   "jax>=0.4.27",
   "jaxlib",
   "matplotlib",
-  "numpy<=1.27",
+  "numpy",
   "fast_histogram",
   "scipy>1.4.1",
   "pycbc",
