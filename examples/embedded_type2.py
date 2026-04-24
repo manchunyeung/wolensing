@@ -14,11 +14,17 @@ import matplotlib.pyplot as plt
 from argparse import ArgumentParser
 
 from lenstronomy.LensModel.lens_model import LensModel
-import lensinggw.constants.constants as const
-from lensinggw.utils.utils import TimeDelay, magnifications, getMinMaxSaddle
-from lensinggw.amplification_factor.amplification_factor import geometricalOpticsMagnification
+
+import wolensing.lgw_compat.constants as const
+from wolensing.lgw_compat.utils import TimeDelay, magnifications, getMinMaxSaddle, param_processing
+from wolensing.lgw_compat.amplification import geometricalOpticsMagnification
+from wolensing.lgw_compat.images import microimages
 
 import wolensing.amplification_factor.amplification_factor as af
+
+parser = ArgumentParser()
+parser.add_argument("--pixel", type=int, default=1000)
+args = parser.parse_args()
 
 G = const.G  # gravitational constant [m^3 kg^-1 s^-2]
 c = const.c  # speed of light [m/s]
@@ -41,8 +47,6 @@ mL2 = 100
 mtot = mL1 + mL2
 
 # convert to radians
-from lensinggw.utils.utils import param_processing
-
 thetaE1 = param_processing(zL, zS, mL1)
 thetaE2 = param_processing(zL, zS, mL2)
 thetaE = param_processing(zL, zS, mtot)
@@ -58,7 +62,6 @@ kwargs_lens_list = [kwargs_sis_1]
 print('thetaE1 and thetaE', thetaE1, thetaE)
 kwargs_sis_1_scaled = {'center_x': eta10 / thetaE, 'center_y': eta11 / thetaE, 'theta_E': thetaE1 / thetaE}
 kwargs_lens_list_scaled = [kwargs_sis_1_scaled]
-from lensinggw.solver.images import microimages
 
 solver_kwargs = {'SearchWindowMacro': 10 * thetaE1,
                  'SearchWindow': 5 * thetaE2,
@@ -91,9 +94,6 @@ kwargs_lens_list = [kwargs_sis_1, kwargs_point_mass_2]
 Img_ra, Img_dec = MacroImg_ra, MacroImg_dec
 
 # time delays, magnifications, Morse indices and amplification factor
-from lensinggw.utils.utils import TimeDelay, magnifications, getMinMaxSaddle
-from lensinggw.amplification_factor.amplification_factor import geometricalOpticsMagnification
-
 tds = TimeDelay(Img_ra, Img_dec,
                beta0, beta1,
                zL, zS,
@@ -120,7 +120,7 @@ thetaE3 = param_processing(zL, zS, mL3)
 kwargs_macro = {'source_pos_x': beta0,
                 'source_pos_y': beta1,
                 'theta_E': thetaE,
-                'mu': np.abs(Macromu[imindex]),
+                'mu': np.abs(Macromus[imindex]),
                }
 
 kwargs_integrator = {'InputScaled': False,

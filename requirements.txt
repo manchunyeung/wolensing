@@ -1,4 +1,5 @@
 numpy<=1.27
+astropy
 lenstronomy==1.5.1
 scipy>=1.4.1
 matplotlib==3.3.4

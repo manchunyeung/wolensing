@@ -16,6 +16,7 @@ classifiers = [
 ]
 dependencies = [
   "lenstronomy",
+  "astropy",
   "jax>=0.4.27",
   "jaxlib",
   "matplotlib",
@@ -27,6 +28,9 @@ dependencies = [
   "mpmath",
   "extension-helpers"
 ]
+
+[project.optional-dependencies]
+dev = ["build", "twine", "pytest", "numba"]
 
 [project.urls]
 "Homepage" = "https://github.com/manchunyeung/wolensing"
