@@ -6,11 +6,11 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Test build
+name: Pytest
 
 on:
   push:
-    branches: [dev]
+    branches: [master]
 
 permissions:
   contents: write
@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.11"]
+        python-version: ["3.9", "3.10", "3.11"]
 
     steps:
     - uses: actions/checkout@v4
@@ -31,19 +31,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install uv
       uses: astral-sh/setup-uv@v5
-    - name: Dynamic versioning with date and time
-      run: |
-        git config user.name github-actions
-        git config user.email github-actions@github.com
-        VERSION=$(date +"%Y.%m.%d.%H%M")
-        echo "__version__ = \"$VERSION\"" > wolensing/__about__.py
-        git add wolensing/__about__.py
-        git commit -m "Dynamic versioning: $VERSION"
-        git tag $VERSION
-        git push
-        git push --tags
-
-    - name: Install latex
+    - name: Install system dependencies
       run: |
         sudo apt install texlive-fonts-recommended texlive-fonts-extra
         sudo apt install dvipng cm-super
@@ -52,14 +40,4 @@ jobs:
         uv pip install --system -e ".[dev]"
     - name: Test with pytest
       run: |
-        cd test/
-        python3 -m pytest
-    - name: Build and upload to PyPI
-      if: ${{ matrix.python-version == '3.11'}}
-      run: |
-        python -m build
-        python -m twine upload --repository testpypi dist/*
-      env:
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.TWINE_TEST_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        pytest

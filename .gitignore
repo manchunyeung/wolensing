@@ -1,10 +1,12 @@
 __pycache__
+.venv/
+build/
+dist/
 *.un~
 *.swp
 data/
-examples/SimonWorking&NotWorking_example_type2(1).ipynb
 examples/data/
 examples/*.txt
+.ipynb_checkpoints/
 */.ipynb_checkpoints
 examples/*.pdf
-wolensing/success/single_mass/data
