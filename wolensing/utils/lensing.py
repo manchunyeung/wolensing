@@ -1,6 +1,6 @@
 import numpy as np
 import astropy.units as u
-import lensinggw.constants.constants as const
+import wolensing.utils.constants as const
 
 Mpc = const.Mpc
 
