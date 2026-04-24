@@ -51,6 +51,7 @@ def Magnifications(Img_ra, Img_dec, lens_model_list, kwargs_lens_list, diff=None
     :returns: images magnifications
     :rtype: array
 
+    ref: lensinggw.utils.utils.magnifications
     """   
     # instantiate the lens model
     lens_model = LensModel(lens_model_list=lens_model_list)
