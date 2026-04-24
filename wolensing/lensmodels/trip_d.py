@@ -1,63 +1,56 @@
 import numpy as np
-<<<<<<< HEAD
 from scipy.special import airy as Air
 from wolensing.lensmodels.hessian import Hessian_Td
-from wolensing.utils.utils import Einstein_radius
+from wolensing.utils.lensing import Einstein_radius
 from wolensing.utils.constants import c
 from astropy.cosmology import FlatLambdaCDM
-import astropy.units as u
+
 Mpc = 3.085677581491367e+22
 
 
-import sys
-import os
-dir = '/home/manchun.yeung/microlensing/wolensing/wolensing'
-sys.path.append(dir)
-
-from lensmodels.derivative import Gradient_SIE as sie_d
-
 def analytic_fold(lens_model_list, x, y, source, kwargs, zL, zS, mL, fs):
-    prefactor = 2**(5/6) * np.pi **(1/2) * np.exp(1j * np.pi * (3/2)) ** (5/2)
-    # prefactor = 2**(5/6) * np.pi **(1/2)
-    
+    prefactor = (
+        2 ** (5 / 6)
+        * np.pi ** (1 / 2)
+        * np.exp(1j * np.pi * (3 / 2)) ** (5 / 2)
+    )
+
     triple_d = total_triple_d(lens_model_list, x, y, kwargs)
-    print(triple_d)
     phi_yyy = triple_d[0]
-    print(phi_yyy, 'yyy')
-    
+
     second_d = Hessian_Td(lens_model_list, x, y, kwargs, matrix=False)
     phi_xx = second_d[0]
-    print(phi_xx, 'xx')
 
     y1, y2 = source
 
-    
     cosmo = FlatLambdaCDM(H0=69.7, Om0=0.306, Tcmb0=2.725)
-    DL       = cosmo.angular_diameter_distance(zL)
-    DS       = cosmo.angular_diameter_distance(zS)
-    DLS      = cosmo.angular_diameter_distance_z1z2(zL, zS)
-    D = DS/(DL*DLS)
-    print(D)
-    D = np.float64(D/Mpc)
-    print(D)
-    
-    ws = (1+zL) * Einstein_radius(zL, zS, mL) **2 * D * 2 * np.pi / c * fs
-    # ws = fs * 8 * np.pi * (1+zL) * mL 
-    ai, aip, bi, bip = Air(2**(1/3) * y2 * ws **(2/3) / abs(phi_yyy)**(1/3))
-    
-    function = ws**(1/6) / (abs(phi_xx) ** (1/2) * abs(phi_yyy)**(1/3)) * ai * np.exp(-1j * ws * y1**2/(2*phi_xx))
+    DL = cosmo.angular_diameter_distance(zL)
+    DS = cosmo.angular_diameter_distance(zS)
+    DLS = cosmo.angular_diameter_distance_z1z2(zL, zS)
+    D = np.float64((DS / (DL * DLS)) / Mpc)
+
+    ws = (1 + zL) * Einstein_radius(zL, zS, mL) ** 2 * D * 2 * np.pi / c * fs
+    ai, _aip, _bi, _bip = Air(2 ** (1 / 3) * y2 * ws ** (2 / 3) / abs(phi_yyy) ** (1 / 3))
+
+    function = (
+        ws ** (1 / 6)
+        / (abs(phi_xx) ** (1 / 2) * abs(phi_yyy) ** (1 / 3))
+        * ai
+        * np.exp(-1j * ws * y1**2 / (2 * phi_xx))
+    )
     return prefactor * function
 
 
 def total_triple_d(lens_model_list, x, y, kwargs):
-    # triple_d = np.float64(0)
-    triple_d = np.array([0., 0., 0., 0.])TEMA
-=======
+    """
+    Third derivatives of the time delay function.
 
-def total_triple_d(lens_model_list, x, y, kwargs):
-    triple_d = np.float64(0)
->>>>>>> 05c6cb0c90922e0b5a54961674e74efb6e9368dc
-    
+    Returns a vector ordered as (phi_yyy, phi_xxx, phi_xxy, phi_yyx).
+    The geometrical term contributes no third derivatives, so this is minus
+    the third derivatives of the lens potential.
+    """
+    triple_d = np.zeros(4, dtype=np.float64)
+
     for lens_type, lens_kwargs in zip(lens_model_list, kwargs):
         thetaE = np.float64(lens_kwargs['theta_E'])
         x_center = np.float64(lens_kwargs['center_x'])
@@ -66,17 +59,13 @@ def total_triple_d(lens_model_list, x, y, kwargs):
         x_shift, y_shift = np.float64(x-x_center), np.float64(y-y_center)
 
         if lens_type == 'SIS':
-<<<<<<< HEAD
             triple_d -= TripD_SIS(x_shift, y_shift, thetaE)
         elif lens_type == 'POINT_MASS':
             triple_d -= TripD_PM(x_shift, y_shift, thetaE)
         elif lens_type == 'SIE':
-            triple_d -= TripD_SIE(x, y, b, s, q)
-=======
-            triple_d += TripD_SIS(x_shift, y_shift, thetaE)
-        elif lens_type == 'POINT_MASS':
-            triple_d += TripD_PM(x_shift, y_shift, thetaE)
->>>>>>> 05c6cb0c90922e0b5a54961674e74efb6e9368dc
+            e1 = lens_kwargs['e1']
+            e2 = lens_kwargs['e2']
+            triple_d -= TripD_SIE(x_shift, y_shift, thetaE, e1, e2)
     return triple_d
     
 def TripD_SIS(x, y, thetaE):
@@ -86,15 +75,7 @@ def TripD_SIS(x, y, thetaE):
     f_xxx = -3*y*y*x*prefac
     f_xxy = -y*(-2*x**2+y**2) * prefac
     f_yyx = -x*(-2*y**2+x**2) * prefac
-<<<<<<< HEAD
-
-    # total = f_yyy * y**3 + f_xxx * x**3 + 3 * f_xxy * (x**2 * y) + 3 * f_yyx * (y**2 * x)
-    return f_xxx, f_xxy, f_yyx, f_yyy
-=======
-    
-    total = f_yyy * y**5 + f_xxx * x**3 + 3 * f_xxy * (x**2 * y) + 3 * f_yyx * (y**2 * x)
-    return total
->>>>>>> 05c6cb0c90922e0b5a54961674e74efb6e9368dc
+    return np.array([f_yyy, f_xxx, f_xxy, f_yyx], dtype=np.float64)
 
 def TripD_PM(x, y, thetaE):
     prefac = thetaE**2 * np.power((x**2 + y**2), -3)
@@ -104,37 +85,34 @@ def TripD_PM(x, y, thetaE):
     f_xxy = -2*y*(-3*x**2+y**2) * prefac
     f_yyx = -2*x*(-3*y**2+x**2) * prefac
     
-<<<<<<< HEAD
-    # total = f_yyy * y**3 + f_xxx * x**3 + 3 * f_xxy * (x**2 * y) + 3 * f_yyx * (y**2 * x)
-    # return total
-    return f_xxx, f_xxy, f_yyx, f_yyy
+    return np.array([f_yyy, f_xxx, f_xxy, f_yyx], dtype=np.float64)
 
-def TripD_SIE(x, y, b, s, q):
-    
-    def major_axis(x, y, b, s, q):
-        f_x, f_y = sie_d(x, y, b, s, q)
-        diff = 0.0000000001
-        fx_pdx, fy_pdx = sie_d(x + diff, y, b, s, q)
-        fx_mdx, fy_mdx = sie_d(x - diff, y, b, s, q)
-    
-        fx_pdy, fy_pdy = sie_d(x, y + diff, b, s, q)
-        fx_mdy, fy_mdy = sie_d(x, y - diff, b, s, q)
-        
-        f_xxx = (-fx_mdx+2*f_x-fx_pdx) / diff**2
-        f_xxy = (-fy_mdx+2*f_y-fy_pdx) / diff**2
-        f_yyx = (-fx_mdy+2*f_x-fx_pdy) / diff**2
-        f_yyy = (-fy_mdy+2*f_x-fy_pdy) / diff**2
-        return f_xxx, f_xxy, f_yyx, f_yyy
 
-    f__xxx, f__xxy, f__yyx, f__yyy = major_axis(x, y, b, s, q)
-    
-    f_xxx = np.cos(theta)**3 * f__yyy + 3 * np.sin(theta) * np.cos(theta)**2 * f__yyx + 3 * np.cos(theta) * np.sin(theta) * f__xxy + np.sin(theta) * f__xxx
-    f_yyy = np.sin(theta)**3 * f__yyy - 3 * np.cos(theta) * np.sin(theta)**2 * f__yyx - 3 *  np.cos(theta) * np.sin(theta) * f__xxy + np.cos(theta) * f__xxx
-    f_xxy = np.cos(theta)**2 * np.sin(theta) * f__yyy - (1/4) * (np.cos(theta) + 3 * np.cos(3 * theta)) * f__yyx - (1/2) * np.sin(theta) * ((1 + 3 * np.cos(2 * theta)) * f__xxy + np.sin(2 * theta) * f__xxx) 
-    f_yyx = np.sin(theta)**2 * np.cos(theta) * f__yyy - (1/4) * (np.sin(theta) - 3 * np.sin(3 * theta)) * f__yyx - 2 * np.cos(theta) * ((-1 + 3 * np.cos(2 * theta)) * f__xxy + np.sin(2 * theta) * f__xxx) 
+def TripD_SIE(x, y, theta_E, e1, e2, diff=1e-4):
+    """
+    Numerical third derivatives of the SIE potential, returned as
+    (psi_yyy, psi_xxx, psi_xxy, psi_yyx).
+    """
 
-    return f_xxx, f_xxy, f_yyx, f_yyy
-=======
-    total = f_yyy * y**3 + f_xxx * x**3 + 3 * f_xxy * (x**2 * y) + 3 * f_yyx * (y**2 * x)
-    return total
->>>>>>> 05c6cb0c90922e0b5a54961674e74efb6e9368dc
+    def alpha(x0, y0):
+        # Gradient_SIE returns (alpha_x, alpha_y)
+        from .derivative import Gradient_SIE
+
+        return Gradient_SIE(x0, y0, theta_E, e1, e2)
+
+    def psi_xx(x0, y0):
+        ax_p, _ay_p = alpha(x0 + diff, y0)
+        ax_m, _ay_m = alpha(x0 - diff, y0)
+        return (ax_p - ax_m) / (2.0 * diff)
+
+    def psi_yy(x0, y0):
+        _ax_p, ay_p = alpha(x0, y0 + diff)
+        _ax_m, ay_m = alpha(x0, y0 - diff)
+        return (ay_p - ay_m) / (2.0 * diff)
+
+    psi_xxx = (psi_xx(x + diff, y) - psi_xx(x - diff, y)) / (2.0 * diff)
+    psi_xxy = (psi_xx(x, y + diff) - psi_xx(x, y - diff)) / (2.0 * diff)
+    psi_yyx = (psi_yy(x + diff, y) - psi_yy(x - diff, y)) / (2.0 * diff)
+    psi_yyy = (psi_yy(x, y + diff) - psi_yy(x, y - diff)) / (2.0 * diff)
+
+    return np.array([psi_yyy, psi_xxx, psi_xxy, psi_yyx], dtype=np.float64)
