@@ -1,6 +1,6 @@
 numpy<=1.27
 astropy
-lenstronomy==1.5.1
+lenstronomy>=1.14.0,<2
 scipy>=1.4.1
 matplotlib==3.3.4
 fast_histogram

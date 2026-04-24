@@ -2,7 +2,7 @@ sphinx-rtd-theme
 numpy
 matplotlib
 jax
-lenstronomy
+lenstronomy>=1.14.0,<2
 scipy
 tqdm
 fast_histogram
