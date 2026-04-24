@@ -15,12 +15,12 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-  "lenstronomy",
+  "lenstronomy>=1.14.0,<2",
+  "astropy",
   "jax>=0.4.27",
   "jaxlib",
   "matplotlib",
-  "numba==0.59.0",
-  "numpy>=1.21",
+  "numpy<=1.27",
   "fast_histogram",
   "scipy>1.4.1",
   "pycbc",
@@ -28,6 +28,9 @@ dependencies = [
   "mpmath",
   "extension-helpers"
 ]
+
+[project.optional-dependencies]
+dev = ["build", "twine", "pytest", "numba"]
 
 [project.urls]
 "Homepage" = "https://github.com/manchunyeung/wolensing"

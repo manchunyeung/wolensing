@@ -1,0 +1,74 @@
+name: Publish to PyPI
+
+on:
+  push:
+    tags:
+      - "v*"
+      - "[0-9]*"
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Set package version from tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+          echo "Publishing version: ${VERSION}"
+          export VERSION
+
+          python - <<'PY'
+          import os, re, pathlib
+          version = os.environ["VERSION"]
+
+          # Keep runtime version file in sync (if you use it in code/docs)
+          about_path = pathlib.Path("wolensing/__about__.py")
+          about_path.write_text(f'__version__ = "{version}"\n', encoding="utf-8")
+
+          # Update pyproject.toml [project].version for the build
+          p = pathlib.Path("pyproject.toml")
+          s = p.read_text(encoding="utf-8")
+          new_s, n = re.subn(r'(?m)^(version\s*=\s*)"[^\"]+"(\s*)$', rf'\1"{version}"\2', s, count=1)
+          if n != 1:
+            raise SystemExit("Could not update version in pyproject.toml (expected exactly one version field).")
+          p.write_text(new_s, encoding="utf-8")
+          PY
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-fonts-recommended texlive-fonts-extra dvipng cm-super
+
+      - name: Install build tooling (uv)
+        run: |
+          uv pip install --system build twine
+
+      - name: Build
+        run: |
+          python -m build
+
+      - name: Upload to PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          python -m twine upload dist/*

@@ -3,7 +3,7 @@ import numpy as np
 
 from lenstronomy.LensModel.lens_model import LensModel
 import wolensing.utils.constants as const
-from wolensing.utils.utils import Einstein_radius
+from wolensing.utils.lensing import Einstein_radius
 import wolensing.amplification_factor.amplification_factor as af
 
 @pytest.fixture
