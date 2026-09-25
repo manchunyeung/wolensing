@@ -55,7 +55,7 @@ class amplification_factor(object):
         if lens_model_list != None:
             self._lens_model_complete = LensModel(lens_model_list = lens_model_list)
 
-    def integrator(self, gpu=False):
+    def integrator(self, gpu=False, trim_zero=True):
         """
         Computes the amplification facator F(f) by constructing the histogram in time domain. Defines the integration window of lens plane first.        
 
@@ -102,20 +102,19 @@ class amplification_factor(object):
                             binmin, binmax, thetaE, self._kwargs_lens, y0, y1, dx)
 
         
-        print(bincount)
         # trimming the array
-        bincountback = np.trim_zeros(bincount, 'f')
-        bincountfront = np.trim_zeros(bincount, 'b')
-        fronttrimmed = len(bincount) - len(bincountback)
-        backtrimmed = len(bincount) - len(bincountfront) + 1
-        # self._ts = bins
-        # self._F_tilde = bincount/ (2 * np.pi * binwidth) / thetaE ** 2
-        # return bins, bincount/ (2 * np.pi * binwidth) / thetaE ** 2
-        print(fronttrimmed, backtrimmed, 'shi')
-        self._F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
-        self._ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
-        if binnumlength < len(self._ts):
-            self._ts, self._F_tilde = self._ts[:binnumlength], self._F_tilde[:binnumlength]
+        if trim_zero:
+            bincountback = np.trim_zeros(bincount, 'f')
+            bincountfront = np.trim_zeros(bincount, 'b')
+            fronttrimmed = len(bincount) - len(bincountback)
+            backtrimmed = len(bincount) - len(bincountfront) + 1
+            self._F_tilde = bincount[fronttrimmed:-backtrimmed] / (2 * np.pi * binwidth) / thetaE ** 2
+            self._ts = bins[fronttrimmed:-backtrimmed] - bins[fronttrimmed]
+            if binnumlength < len(self._ts):
+                self._ts, self._F_tilde = self._ts[:binnumlength], self._F_tilde[:binnumlength]
+        else:
+            self._F_tilde = bincount / (2*np.pi*binwidth) / thetaE**2
+            self._ts = bins - bins[0]
 
         import jax.numpy as jnp
         if isinstance(self._ts, jnp.ndarray) or isinstance(self._F_tilde, jnp.ndarray):
